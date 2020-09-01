@@ -1,0 +1,12 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "devDependencies": {
+    "bootstrap": "^4.5.2",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^4.1.0",
+    "jquery": "^3.5.1",
+    "popper.js": "^2.0.0-next.4"
+  }
+}
