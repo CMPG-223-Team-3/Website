@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!--html xmlns="http://www.w3.org/1999/xhtml">-->
 <head runat="server">
     <title></title>
     <link rel="stylesheet" href="dist/style.css">
@@ -119,4 +119,4 @@
         <script src="/js/bootstrap.min.js"></script>-->
         <script src="dist/all.js"></script>
     </body>
-</html>
+</!--html>

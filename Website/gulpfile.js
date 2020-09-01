@@ -7,9 +7,11 @@ const files = {
     scssPath: [//'node_modules/bootstrap/scss/bootstrap.scss',
         'app/scss/**/*.scss'],
 
-    jsPath: ['node_modules/bootstrap/dist/js/bootstrap.min.js',
+    jsPath: ['node_modules/@fortawesome/fontawesome-free/js/**/*.js',
+        'node_modules/bootstrap/dist/js/bootstrap.min.js',
         'node_modules/jquery/dist/jquery.min.js',
-        'node_modules/popper.js/dist/umd/index.min.js', 'app/js/**/*.js']
+        'node_modules/popper.js/dist/umd/index.min.js',
+        'app/js/**/*.js']
 }
 
 function scssTask() {
