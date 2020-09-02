@@ -6,6 +6,12 @@
 <head runat="server">
     <title></title>
     <link rel="stylesheet" href="dist/style.css">
+    <script src="dist/general.js"></script>
+    <script src="dist/jquery.js"></script>
+    <script src="dist/popper.js"></script>
+    <script src="dist/fontawesome.js"></script>
+    <script src="dist/bootstrap.js"></script>
+        
 </head>
 <body>
     <form id="form1" runat="server">
@@ -44,6 +50,7 @@
             <div class="jumbotron">
                 <h1 class="display-4">Simple. Elegant. Awesome.</h1>
                 <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <i class="fas fa-clock"></i>
                 <p class="lead">
                     <asp:Button class="btn btn-primary btn lg" ID="Button1" runat="server" Text="Learn More" />
                     <!--<a class="btn btn-primary btn lg" href="#" role="button">Learn more</a>-->
@@ -111,12 +118,5 @@
             </div>
         </div>
     </form>
-
-
-        
-        <!--<script src="/js/jquery.min.js"></script>
-        <script src="/js/popper.min.js"></script>
-        <script src="/js/bootstrap.min.js"></script>-->
-        <script src="dist/all.js"></script>
     </body>
 </!--html>
