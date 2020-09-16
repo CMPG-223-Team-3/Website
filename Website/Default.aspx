@@ -4,7 +4,7 @@
 
 <!--html xmlns="http://www.w3.org/1999/xhtml">-->
 <head runat="server">
-    <title></title>
+    <title>Landing Page</title>
     <link rel="stylesheet" href="dist/style.css">
     <script src="dist/general.js"></script>
     <script src="dist/jquery.js"></script>
