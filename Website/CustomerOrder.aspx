@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
     -->
 
-    <link rel="stylesheet" href="dist/style.css">
+    <link rel="stylesheet" href="dist/style.css"/>
     <script src="dist/general.js"></script>
     <script src="dist/jquery.js"></script>
     <script src="dist/popper.js"></script>
@@ -51,7 +51,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="customerLogin.aspx">Login</a>
+                                <asp:Label ID="lblLogin" class="nav-link" runat="server" Text="Login" href="#"></asp:Label>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Contact</a>
@@ -60,6 +60,21 @@
                     </div>
                 </div>
             </nav>
+
+            <!--Search Nav-->
+            
+
+            <!--
+            panel for deals of the day and such - maybe a carousel? how to: https://www.w3schools.com/bootstrap/bootstrap_carousel.asp
+            <div>
+                <asp:Panel class="carousel slide" data-ride="carousel" ID="pnlDotd" runat="server"></asp:Panel>
+            </div>
+            -->
+
+            <div>
+                <asp:Panel ID="pnlMaster" runat="server"></asp:Panel>
+            </div>
+
         </div>
 
         
