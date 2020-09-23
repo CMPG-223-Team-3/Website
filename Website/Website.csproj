@@ -68,12 +68,21 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\js\script.js" />
+    <Content Include="CustomerOrder.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="gulpfile.js" />
+    <Content Include="Images\logo.jpg" />
     <Content Include="Login.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomerOrder.aspx.cs">
+      <DependentUpon>CustomerOrder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerOrder.aspx.designer.cs">
+      <DependentUpon>CustomerOrder.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
