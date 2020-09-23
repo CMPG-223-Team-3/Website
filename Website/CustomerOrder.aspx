@@ -24,8 +24,8 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div class="container">
-            <!--Nav bar-->
+
+        <!--Nav bar-->
             <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="#"><img src="Images/logo.jpg" style="max-height: 40px"/></a>
@@ -61,6 +61,7 @@
                 </div>
             </nav>
 
+        <div class="container">
             <!--Search Nav-->
             
 
