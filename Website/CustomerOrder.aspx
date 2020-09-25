@@ -28,7 +28,7 @@
         <!--Nav bar-->
             <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#"><img src="Images/logo.jpg" style="max-height: 40px"/></a>
+                    <a class="navbar-brand" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
                         <span class="navbar-toggler-icon"></span>
                     </button>

@@ -18,29 +18,45 @@ namespace Website
 {
     public partial class CustomerOrder : System.Web.UI.Page
     {
+        /*private MySqlConnection conn;
+        private static string server = "mysql";
+        private static string database = "test";
+        private static string userName = "root";
+        private static string userPass = "5e3RsCPNomtGJDa8Vg";
+        private string connString = "SERVER=" + server + ";DATABASE=" + database + ";UID=" + userName + ";PASSWORD=" + userPass;*/
+
+
+
+
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["UserName"] != null) 
-            {
-                //if the user has logged in, display their name instead of the log in label on the navbar
-                lblLogin.Text = Session["UserName"].ToString();
-            }
-            if(!IsPostBack || !isSearched)
-            {
-                //if the user hasn't searched anything or 1st time page loaded
-                //all products should be displayed
-            }
-            if(isSearched)
-            {
-                //search in the products for what the user wants
-                isSearched = false;
-            }
             try
             {
                 //try to quickly connect to database to see if it works
+                //conn = new MySqlConnection(connString);
+                //conn.Open();
+
+                if (Session["UserName"] != null)
+                {
+                    //if the user has logged in, display their name instead of the log in label on the navbar
+                    lblLogin.Text = Session["UserName"].ToString();
+                }
+                if (!IsPostBack || !isSearched)
+                {
+                    //if the user hasn't searched anything or 1st time page loaded
+                    //all products should be displayed
+                    //showProducts(conn, "SELECT * FROM ");
+                }
+                if (isSearched)
+                {
+                    //search in the products for what the user wants
+                    isSearched = false;
+                }
+
+                //conn.Close();
             }
             catch
             {
@@ -81,19 +97,28 @@ namespace Website
 
                             //Create panel to serve as a card, so img, price, name, description can be added inside it
                             Panel pnl1 = new Panel();
-                            pnl1.CssClass = "card";
+                            pnl1.CssClass = "card row";
+
+                            Panel pnlNameDesc = new Panel();
+                            pnlNameDesc.CssClass = "col-sm-8";
+                            pnlNameDesc.Attributes.CssStyle.Add("display","flex");
+                            pnlNameDesc.Attributes.CssStyle.Add("flex-direction", "column");
+
+                            Panel pnlPriceBtn = new Panel();
+                            pnlPriceBtn.CssClass = "col-sm-4";
+                            pnlPriceBtn.Attributes.CssStyle.Add("display", "flex");
+                            pnlPriceBtn.Attributes.CssStyle.Add("flex-direction", "column");
 
                             //Label for the price
                             Label lblPrice = new Label();
                             lblPrice.Text = productPrice;
-                            //lblPrice.CssClass = 
+                            lblPrice.CssClass = "";
 
                             //Creating image object
                             Image img1 = new Image();
                             img1.ImageUrl = productImageUrl;
                             //im1.CssClass = 
                             img1.AlternateText = "Product Image";
-                            
 
                             //Creating the add to cart button
                             Button btn1 = new Button();
@@ -113,10 +138,12 @@ namespace Website
                             //lblName.CssClass = 
 
                             //Add items to their respective panels
-                            pnl1.Controls.Add(lblName);
-                            pnl1.Controls.Add(lblDesc);
-                            pnl1.Controls.Add(btn1);
-                            pnl1.Controls.Add(img1);
+                            pnlNameDesc.Controls.Add(lblName);
+                            pnlNameDesc.Controls.Add(lblDesc);
+                            pnlPriceBtn.Controls.Add(lblPrice);
+                            pnlPriceBtn.Controls.Add(btn1);
+                            pnl1.Controls.Add(pnlNameDesc);
+                            pnl1.Controls.Add(pnlPriceBtn);
 
                             //Add panel to master panel
                             pnlMaster.Controls.Add(pnl1);
@@ -153,7 +180,7 @@ namespace Website
                 //Help the user log in without losing the selected item(s)
             }
         }
-
-
     }
+
+    
 }
