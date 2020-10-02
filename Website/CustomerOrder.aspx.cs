@@ -26,8 +26,6 @@ namespace Website
         private string connString = "SERVER=" + server + ";DATABASE=" + database + ";UID=" + userName + ";PASSWORD=" + userPass;*/
 
 
-
-
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
 
@@ -112,12 +110,12 @@ namespace Website
                             //Label for the price
                             Label lblPrice = new Label();
                             lblPrice.Text = productPrice;
-                            lblPrice.CssClass = "";
+                            //lblPrice.CssClass = "";
 
                             //Creating image object
                             Image img1 = new Image();
                             img1.ImageUrl = productImageUrl;
-                            //im1.CssClass = 
+                            //im1.CssClass = "";
                             img1.AlternateText = "Product Image";
 
                             //Creating the add to cart button

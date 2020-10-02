@@ -22,13 +22,13 @@
     <script src="dist/bootstrap.js"></script>
 
 </head>
-<body>
+<body style="background-color: #40404F;">
     <form id="form1" runat="server">
 
         <!--Nav bar-->
-            <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+            <nav style="background-color: rgba(0, 0, 0, 0.562);" class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
+                    <a class="navbar-brand thumbnail" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -61,8 +61,13 @@
                 </div>
             </nav>
 
-        <div class="container">
+        <div class="container text-white">
             <!--Search Nav-->
+            
+            <div class="row">
+                <asp:Button ID="Button1" class="btn btn-dark col-2" runat="server" Text="Search"/>
+                <asp:TextBox ID="TextBox1" class="form-control col-10" placeholder="Search term, keyword" runat="server"></asp:TextBox>
+            </div>
             
 
             <!--
@@ -80,8 +85,45 @@
 
         
 
-        <div>
-        </div>
+        <footer style="background-color: rgba(0, 0, 0, 0.562);" class="text-white page-footer font-small pt-md-4 pb-4 mt-4">
+            <div class="container-fluid text-center text-sm-left">
+                <div class="row">
+                    <div class="col">
+                        <h4>This footer is a footer</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur.</p>
+                    </div>
+                    <div class="col">
+                        <h5>Some links</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#">Footer Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#">Footer Link 2</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h5>Some other links</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#">Footer Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#">Footer Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+     </footer>
+
+    <div style="background-color: white;" class="footer-copyright text-center py-3">
+        Copyright text
+        <a href="#">2020</a>
+    </div>
+
+
     </form>
     <!--More Bootstrap cdn javascript links-->
     <!--
