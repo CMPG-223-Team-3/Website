@@ -18,12 +18,13 @@ namespace Website
 {
     public partial class CustomerOrder : System.Web.UI.Page
     {
-        /*private MySqlConnection conn;
-        private static string server = "mysql";
-        private static string database = "test";
-        private static string userName = "root";
-        private static string userPass = "5e3RsCPNomtGJDa8Vg";
-        private string connString = "SERVER=" + server + ";DATABASE=" + database + ";UID=" + userName + ";PASSWORD=" + userPass;*/
+        private MySqlConnection conn;
+        private static string server = "sql7.freemysqlhosting.net";
+        private static string database = "sql7368973";
+        private static string userName = "sql7368973";
+        private static string userPass = "1lFxsKtjXr";
+        String connectionString = "Server=" + server + ";"+ "Port=3306;" + "Database=" +
+            database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
 
 
         //Global variables and such
@@ -34,8 +35,9 @@ namespace Website
             try
             {
                 //try to quickly connect to database to see if it works
-                //conn = new MySqlConnection(connString);
-                //conn.Open();
+                conn = new MySqlConnection(connectionString);
+                conn.Open();
+                conn.Close();
 
                 if (Session["UserName"] != null)
                 {
@@ -46,19 +48,21 @@ namespace Website
                 {
                     //if the user hasn't searched anything or 1st time page loaded
                     //all products should be displayed
-                    //showProducts(conn, "SELECT * FROM ");
+                    showProducts(conn, "SELECT * FROM Menu_Item");
                 }
                 if (isSearched)
                 {
-                    //search in the products for what the user wants
+                    //if the user did search in the products for what the user wants
                     isSearched = false;
                 }
 
-                //conn.Close();
+                
             }
-            catch
+            catch(Exception ee)
             {
-                Response.Redirect("Error.aspx");
+
+                Label1.Text = ee.Message;
+                //Response.Redirect("Error.aspx");
             }
         }
 
@@ -85,17 +89,20 @@ namespace Website
                         while(mysqlReader.Read())
                         {
                             //Reading specific product info out of database to use for the cards
+                            //According to the data model, 0-Menu-Item-ID; 1-Recipe-ID; 2-Category-ID; 3-Name; 4-Price
+                            /*string productId = mysqlReader.GetValue(0).ToString();
+                            string productName = mysqlReader.GetValue(3).ToString();
+                            string productPrice = mysqlReader.GetValue(4).ToString();*/
+
                             string productId = mysqlReader.GetValue(0).ToString();
                             string productName = mysqlReader.GetValue(1).ToString();
                             string productPrice = mysqlReader.GetValue(2).ToString();
-                            string productDesc = mysqlReader.GetValue(3).ToString();
-                            string productImageUrl = mysqlReader.GetValue(4).ToString();
 
                             countedProducts++;
 
-                            //Create panel to serve as a card, so img, price, name, description can be added inside it
+                            //Create panel to serve as a card, so img, price, name can be added inside it
                             Panel pnl1 = new Panel();
-                            pnl1.CssClass = "card row";
+                            pnl1.CssClass = "card row bg-dark m-md-1";
 
                             Panel pnlNameDesc = new Panel();
                             pnlNameDesc.CssClass = "col-sm-8";
@@ -112,16 +119,16 @@ namespace Website
                             lblPrice.Text = productPrice;
                             //lblPrice.CssClass = "";
 
-                            //Creating image object
-                            Image img1 = new Image();
+                            //Creating image object (for future implementation)
+                            /*Image img1 = new Image();
                             img1.ImageUrl = productImageUrl;
                             //im1.CssClass = "";
-                            img1.AlternateText = "Product Image";
+                            img1.AlternateText = "Product Image";*/
 
                             //Creating the add to cart button
                             Button btn1 = new Button();
                             btn1.Text = "Add to cart";
-                            btn1.CssClass = "btn btn-lg";
+                            btn1.CssClass = "btn btn-light";
                             btn1.ID = productId; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
                             btn1.Click += new EventHandler(addToCartBtnClicked); //To correctly link the event to the event handler
 
@@ -130,14 +137,8 @@ namespace Website
                             lblName.Text = productName;
                             //lblName.CssClass = 
 
-                            //Label object for the description of the item
-                            Label lblDesc = new Label();
-                            lblDesc.Text = productDesc;
-                            //lblName.CssClass = 
-
                             //Add items to their respective panels
                             pnlNameDesc.Controls.Add(lblName);
-                            pnlNameDesc.Controls.Add(lblDesc);
                             pnlPriceBtn.Controls.Add(lblPrice);
                             pnlPriceBtn.Controls.Add(btn1);
                             pnl1.Controls.Add(pnlNameDesc);
@@ -151,12 +152,15 @@ namespace Website
                     {
                         throw new Exception("Could not access database items");
                     }
+                    mysqlConnection.Close();
                 }
             }
             catch(Exception exc)
             {
-                Response.Redirect("Erorr.aspx");
+                Label1.Text = exc.Message + " : " + exc.InnerException;
+                //Response.Redirect("Erorr.aspx");
             }
+
         }
 
         //Eventhandler/method for the add to cart buttons

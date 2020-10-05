@@ -64,6 +64,8 @@
         <div class="container text-white">
             <!--Search Nav-->
             
+            <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+
             <div class="row">
                 <asp:Button ID="Button1" class="btn btn-dark col-2" runat="server" Text="Search"/>
                 <asp:TextBox ID="TextBox1" class="form-control col-10" placeholder="Search term, keyword" runat="server"></asp:TextBox>
