@@ -9,7 +9,9 @@ using System.Web.UI.WebControls;
 
 /*NOTES:
  * The logged in user session name here is "UserName"
- * I still need to figure out how to connect to the database and stuff
+ * Make the products cards pretty
+ * Need help with sass
+ * 
  * 
  * 
  */
@@ -55,8 +57,6 @@ namespace Website
                     //if the user did search in the products for what the user wants
                     isSearched = false;
                 }
-
-                
             }
             catch(Exception ee)
             {
@@ -89,14 +89,10 @@ namespace Website
                         while(mysqlReader.Read())
                         {
                             //Reading specific product info out of database to use for the cards
-                            //According to the data model, 0-Menu-Item-ID; 1-Recipe-ID; 2-Category-ID; 3-Name; 4-Price
-                            /*string productId = mysqlReader.GetValue(0).ToString();
-                            string productName = mysqlReader.GetValue(3).ToString();
-                            string productPrice = mysqlReader.GetValue(4).ToString();*/
-
-                            string productId = mysqlReader.GetValue(0).ToString();
-                            string productName = mysqlReader.GetValue(1).ToString();
-                            string productPrice = mysqlReader.GetValue(2).ToString();
+                            //According to the data model columns are: 0-Menu-Item-ID; 1-Recipe-ID; 2-Category-ID; 3-Name; 4-Price
+                            string productId = mysqlReader.GetString("Menu-Item ID");
+                            string productName = mysqlReader.GetString("Name");
+                            string productPrice = mysqlReader.GetString("Price");
 
                             countedProducts++;
 
@@ -183,6 +179,4 @@ namespace Website
             }
         }
     }
-
-    
 }

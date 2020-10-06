@@ -64,9 +64,9 @@
         <div class="container text-white">
             <!--Search Nav-->
             
-            <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+            <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label> <!--label just to check errors-->
 
-            <div class="row">
+            <div class="row mt-md- mb-md-4 mt-sm-2 mb-sm-2">
                 <asp:Button ID="Button1" class="btn btn-dark col-2" runat="server" Text="Search"/>
                 <asp:TextBox ID="TextBox1" class="form-control col-10" placeholder="Search term, keyword" runat="server"></asp:TextBox>
             </div>
