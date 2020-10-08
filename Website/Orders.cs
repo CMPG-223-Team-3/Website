@@ -70,13 +70,8 @@ namespace Website
                 "SELECT `" + valInRow + "` " +
                 "FROM `" + table + "` " +
                 "WHERE `" + valInRow + "` = (SELECT LAST_INSERT_ID());";
-
-
-
             cmmd2.Connection = conn;
-            //cmmd2.Parameters.AddWithValue("@row", valInRow);
-            //cmmd2.Parameters.AddWithValue("@row2", valInRow);
-            //cmmd2.Parameters.AddWithValue("@tab", table);
+
             using(conn)
             {
                 using (MySqlDataReader rdr = cmmd2.ExecuteReader())

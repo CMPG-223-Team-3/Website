@@ -43,25 +43,6 @@ namespace Website
                 conn.Open();
                 conn.Close();
 
-                order = new Orders(conn,3,1);
-                //order = new Orders(conn, 41);
-                order.addNewProduct(12, 1);
-                order.addNewProduct(13, 2);
-                order.addNewProduct(14, 3);
-
-                order.add1Product(12, 5);
-                order.add1Product(13, 5);
-                order.add1Product(14, 5);
-
-                order.remove1Product(12,4);
-                order.remove1Product(13,4);
-                order.remove1Product(14, 4);
-
-                order.deleteProduct(12);
-                order.remove1Product(13, 4);
-                order.deleteAllProducts();
-                order.deleteOrder();
-
                 //order.addNewProduct(3, 0);
                 //order.addNewProduct(5, -3);
 
@@ -183,7 +164,6 @@ namespace Website
                 Label1.Text = exc.Message + " : " + exc.InnerException;
                 //Response.Redirect("Erorr.aspx");
             }
-
         }
 
         //Eventhandler/method for the add to cart buttons
@@ -226,7 +206,5 @@ namespace Website
             }
             isSearched = true;
         }
-
     }
-        
 }
