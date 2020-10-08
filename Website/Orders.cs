@@ -26,18 +26,23 @@ namespace Website
             this.orderID = orderId;
         }
 
-        public Orders(MySqlConnection c, int customerID, int paid, DateTime date)
+        public Orders(MySqlConnection c, int customerID, int paid)
         {
             this.conn = c;
             tryConnect(conn);
             this.customerID = customerID;
             try
             {
-                MySqlCommand cmmd = new MySqlCommand("INSERT INTO `Order`(`Customer ID`, `Paid`, `Date`) VALUES(@cid, @paid, @date);");
+                MySqlCommand cmmd = new MySqlCommand();
+                cmmd.CommandText =
+                    "INSERT " +
+                    "INTO `Order`" +
+                    "(`Customer ID`, `Paid`) " +
+                    "VALUES(" + customerID + "," + paid + ");";
                 cmmd.Connection = conn;
-                cmmd.Parameters.AddWithValue("@cid", customerID);
-                cmmd.Parameters.AddWithValue("@paid", paid);
-                cmmd.Parameters.AddWithValue("@date", date);
+                //cmmd.Parameters.AddWithValue("@cid", customerID);
+                //cmmd.Parameters.AddWithValue("@paid", paid);
+                //cmmd.Parameters.AddWithValue("@date", date);
                 conn.Open();
                 cmmd.ExecuteNonQuery();
                 orderID = getLastID("Order", "Order ID");
@@ -60,11 +65,18 @@ namespace Website
         public int getLastID(string table, string valInRow)
         {
             int x = -1;
-            MySqlCommand cmmd2 = new MySqlCommand("SELECT `@row` FROM `@tab` WHERE `@row2` = (SELECT LAST_INSERT_ID());");
+            MySqlCommand cmmd2 = new MySqlCommand();
+            cmmd2.CommandText =
+                "SELECT `" + valInRow + "` " +
+                "FROM `" + table + "` " +
+                "WHERE `" + valInRow + "` = (SELECT LAST_INSERT_ID());";
+
+
+
             cmmd2.Connection = conn;
-            cmmd2.Parameters.AddWithValue("@row", valInRow);
-            cmmd2.Parameters.AddWithValue("@row2", valInRow);
-            cmmd2.Parameters.AddWithValue("@tab", table);
+            //cmmd2.Parameters.AddWithValue("@row", valInRow);
+            //cmmd2.Parameters.AddWithValue("@row2", valInRow);
+            //cmmd2.Parameters.AddWithValue("@tab", table);
             using(conn)
             {
                 using (MySqlDataReader rdr = cmmd2.ExecuteReader())
@@ -97,7 +109,7 @@ namespace Website
             int currentQuantity = getQuantityOfProducts("Order Menu Item link","Order ID","Menu-Item ID",orderID,productID);
             MySqlCommand c = new MySqlCommand();
             c.Connection = conn;
-            c.CommandText = "UPDATE `Order Menu Item link` SET `Quantity`=@quan WHERE OrderID=`@orderID` AND `Menu-Item ID`=`@menuID`;";
+            c.CommandText = "UPDATE `Order Menu Item link` SET `Quantity`=@quan WHERE `Order ID`=@orderID AND `Menu-Item ID`=@menuID;";
             c.Parameters.AddWithValue("@menuID", productID);
             c.Parameters.AddWithValue("@orderID", orderID);
             c.Parameters.AddWithValue("@quan", howmany+currentQuantity);
@@ -114,7 +126,7 @@ namespace Website
                 {
                     MySqlCommand c = new MySqlCommand();
                     c.Connection = conn;
-                    c.CommandText = "UPDATE `Order Menu Item link` SET `Quantity`=@quan WHERE OrderID=`@orderID` AND `Menu-Item ID`=`@menuID`;";
+                    c.CommandText = "UPDATE `Order Menu Item link` SET `Quantity`=@quan WHERE `Order ID`=@orderID AND `Menu-Item ID`=@menuID;";
                     c.Parameters.AddWithValue("@menuID", productId);
                     c.Parameters.AddWithValue("@orderID", orderID);
                     c.Parameters.AddWithValue("@quan", quantity - howmany);
@@ -134,16 +146,21 @@ namespace Website
         private int getQuantityOfProducts(string tableName, string orderColName, string menuColName, int orderID, int menuItemID)
         {
             int quantity = -1;
+            MySqlCommand checkQuantity = new MySqlCommand();
             try
             {
-                MySqlCommand checkQuantity = new MySqlCommand();
-                checkQuantity.CommandText = "SELECT Quantity FROM @tname WHERE @col1 = @oid AND @col2 = @mid;";
+                //MySqlCommand checkQuantity = new MySqlCommand();
+                checkQuantity.CommandText = 
+                    "SELECT Quantity " +
+                    "FROM `" + tableName + "` " +
+                    "WHERE `" + orderColName + "`=" + orderID + " " +
+                    "AND `" + menuColName +"`=" + menuItemID + ";";
                 checkQuantity.Connection = conn;
-                checkQuantity.Parameters.AddWithValue("@tname", ""+tableName);
-                checkQuantity.Parameters.AddWithValue("@col1", ""+orderColName);
-                checkQuantity.Parameters.AddWithValue("@oid", orderID);
-                checkQuantity.Parameters.AddWithValue("@col2", ""+menuColName);
-                checkQuantity.Parameters.AddWithValue("@mid", menuItemID);
+                //checkQuantity.Parameters.AddWithValue("@tname", tableName);
+                //checkQuantity.Parameters.AddWithValue("@col1", orderColName);
+                //checkQuantity.Parameters.AddWithValue("@oid", orderID);
+                //checkQuantity.Parameters.AddWithValue("@col2", menuColName);
+                //checkQuantity.Parameters.AddWithValue("@mid", menuItemID);
 
                 conn.Open();
                 MySqlDataReader r = checkQuantity.ExecuteReader();
@@ -154,7 +171,7 @@ namespace Website
             }
             catch(Exception x)
             {
-                throw new Exception(x.Message);
+                throw new Exception(x.Message + "   " + checkQuantity.CommandText.ToString()) ;
             }
             return quantity;
         }
@@ -180,16 +197,19 @@ namespace Website
             delete("Order", "Order ID", orderID);
         }
 
-        private void delete(string table, string column, int whereID)
+        private void delete(string table, string IDcolumn, int ID)
         {
             try
             {
                 MySqlCommand comm = new MySqlCommand();
-                comm.CommandText = "DELETE FROM `@tid` WHERE `@whe` = `@oid`;";
+                comm.CommandText = 
+                    "DELETE " +
+                    "FROM `" + table + "`" +
+                    "WHERE `" + IDcolumn + "`=" + ID + ";";
                 comm.Connection = conn;
-                comm.Parameters.AddWithValue("@oid", whereID);
-                comm.Parameters.AddWithValue("@tid", table);
-                comm.Parameters.AddWithValue("@whe", column);
+                //comm.Parameters.AddWithValue("@oid", whereID);
+                //comm.Parameters.AddWithValue("@tid", table);
+                //comm.Parameters.AddWithValue("@whe", column);
                 executeNonQuery(comm);
             }
             catch(Exception x)

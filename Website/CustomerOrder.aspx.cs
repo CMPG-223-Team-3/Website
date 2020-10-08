@@ -43,8 +43,8 @@ namespace Website
                 conn.Open();
                 conn.Close();
 
-                //order = new Orders(conn,1,0,new DateTime().Date);
-                order = new Orders(conn, 40);
+                order = new Orders(conn,3,1);
+                //order = new Orders(conn, 41);
                 order.addNewProduct(12, 1);
                 order.addNewProduct(13, 2);
                 order.addNewProduct(14, 3);
@@ -56,6 +56,11 @@ namespace Website
                 order.remove1Product(12,4);
                 order.remove1Product(13,4);
                 order.remove1Product(14, 4);
+
+                order.deleteProduct(12);
+                order.remove1Product(13, 4);
+                order.deleteAllProducts();
+                order.deleteOrder();
 
                 //order.addNewProduct(3, 0);
                 //order.addNewProduct(5, -3);
