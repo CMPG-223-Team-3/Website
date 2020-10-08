@@ -11,8 +11,8 @@ using System.Web.UI.WebControls;
  * The logged in user session name here is "UserName"
  * Make the products cards pretty
  * Need help with sass
- * 
- * 
+ * Order list need help with
+ * Order connect and insert to db need help with
  * 
  */
 
@@ -28,6 +28,8 @@ namespace Website
         String connectionString = "Server=" + server + ";"+ "Port=3306;" + "Database=" +
             database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
 
+        private Orders order;
+
 
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
@@ -36,10 +38,30 @@ namespace Website
         {
             try
             {
-                //try to quickly connect to database to see if it works
+                //try to quickly connect to database to see if it works  
                 conn = new MySqlConnection(connectionString);
                 conn.Open();
                 conn.Close();
+
+                //order = new Orders(conn,1,0,new DateTime().Date);
+                order = new Orders(conn, 40);
+                order.addNewProduct(12, 1);
+                order.addNewProduct(13, 2);
+                order.addNewProduct(14, 3);
+
+                order.add1Product(12, 5);
+                order.add1Product(13, 5);
+                order.add1Product(14, 5);
+
+                order.remove1Product(12,4);
+                order.remove1Product(13,4);
+                order.remove1Product(14, 4);
+
+                //order.addNewProduct(3, 0);
+                //order.addNewProduct(5, -3);
+
+
+                //Label1.Text = o.submit().ToString();
 
                 if (Session["UserName"] != null)
                 {
@@ -61,7 +83,7 @@ namespace Website
             catch(Exception ee)
             {
 
-                Label1.Text = ee.Message;
+                Label1.Text = ee.Message + " " + ee.StackTrace;
                 //Response.Redirect("Error.aspx");
             }
         }
@@ -171,6 +193,7 @@ namespace Website
             {
                 //Add the item to the cart
 
+
                 //If user does not have a cart assigned to them, this is where you'd want to choose what happens next
             }
             else
@@ -178,5 +201,27 @@ namespace Website
                 //Help the user log in without losing the selected item(s)
             }
         }
+
+        //When user searched for product
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            //If searchbar isn't empty
+            if(txtSearch.Text != null)
+            {
+                try
+                {
+                    //Create new cmmd to ShowProducts() for filtered items
+                    string tmp = "SELECT * FROM Menu_Item WHERE Name LIKE '" + "%" + txtSearch.Text.ToLower() + "%" + "'";
+                    showProducts(conn, tmp);
+                }
+                catch(Exception x)
+                {
+                    Response.Redirect("Error.aspx");
+                }
+            }
+            isSearched = true;
+        }
+
     }
+        
 }

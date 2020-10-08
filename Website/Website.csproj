@@ -74,6 +74,12 @@
     <Content Include="app\js\script.js" />
     <Content Include="CustomerOrder.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="gulpfile.es5.js">
+      <DependentUpon>gulpfile.js</DependentUpon>
+    </Content>
+    <Content Include="gulpfile.es5.min.js">
+      <DependentUpon>gulpfile.es5.js</DependentUpon>
+    </Content>
     <Content Include="gulpfile.js" />
     <Content Include="images\logo.jpg" />
     <Content Include="Login.aspx" />
@@ -101,11 +107,16 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Orders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\scss\style.scss" />
     <Content Include="package.json" />
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
