@@ -43,18 +43,6 @@ namespace Website
                 conn.Open();
                 conn.Close();
 
-                //order = new Orders(conn, 56);
-                order = new Orders(conn, 95, 0);
-                order.addNewProduct(1, 2);
-                order.addNewProduct(1, 1);
-                ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
-
-                pnlOrder.Controls.Add(ov.getHeadPanel());
-
-                //order.addNewProduct(3, 0);
-                //order.addNewProduct(5, -3);
-
-
                 //Label1.Text = o.submit().ToString();
 
                 if (Session["UserName"] != null)
@@ -66,6 +54,18 @@ namespace Website
                 {
                     //if the user hasn't searched anything or 1st time page loaded
                     //all products should be displayed
+
+                    order = new Orders(conn, 56);
+                    //order = new Orders(conn, 95, 0);
+                    //order.addNewProduct(1, 2);
+                    //order.addNewProduct(1, 1);
+                    ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
+
+                    pnlOrder.Controls.Add(ov.getHeadPanel());
+
+                    //order.addNewProduct(3, 0);
+                    //order.addNewProduct(5, -3);
+
                     showProducts(conn, "SELECT * FROM Menu_Item");
                 }
                 if (isSearched)
@@ -141,8 +141,9 @@ namespace Website
                             Button btn1 = new Button();
                             btn1.Text = "Add to cart";
                             btn1.CssClass = "btn btn-light";
-                            btn1.ID = productId; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
+                            btn1.ID = productId + "_addtocart_" + countedProducts; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
                             btn1.Click += new EventHandler(addToCartBtnClicked); //To correctly link the event to the event handler
+                            btn1.CausesValidation = false;
 
                             //Label object for the name of the item
                             Label lblName = new Label();
@@ -179,10 +180,14 @@ namespace Website
         {
             //Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
             Button btn = sender as Button;
-            string Id = btn.ID;
+            string[] i = btn.ID.Split('_');
+            int Id = int.Parse(i[0]);
+
+            order.addNewProduct(Id, 1);
+            ov.update();
 
             //Second check if user is logged in so we can add the selected products to their cart
-            if(Session["UserName"] != null)
+            if (Session["UserName"] != null)
             {
                 //Add the item to the cart
 

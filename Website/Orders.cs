@@ -42,21 +42,14 @@ namespace Website
                     "(`Customer ID`, `Paid`) " +
                     "VALUES(" + customerID + "," + paid + ");";
                 cmmd.Connection = conn;
-                //cmmd.Parameters.AddWithValue("@cid", customerID);
-                //cmmd.Parameters.AddWithValue("@paid", paid);
-                //cmmd.Parameters.AddWithValue("@date", date);
-                conn.Open();
-                cmmd.ExecuteNonQuery();
-                conn.Close();
+                executeNonQuery(cmmd);
                 orderID = getLastID("Order", "Order ID");
-
             }
             catch (Exception o)
             {
                 throw new Exception("Database Error : " + o.Message);
             }
         }
-
 
         private void getOrderInfo(int orderId)
         {
@@ -66,17 +59,11 @@ namespace Website
                 "FROM `Order` " +
                 "WHERE `Order ID` = " + orderId + ";";
             cmmd2.Connection = conn;
-            conn.Open();
 
             using (conn)
             {
-                using (MySqlDataReader rdr = cmmd2.ExecuteReader())
-                {
-                    while(rdr.Read())
-                    {
-                        customerID = int.Parse(rdr["Customer ID"].ToString());
-                    }
-                }
+                conn.Open();
+                customerID = int.Parse(cmmd2.ExecuteScalar().ToString());
             }
         }
 
@@ -87,10 +74,10 @@ namespace Website
                 i.Open();
             }
         }
-        
 
         public int getLastID(string table, string valInRow)
         {
+            //This may not be functioning
             int x = -1;
             MySqlCommand cmmd2 = new MySqlCommand();
             cmmd2.CommandText =
@@ -98,16 +85,11 @@ namespace Website
                 "FROM `" + table + "` " +
                 "WHERE `" + valInRow + "` = (SELECT LAST_INSERT_ID());";
             cmmd2.Connection = conn;
-
             
             using(conn)
             {
                 conn.Open();
-                using (MySqlDataReader rdr = cmmd2.ExecuteReader())
-                {
-                    rdr.Read();
-                    x = int.Parse(rdr[valInRow].ToString());
-                }
+                x = int.Parse(cmmd2.ExecuteScalar().ToString());
             }
             
             return x;
@@ -211,17 +193,9 @@ namespace Website
                     "WHERE `" + orderColName + "`=" + orderID + " " +
                     "AND `" + menuColName +"`=" + menuItemID + ";";
                 checkQuantity.Connection = conn;
-                //checkQuantity.Parameters.AddWithValue("@tname", tableName);
-                //checkQuantity.Parameters.AddWithValue("@col1", orderColName);
-                //checkQuantity.Parameters.AddWithValue("@oid", orderID);
-                //checkQuantity.Parameters.AddWithValue("@col2", menuColName);
-                //checkQuantity.Parameters.AddWithValue("@mid", menuItemID);
 
                 conn.Open();
-                MySqlDataReader r = checkQuantity.ExecuteReader();
-                r.Read();
-                quantity = int.Parse(r["Quantity"].ToString());
-                r.Close();
+                quantity = int.Parse(checkQuantity.ExecuteScalar().ToString());
                 conn.Close();
             }
             catch(Exception x)
@@ -262,9 +236,6 @@ namespace Website
                     "FROM `" + table + "`" +
                     "WHERE `" + IDcolumn + "`=" + ID + ";";
                 comm.Connection = conn;
-                //comm.Parameters.AddWithValue("@oid", whereID);
-                //comm.Parameters.AddWithValue("@tid", table);
-                //comm.Parameters.AddWithValue("@whe", column);
                 executeNonQuery(comm);
             }
             catch(Exception x)
