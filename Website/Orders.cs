@@ -18,12 +18,14 @@ namespace Website
         private int customerID;
         private MySqlConnection conn;
         private int orderID;
+        
 
         public Orders(MySqlConnection c, int orderId)
         {
             this.conn = c;
             tryConnect(conn);
             this.orderID = orderId;
+            getOrderInfo(orderId);
         }
 
         public Orders(MySqlConnection c, int customerID, int paid)
@@ -45,11 +47,36 @@ namespace Website
                 //cmmd.Parameters.AddWithValue("@date", date);
                 conn.Open();
                 cmmd.ExecuteNonQuery();
+                conn.Close();
                 orderID = getLastID("Order", "Order ID");
+
             }
             catch (Exception o)
             {
                 throw new Exception("Database Error : " + o.Message);
+            }
+        }
+
+
+        private void getOrderInfo(int orderId)
+        {
+            MySqlCommand cmmd2 = new MySqlCommand();
+            cmmd2.CommandText =
+                "SELECT * " +
+                "FROM `Order` " +
+                "WHERE `Order ID` = " + orderId + ";";
+            cmmd2.Connection = conn;
+            conn.Open();
+
+            using (conn)
+            {
+                using (MySqlDataReader rdr = cmmd2.ExecuteReader())
+                {
+                    while(rdr.Read())
+                    {
+                        customerID = int.Parse(rdr["Customer ID"].ToString());
+                    }
+                }
             }
         }
 
@@ -72,8 +99,10 @@ namespace Website
                 "WHERE `" + valInRow + "` = (SELECT LAST_INSERT_ID());";
             cmmd2.Connection = conn;
 
+            
             using(conn)
             {
+                conn.Open();
                 using (MySqlDataReader rdr = cmmd2.ExecuteReader())
                 {
                     rdr.Read();
@@ -90,13 +119,21 @@ namespace Website
             {
                 throw new Exception("Invalid quantity of products: " + quantity);
             }
-            MySqlCommand c = new MySqlCommand();
-            c.Connection = conn;
-            c.CommandText = "INSERT INTO `Order Menu Item link`(`Menu-Item ID`, `Order ID`, Quantity) VALUES(@menuID, @orderID, @quan);";
-            c.Parameters.AddWithValue("@menuID", productId);
-            c.Parameters.AddWithValue("@orderID", orderID);
-            c.Parameters.AddWithValue("@quan", quantity);
-            executeNonQuery(c);
+            if (hasProduct(productId, orderID))
+            {
+                add1Product(productId, quantity);
+            }
+            else
+            {
+                MySqlCommand c = new MySqlCommand();
+                c.Connection = conn;
+                c.CommandText = "INSERT INTO `Order Menu Item link`(`Menu-Item ID`, `Order ID`, Quantity) VALUES(@menuID, @orderID, @quan);";
+                c.Parameters.AddWithValue("@menuID", productId);
+                c.Parameters.AddWithValue("@orderID", orderID);
+                c.Parameters.AddWithValue("@quan", quantity);
+                executeNonQuery(c);
+            }
+            
         }
 
         public void add1Product(int productID, int howmany)
@@ -111,13 +148,36 @@ namespace Website
             executeNonQuery(c);
         }
 
+        public bool hasProduct(int productId, int orderId)
+        {
+            MySqlCommand c = new MySqlCommand();
+            c.Connection = conn;
+            c.CommandText =
+                "SELECT * " +
+                "FROM `Order Menu Item link` " +
+                "WHERE `Order ID` = " + orderId + " " +
+                "AND `Menu-Item ID` = " + productId + ";";
+            using(conn)
+            {
+                conn.Open();
+                if(c.ExecuteScalar() != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public void remove1Product(int productId, int howmany)
         {
             try
             {
                 int quantity = getQuantityOfProducts("Order Menu Item link", "Order ID", "Menu-Item ID", orderID, productId);
 
-                if (quantity-howmany > 1)
+                if (quantity-howmany > 0)
                 {
                     MySqlCommand c = new MySqlCommand();
                     c.Connection = conn;
@@ -227,6 +287,20 @@ namespace Website
             {
                 throw new Exception(x.Message);
             }
+        }
+
+
+        public int getCustomerID()
+        {
+            return customerID;
+        }
+        public MySqlConnection getConnection()
+        {
+            return conn;
+        }
+        public int getOrderID()
+        {
+            return orderID;
         }
     }
 }

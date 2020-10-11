@@ -29,7 +29,7 @@ namespace Website
             database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
 
         private Orders order;
-
+        private OrderVisual ov;
 
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
@@ -42,6 +42,14 @@ namespace Website
                 conn = new MySqlConnection(connectionString);
                 conn.Open();
                 conn.Close();
+
+                //order = new Orders(conn, 56);
+                order = new Orders(conn, 95, 0);
+                order.addNewProduct(1, 2);
+                order.addNewProduct(1, 1);
+                ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
+
+                pnlOrder.Controls.Add(ov.getHeadPanel());
 
                 //order.addNewProduct(3, 0);
                 //order.addNewProduct(5, -3);
