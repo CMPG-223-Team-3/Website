@@ -62,6 +62,11 @@ namespace Website
                     ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
 
                     pnlOrder.Controls.Add(ov.getHeadPanel());
+                    Button checkOut = new Button();
+                    checkOut.Text = "Checkout";
+                    checkOut.CssClass = "btn btn-dark";
+                    checkOut.Click += new EventHandler(checkoutBtnClicked);
+                    pnlOrder.Controls.Add(checkOut);
 
                     //order.addNewProduct(3, 0);
                     //order.addNewProduct(5, -3);
@@ -218,6 +223,13 @@ namespace Website
                 }
             }
             isSearched = true;
+        }
+
+        private void checkoutBtnClicked(object sender, EventArgs e)
+        {
+            Session["UserID"] = this.order.getCustomerID();
+            Session["OrderID"] = this.order.getOrderID();
+            Response.Redirect("Checkout.aspx");
         }
     }
 }
