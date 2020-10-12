@@ -15,7 +15,7 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <asp:Panel ID="pnlCheckout" runat="server"></asp:Panel>
+            <asp:Panel class="container m-4" ID="pnlCheckout" runat="server"></asp:Panel>
         </div>
     </form>
 </body>

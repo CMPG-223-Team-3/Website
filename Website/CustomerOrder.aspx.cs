@@ -12,19 +12,16 @@ using System.Web.UI.WebControls;
  * The logged in user session name here is "UserName"
  * Make the products cards pretty
  * Need help with sass
- * Order list need help with
- * Order connect and insert to db need help with
- * 
  */
 
 namespace Website
 {
     public partial class CustomerOrder : System.Web.UI.Page
     {
-        private Connection connection;
-        private MySqlConnection conn;
         private Order order;
         private OrderVisual ov;
+        private MySqlConnection conn;
+        private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
@@ -33,11 +30,14 @@ namespace Website
         {
             Session["Username"] = "Johan";
             Session["CustomerID"] = 69;
+            Session["OrderID"] = 100;
+            Session["Error"] = null;
+            Session["FromPage"] = pageName;
 
             try
             {
                 //try to quickly connect to database to see if it works  
-                connection = new Connection();
+                Connection connection = new Connection();
                 conn = connection.getConnection();
 
                 if (Session["UserName"] != null)
@@ -73,6 +73,11 @@ namespace Website
 
                     ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
                     pnlOrder.Controls.Add(ov.getHeadPanel());
+                    Button checkoutBtn = new Button();
+                    checkoutBtn.Text = ov.getTotalPrice().ToString();
+                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                    pnlOrder.Controls.Add(checkoutBtn);
                     showProducts(conn, "SELECT * FROM Menu_Item");
                 }
 
@@ -177,8 +182,8 @@ namespace Website
             }
             catch(Exception exc)
             {
-                Label1.Text = exc.Message + " : " + exc.InnerException;
-                //Response.Redirect("Erorr.aspx");
+                Session["Error"] = exc.Message;
+                Response.Redirect("Erorr.aspx");
             }
         }
 
@@ -221,6 +226,7 @@ namespace Website
                 }
                 catch(Exception x)
                 {
+                    Session["Erorr"] = x.Message;
                     Response.Redirect("Error.aspx");
                 }
             }

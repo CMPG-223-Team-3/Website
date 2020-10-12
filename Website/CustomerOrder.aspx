@@ -79,10 +79,13 @@
             </div>
             -->
 
-            <div>
-                <asp:Panel ID="pnlMaster" runat="server"></asp:Panel>
-                <asp:Panel ID="pnlOrder" runat="server"></asp:Panel>
+            <div class="container">
+                <div class="row">
+                    <asp:Panel class="col-xs-12 col-lg-7" ID="pnlMaster" runat="server"></asp:Panel>
+                    <asp:Panel class="col-xs-0 col-lg-5" ID="pnlOrder" runat="server"></asp:Panel>
+                </div>
             </div>
+            
 
         </div>
 

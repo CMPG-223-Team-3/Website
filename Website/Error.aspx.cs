@@ -11,10 +11,24 @@ namespace Website
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Error"] != null)
+            if (Session["Error"].ToString() != null)
                 lblError.Text = Session["Error"].ToString();
             else
                 lblError.Text = "Something went wrong...";
+
+            Button i = new Button();
+            i.Click += new EventHandler(btnClicked);
+            i.Text = "Retry";
+            pnlError.Controls.Add(i);
+
+        }
+
+        public void btnClicked(object sender, EventArgs e)
+        {
+            if(Session["FromPage"].ToString() != null)
+            {
+                Response.Redirect(Session["FromPage"].ToString());
+            }
         }
     }
 }

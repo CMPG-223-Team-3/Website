@@ -13,7 +13,8 @@ namespace Website
         private static string database;
         private static string userName;
         private static string userPass;
-        String connectionString;
+        private string connectionString;
+        private Exception x = new NotImplementedException();
 
         public Connection()
         {
@@ -23,12 +24,11 @@ namespace Website
             userPass = "1lFxsKtjXr";
             connectionString = "Server=" + server + ";" + "Port=3306;" + "Database=" +
                 database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
-            conn = new MySqlConnection();
-            conn.ConnectionString = connectionString;
+            conn = new MySqlConnection(connectionString);
 
-            if(!tryConnect())
+            if(tryConnect() == false)
             {
-                throw new Exception("Could not connect to database");
+                throw x;
             }
         }
 
@@ -41,8 +41,9 @@ namespace Website
                     conn.Open();
                 }
             }
-            catch(Exception x)
+            catch(Exception m)
             {
+                x = m;
                 return false;
             }
             return true;

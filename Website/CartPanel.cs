@@ -174,14 +174,24 @@ namespace Website
                 throw new Exception("Order ID: " + orderID + " ");
             }*/
 
-            Label total = new Label();
-            total.Text = "R" + totalPrice.ToString();
-            total.CssClass = "";
+            //if(totalPrice > 0)
+            //{
+                Label total = new Label();
+                total.Text = "R" + totalPrice.ToString();
+                total.CssClass = "";
 
-            headPanel.Controls.Add(total);
+                headPanel.Controls.Add(total);
+            //}
+            /*else
+            {
+                headPanel.Visible = false;
+            }*/
         }
 
-        
+        public float getTotalPrice()
+        {
+            return this.totalPrice;
+        }
 
         private void plusBtnClicked(object sender, EventArgs e)
         {//when the plus btn is clicked on a product

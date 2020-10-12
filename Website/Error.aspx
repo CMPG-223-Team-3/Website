@@ -9,7 +9,9 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <asp:Label ID="lblError" runat="server" Text=""></asp:Label>
+            <asp:Panel ID="pnlError" runat="server">
+                <asp:Label ID="lblError" runat="server" Text=""></asp:Label>
+            </asp:Panel>
         </div>
     </form>
 </body>
