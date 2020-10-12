@@ -226,5 +226,12 @@ namespace Website
             }
             isSearched = true;
         }
+
+        private void checkoutBtnClicked(object sender, EventArgs e)
+        {
+            Session["UserID"] = this.order.getCustomerID();
+            Session["OrderID"] = this.order.getOrderID();
+            Response.Redirect("Checkout.aspx");
+        }
     }
 }

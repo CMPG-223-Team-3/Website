@@ -174,18 +174,14 @@ namespace Website
                 throw new Exception("Order ID: " + orderID + " ");
             }*/
 
-            Button checkOut = new Button();
             Label total = new Label();
-            checkOut.Text = "Checkout";
-            checkOut.CssClass = "btn btn-dark";
-            checkOut.Click += new EventHandler(checkoutBtnClicked);
-            //checkOut.PostBackUrl = "Checkout.aspx";
             total.Text = "R" + totalPrice.ToString();
             total.CssClass = "";
 
-            headPanel.Controls.Add(checkOut);
             headPanel.Controls.Add(total);
         }
+
+        
 
         private void plusBtnClicked(object sender, EventArgs e)
         {//when the plus btn is clicked on a product
@@ -210,13 +206,6 @@ namespace Website
             order.remove1Product(Id, 1);
             update();
         }
-
-        private void checkoutBtnClicked(object sender, EventArgs e)
-        {
-
-            throw new NotImplementedException();
-        }
-
 
         public Panel getHeadPanel()
         {
