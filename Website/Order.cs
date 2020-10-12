@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 
@@ -13,14 +14,13 @@ using System.Web;
 
 namespace Website
 {
-    public class Orders
+    public class Order
     {
         private int customerID;
         private MySqlConnection conn;
         private int orderID;
-        
 
-        public Orders(MySqlConnection c, int orderId)
+        public Order(MySqlConnection c, int orderId)
         {
             this.conn = c;
             tryConnect(conn);
@@ -28,7 +28,7 @@ namespace Website
             getOrderInfo(orderId);
         }
 
-        public Orders(MySqlConnection c, int customerID, int paid)
+        public Order(MySqlConnection c, int customerID, int paid)
         {
             this.conn = c;
             tryConnect(conn);
@@ -115,7 +115,6 @@ namespace Website
                 c.Parameters.AddWithValue("@quan", quantity);
                 executeNonQuery(c);
             }
-            
         }
 
         public void add1Product(int productID, int howmany)
@@ -244,17 +243,17 @@ namespace Website
             }
         }
 
-        private void executeNonQuery(MySqlCommand que)
+        public void executeNonQuery(MySqlCommand que)
         {
             try
             {
-                using(conn)
+                using (conn)
                 {
                     conn.Open();
                     que.ExecuteNonQuery();
                 }
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throw new Exception(x.Message);
             }

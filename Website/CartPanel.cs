@@ -15,7 +15,7 @@ namespace Website
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information
         private float totalPrice;
-        private Orders order;
+        private Order order;
         private DataTable menuItems;
         private DataTable orderItems;
 
@@ -35,14 +35,14 @@ namespace Website
             headPanel = new Panel();
             headPanel.CssClass = "row";
 
-            order = new Orders(conn, orderID);
+            order = new Order(conn, orderID);
 
             getMenuItems();
             getOrderItems();
             update();
         }
 
-        public OrderVisual(Orders ord, int customerID)
+        public OrderVisual(Order ord, int customerID)
         {
             this.conn = ord.getConnection();
             this.customerID = ord.getCustomerID();
@@ -179,6 +179,7 @@ namespace Website
             checkOut.Text = "Checkout";
             checkOut.CssClass = "btn btn-dark";
             checkOut.Click += new EventHandler(checkoutBtnClicked);
+            //checkOut.PostBackUrl = "Checkout.aspx";
             total.Text = "R" + totalPrice.ToString();
             total.CssClass = "";
 
@@ -187,8 +188,7 @@ namespace Website
         }
 
         private void plusBtnClicked(object sender, EventArgs e)
-        {
-            //when the plus btn is clicked on a product
+        {//when the plus btn is clicked on a product
 
             //get the button id which is set to the id of the product in update() that needs to be added 
             Button btn = sender as Button;
@@ -200,8 +200,7 @@ namespace Website
         }
 
         private void minBtnClicked(object sender, EventArgs e)
-        {
-            //when the minus button is clicked on a product
+        {//when the minus button is clicked on a product
 
             //get the button id which is set to the id of the product in update() that needs to be added 
             Button btn = sender as Button;
@@ -214,8 +213,8 @@ namespace Website
 
         private void checkoutBtnClicked(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
 
+            throw new NotImplementedException();
         }
 
 

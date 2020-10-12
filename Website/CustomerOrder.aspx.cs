@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -20,15 +21,9 @@ namespace Website
 {
     public partial class CustomerOrder : System.Web.UI.Page
     {
+        private Connection connection;
         private MySqlConnection conn;
-        private static string server = "sql7.freemysqlhosting.net";
-        private static string database = "sql7368973";
-        private static string userName = "sql7368973";
-        private static string userPass = "1lFxsKtjXr";
-        String connectionString = "Server=" + server + ";"+ "Port=3306;" + "Database=" +
-            database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
-
-        private Orders order;
+        private Order order;
         private OrderVisual ov;
 
         //Global variables and such
@@ -36,38 +31,51 @@ namespace Website
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Session["Username"] = "Johan";
+            Session["CustomerID"] = 69;
+
             try
             {
                 //try to quickly connect to database to see if it works  
-                conn = new MySqlConnection(connectionString);
-                conn.Open();
-                conn.Close();
-
-                //Label1.Text = o.submit().ToString();
+                connection = new Connection();
+                conn = connection.getConnection();
 
                 if (Session["UserName"] != null)
                 {
                     //if the user has logged in, display their name instead of the log in label on the navbar
                     lblLogin.Text = Session["UserName"].ToString();
+
+                    if (Session["CustomerID"] != null)
+                    {
+                        if (Session["OrderID"] != null)
+                        {
+                            order = new Order(conn, int.Parse(Session["OrderID"].ToString()));
+                        }
+                        else
+                        {
+                            order = new Order(conn, int.Parse(Session["CustomerID"].ToString()), 0);
+                        }
+                    }
+                    else
+                    {
+                        Session["Error"] = "Could not find customer ID";
+                        Response.Redirect("Error.aspx");
+                    }
                 }
+                else
+                {
+                    Response.Redirect("Login.aspx");
+                }
+
                 if (!IsPostBack || !isSearched)
                 {
                     //if the user hasn't searched anything or 1st time page loaded
-                    //all products should be displayed
 
-                    order = new Orders(conn, 56);
-                    //order = new Orders(conn, 95, 0);
-                    //order.addNewProduct(1, 2);
-                    //order.addNewProduct(1, 1);
                     ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
-
                     pnlOrder.Controls.Add(ov.getHeadPanel());
-
-                    //order.addNewProduct(3, 0);
-                    //order.addNewProduct(5, -3);
-
                     showProducts(conn, "SELECT * FROM Menu_Item");
                 }
+
                 if (isSearched)
                 {
                     //if the user did search in the products for what the user wants
@@ -77,16 +85,15 @@ namespace Website
             catch(Exception ee)
             {
 
-                Label1.Text = ee.Message + " " + ee.StackTrace;
-                //Response.Redirect("Error.aspx");
+                Session["Error"] = ee.Message + ee.StackTrace;
+                Response.Redirect("Error.aspx");
             }
         }
-
+        
         //Method to load the correct products from the sent query (query in string form instead of a command var is easier to manipulate at this stage)
         public void showProducts(MySqlConnection mysqlConnection, String command)
         {
             int countedProducts = 0;
-
             try
             {
                 //Clear the main products panel to avoid accidental doubles
