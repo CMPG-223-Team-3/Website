@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,47 +12,75 @@ using System.Web.UI.WebControls;
  * The logged in user session name here is "UserName"
  * Make the products cards pretty
  * Need help with sass
- * 
- * 
- * 
  */
 
 namespace Website
 {
     public partial class CustomerOrder : System.Web.UI.Page
     {
+        private Order order;
+        private OrderVisual ov;
         private MySqlConnection conn;
-        private static string server = "sql7.freemysqlhosting.net";
-        private static string database = "sql7368973";
-        private static string userName = "sql7368973";
-        private static string userPass = "1lFxsKtjXr";
-        String connectionString = "Server=" + server + ";"+ "Port=3306;" + "Database=" +
-            database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
-
+        private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Session["Username"] = "Johan";
+            Session["CustomerID"] = 69;
+            Session["OrderID"] = 100;
+            Session["Error"] = null;
+            Session["FromPage"] = pageName;
+
             try
             {
-                //try to quickly connect to database to see if it works
-                conn = new MySqlConnection(connectionString);
-                conn.Open();
-                conn.Close();
+                //try to quickly connect to database to see if it works  
+                Connection connection = new Connection();
+                conn = connection.getConnection();
 
                 if (Session["UserName"] != null)
                 {
                     //if the user has logged in, display their name instead of the log in label on the navbar
                     lblLogin.Text = Session["UserName"].ToString();
+
+                    if (Session["CustomerID"] != null)
+                    {
+                        if (Session["OrderID"] != null)
+                        {
+                            order = new Order(conn, int.Parse(Session["OrderID"].ToString()));
+                        }
+                        else
+                        {
+                            order = new Order(conn, int.Parse(Session["CustomerID"].ToString()), 0);
+                        }
+                    }
+                    else
+                    {
+                        Session["Error"] = "Could not find customer ID";
+                        Response.Redirect("Error.aspx");
+                    }
                 }
+                else
+                {
+                    Response.Redirect("Login.aspx");
+                }
+
                 if (!IsPostBack || !isSearched)
                 {
                     //if the user hasn't searched anything or 1st time page loaded
-                    //all products should be displayed
+
+                    ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
+                    pnlOrder.Controls.Add(ov.getHeadPanel());
+                    Button checkoutBtn = new Button();
+                    checkoutBtn.Text = "Checkout";
+                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                    pnlOrder.Controls.Add(checkoutBtn);
                     showProducts(conn, "SELECT * FROM Menu_Item");
                 }
+
                 if (isSearched)
                 {
                     //if the user did search in the products for what the user wants
@@ -61,16 +90,15 @@ namespace Website
             catch(Exception ee)
             {
 
-                Label1.Text = ee.Message;
-                //Response.Redirect("Error.aspx");
+                Session["Error"] = ee.Message + ee.StackTrace;
+                Response.Redirect("Error.aspx");
             }
         }
-
+        
         //Method to load the correct products from the sent query (query in string form instead of a command var is easier to manipulate at this stage)
         public void showProducts(MySqlConnection mysqlConnection, String command)
         {
             int countedProducts = 0;
-
             try
             {
                 //Clear the main products panel to avoid accidental doubles
@@ -125,8 +153,9 @@ namespace Website
                             Button btn1 = new Button();
                             btn1.Text = "Add to cart";
                             btn1.CssClass = "btn btn-light";
-                            btn1.ID = productId; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
+                            btn1.ID = productId + "_addtocart_" + countedProducts; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
                             btn1.Click += new EventHandler(addToCartBtnClicked); //To correctly link the event to the event handler
+                            btn1.CausesValidation = false;
 
                             //Label object for the name of the item
                             Label lblName = new Label();
@@ -153,10 +182,9 @@ namespace Website
             }
             catch(Exception exc)
             {
-                Label1.Text = exc.Message + " : " + exc.InnerException;
-                //Response.Redirect("Erorr.aspx");
+                Session["Error"] = exc.Message;
+                Response.Redirect("Erorr.aspx");
             }
-
         }
 
         //Eventhandler/method for the add to cart buttons
@@ -164,12 +192,17 @@ namespace Website
         {
             //Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
             Button btn = sender as Button;
-            string Id = btn.ID;
+            string[] i = btn.ID.Split('_');
+            int Id = int.Parse(i[0]);
+
+            order.addNewProduct(Id, 1);
+            ov.update();
 
             //Second check if user is logged in so we can add the selected products to their cart
-            if(Session["UserName"] != null)
+            if (Session["UserName"] != null)
             {
                 //Add the item to the cart
+
 
                 //If user does not have a cart assigned to them, this is where you'd want to choose what happens next
             }
@@ -177,6 +210,34 @@ namespace Website
             {
                 //Help the user log in without losing the selected item(s)
             }
+        }
+
+        //When user searched for product
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            //If searchbar isn't empty
+            if(txtSearch.Text != null)
+            {
+                try
+                {
+                    //Create new cmmd to ShowProducts() for filtered items
+                    string tmp = "SELECT * FROM Menu_Item WHERE Name LIKE '" + "%" + txtSearch.Text.ToLower() + "%" + "'";
+                    showProducts(conn, tmp);
+                }
+                catch(Exception x)
+                {
+                    Session["Erorr"] = x.Message;
+                    Response.Redirect("Error.aspx");
+                }
+            }
+            isSearched = true;
+        }
+
+        private void checkoutBtnClicked(object sender, EventArgs e)
+        {
+            Session["UserID"] = this.order.getCustomerID();
+            Session["OrderID"] = this.order.getOrderID();
+            Response.Redirect("Checkout.aspx");
         }
     }
 }

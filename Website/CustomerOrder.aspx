@@ -67,8 +67,8 @@
             <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label> <!--label just to check errors-->
 
             <div class="row mt-md- mb-md-4 mt-sm-2 mb-sm-2">
-                <asp:Button ID="Button1" class="btn btn-dark col-2" runat="server" Text="Search"/>
-                <asp:TextBox ID="TextBox1" class="form-control col-10" placeholder="Search term, keyword" runat="server"></asp:TextBox>
+                <asp:Button ID="btnSearch" class="btn btn-dark col-2" runat="server" Text="Search" OnClick="btnSearch_Click"/>
+                <asp:TextBox ID="txtSearch" class="form-control col-10" placeholder="Search term, keyword" runat="server"></asp:TextBox>
             </div>
             
 
@@ -79,9 +79,13 @@
             </div>
             -->
 
-            <div>
-                <asp:Panel ID="pnlMaster" runat="server"></asp:Panel>
+            <div class="container">
+                <div class="row">
+                    <asp:Panel class="col-xs-12 col-lg-7" ID="pnlMaster" runat="server"></asp:Panel>
+                    <asp:Panel class="col-xs-0 col-lg-5" ID="pnlOrder" runat="server"></asp:Panel>
+                </div>
             </div>
+            
 
         </div>
 
