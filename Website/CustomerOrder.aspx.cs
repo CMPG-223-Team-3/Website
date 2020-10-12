@@ -74,7 +74,7 @@ namespace Website
                     ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
                     pnlOrder.Controls.Add(ov.getHeadPanel());
                     Button checkoutBtn = new Button();
-                    checkoutBtn.Text = ov.getTotalPrice().ToString();
+                    checkoutBtn.Text = "Checkout";
                     checkoutBtn.CssClass = "btn btn-dark btn-lg";
                     checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
                     pnlOrder.Controls.Add(checkoutBtn);
