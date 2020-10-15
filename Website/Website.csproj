@@ -76,7 +76,11 @@
     <Content Include="Default.aspx" />
     <Content Include="gulpfile.js" />
     <Content Include="images\logo.jpg" />
+    <Content Include="images\Toroimg.jpg" />
     <Content Include="Login.aspx" />
+    <Content Include="WaiterLogin.aspx" />
+    <Content Include="WaiterLogout.aspx" />
+    <Content Include="WaiterOrders.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +106,27 @@
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WaiterLogin.aspx.cs">
+      <DependentUpon>WaiterLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WaiterLogin.aspx.designer.cs">
+      <DependentUpon>WaiterLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WaiterLogout.aspx.cs">
+      <DependentUpon>WaiterLogout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WaiterLogout.aspx.designer.cs">
+      <DependentUpon>WaiterLogout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WaiterOrders.aspx.cs">
+      <DependentUpon>WaiterOrders.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WaiterOrders.aspx.designer.cs">
+      <DependentUpon>WaiterOrders.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\scss\style.scss" />
