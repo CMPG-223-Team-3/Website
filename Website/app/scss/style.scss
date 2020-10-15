@@ -1,9 +1,7 @@
 // Variable Overrides
-$theme-colors: ( "primary": #ff6a00);
-
+$theme-colors: ( "primary": #40a71877);
 $body-bg: #8d8d8d;
 $blue:#000000;
-
 .jumbotron {
     background-color: #ffffff !important;
     border-top: 3px solid rgb(219, 219, 219);
@@ -11,7 +9,7 @@ $blue:#000000;
 
 .dropdown:hover .dropdown-menu {
     display: block;
-} 
+}
 
 // Bootstrap Sass Imports
 @import "node_modules/bootstrap/scss/bootstrap";
@@ -19,4 +17,3 @@ $blue:#000000;
 @import "node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
 @import "node_modules/@fortawesome/fontawesome-free/scss/brands.scss";
 @import "node_modules/@fortawesome/fontawesome-free/scss/regular.scss";
-

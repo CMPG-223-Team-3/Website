@@ -27,7 +27,7 @@ namespace Website
             Session["FromPage"] = pageName;
             try
             {
-                Connection connection = new Connection();
+                ConnectionClass connection = new ConnectionClass();
                 MySqlConnection conn = connection.getConnection();
 
                 if (Session["CustomerID"] != null)

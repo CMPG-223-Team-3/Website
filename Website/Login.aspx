@@ -44,7 +44,7 @@
                 <td class="auto-style3">User Name:</td>
                 <td class="auto-style4">
                     <asp:TextBox ID="txtLogName" runat="server" Width="180px"></asp:TextBox>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtName" ErrorMessage="Please enter User Name" ForeColor="Red"></asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtLogName" ErrorMessage="Please enter User Name" ForeColor="Red"></asp:RequiredFieldValidator>
                 </td>
                 <td>&nbsp;</td>
             </tr>
@@ -52,7 +52,7 @@
                 <td class="auto-style3">Password:</td>
                 <td class="auto-style4">
                     <asp:TextBox ID="txtLogPassword" runat="server" TextMode="Password" Width="180px"></asp:TextBox>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="txtPassword" ErrorMessage="Please enter user Password" ForeColor="Red"></asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="txtLogPassword" ErrorMessage="Please enter user Password" ForeColor="Red"></asp:RequiredFieldValidator>
                 </td>
                 <td>&nbsp;</td>
             </tr>

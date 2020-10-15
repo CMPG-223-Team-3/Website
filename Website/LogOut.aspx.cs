@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace Login_Main
+namespace Website
 {
     public partial class LogOut : System.Web.UI.Page
     {

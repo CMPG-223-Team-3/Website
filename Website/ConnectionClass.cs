@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Website
 {
-    public class Connection
+    public class ConnectionClass
     {
         private MySqlConnection conn;
         private static string server;
@@ -16,7 +16,7 @@ namespace Website
         private string connectionString;
         private Exception x = new NotImplementedException();
 
-        public Connection()
+        public ConnectionClass()
         {
             server = "sql7.freemysqlhosting.net";
             database = "sql7368973";

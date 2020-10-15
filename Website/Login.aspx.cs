@@ -3,56 +3,65 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 
-namespace Login_Main
+namespace Website
 {
     public partial class Login : System.Web.UI.Page
     {
-
         private MySqlConnection conn;
-        private string server = "sql7.freemysqlhosting.net";
-        private string database = "sql7368973";
-        private string uid = "sql7368973";
-        private string password = "1lFxsktjXr";
-        string connectionString;
+        private string pageName = HttpContext.Current.Request.Url.AbsoluteUri; //Getting the pagename to store in session at page load so we can know which page to go back to after Error page is thrown
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            connectionString = "Server=" + server + ";" + "Port=3306;" + "Database=" +
-            database + ";" + " Uid=" + uid + ";" + "pwd=" + password + ";";
-
-            conn = new MySqlConnection(connectionString);
+            Session["FromPage"] = pageName;
+            try
+            {
+                ConnectionClass connection = new ConnectionClass(); //New connection object (See Connection.cs)
+                conn = connection.getConnection();
+            }
+            catch(Exception x)
+            {//Note how we're doing the error handling on the site: put Exception message into error session and redirect to Error.aspx
+                Session["Error"] = x.Message;
+                Response.Redirect("Error.aspx");
+            }
         }
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-
+            Response.Redirect("Registration.aspx");
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e)
+        protected void btnLogin_Click(object sender, EventArgs e) //NOTE to @Skroef: Check the isUser and isStaff methods i made (might execute faster)
         {
             //#1 Make the connection String.
             //#2 run the username and password to check if it is registered correct.
+                //#2.1 check the users database table if user exist
+                //#2.2 check the staff database table if user is staff
 
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[]);
-            conn.Open();
+            /*conn.Open();
             string checkUser = "select count(*) from UserData where UserName='" + txtLogName.Text + "'";
-            SqlCommand com = new SqlCommand(checkUser, conn);
+            MySqlCommand com = new MySqlCommand(checkUser, conn);
             int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
             conn.Close();
             if (temp == 1)
             {
                 conn.Open();
                 string checkPassword = "select Password from UserData where UserName='" + txtLogName.Text + "'";
-                SqlCommand passcom = new SqlCommand(checkPassword, conn);
+                MySqlCommand passcom = new MySqlCommand(checkPassword, conn);
                 string password = passcom.ExecuteScalar().ToString().Replace(" ", "");
 
-                if (password == txtLogPassword.Text)
-                {
-                    Session["New"] = txtLogName.Text;
+                Hash hPass = new Hash(txtLogPassword.Text); //Making new Hash object to hash the entered password to compare to what is in the database
+                string enteredPassword = hPass.getHash(); //Getting the hash object's hash
+
+                if (password == enteredPassword)
+                {//If the user's UserName and Password is correct, get the user's data for the customerorder page, if the user is staff, send them to Orders page
+                    Session["Username"] = txtLogName.Text;
                     Response.Write("Password is correct");
                     //Redirect to the next page.
                     Response.Redirect("Orders.aspx");
@@ -65,6 +74,24 @@ namespace Login_Main
             else
             {
                 Response.Write("Username is NOT correct");
+            }*/
+
+
+
+
+
+            //Alternate way of doing the login btn
+            if(isCustomer(txtLogName.Text, txtLogPassword.Text) == true)
+            {//Remember that the isStaff and isCustomer already sets the sessions for the respected whatevers
+                Response.Redirect("CustomerOrder.aspx");
+            }
+            else if(isStaff(txtLogName.Text, txtLogPassword.Text) == true)
+            {
+                Response.Redirect("Orders.aspx");
+            }
+            else
+            {
+                //This is what happens when user not found
             }
         }
 
@@ -72,5 +99,84 @@ namespace Login_Main
         {
             Response.Redirect("Resistration.aspx");
         }
+
+        protected bool isStaff(string usName, string psWord)
+        {//This way around is open to problems like 2 people having the same name and password
+            bool isStaff = false;
+
+            Hash hPass = new Hash(psWord); //Making new Hash object to hash the entered password to compare to what is in the database
+            string enteredPassword = hPass.getHash(); //Getting the hash object's hash
+
+            MySqlCommand comm = new MySqlCommand
+            {
+                Connection = conn,
+                CommandText =
+                "SELECT * " +
+                "FROM Staff " +
+                "WHERE `First name`= @fname " +
+                "AND `Password`= @pasw "
+            };
+            comm.Parameters.AddWithValue("@fname", usName);
+            comm.Parameters.AddWithValue("@pasw", enteredPassword);
+
+            using (conn)
+            {
+                conn.Open();
+                using(MySqlDataReader rder = comm.ExecuteReader())
+                {
+                    if(rder.HasRows) //If staff exist
+                    {
+                        isStaff = true;
+                        while(rder.Read())
+                        {
+                            Session["Staff"] = true;
+                            Session["UserName"] = rder["First name"];
+                            Session["LastName"] = rder["Last name"];
+                        }
+                    }
+                }
+            }
+            return isStaff;
+        }
+
+        protected bool isCustomer(string usName, string psWord)
+        {//Check isStaff comments, it does the same
+            bool isUser = false;
+
+            Hash hPass = new Hash(psWord);
+            string enteredPassword = hPass.getHash();
+
+            MySqlCommand comm = new MySqlCommand
+            {
+                Connection = conn,
+                CommandText =
+                "SELECT * " +
+                "FROM Customer " +
+                "WHERE `First Name` = @fname " +
+                "AND `Password` = @pasw "
+            };
+            comm.Parameters.AddWithValue("@fname", usName);
+            comm.Parameters.AddWithValue("@pasw", enteredPassword);
+
+            using (conn)
+            {
+                conn.Open();
+                using (MySqlDataReader rder = comm.ExecuteReader())
+                {
+                    if (rder.HasRows)
+                    {
+                        isUser = true;
+                        while (rder.Read())
+                        {
+                            Session["Staff"] = false;
+                            Session["UserName"] = rder["First Name"];
+                            Session["LastName"] = rder["Last Name"];
+                        }
+                    }
+                }
+            }
+            return isUser;
+        }
+
     }
 }

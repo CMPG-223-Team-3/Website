@@ -37,7 +37,7 @@ namespace Website
             try
             {
                 //try to quickly connect to database to see if it works  
-                Connection connection = new Connection();
+                ConnectionClass connection = new ConnectionClass();
                 conn = connection.getConnection();
 
                 if (Session["UserName"] != null)
