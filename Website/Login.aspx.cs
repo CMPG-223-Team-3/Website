@@ -10,6 +10,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 
+//NOTE: Check username vs user name
+
 namespace Website
 {
     public partial class Login : System.Web.UI.Page
@@ -78,30 +80,39 @@ namespace Website
 
 
 
-
+            Hash i = new Hash(txtLogPassword.Text);
 
             //Alternate way of doing the login btn
-            if(isCustomer(txtLogName.Text, txtLogPassword.Text) == true)
+            if(isCustomer(txtLogUserName.Text, txtLogPassword.Text) == true)
             {//Remember that the isStaff and isCustomer already sets the sessions for the respected whatevers
+                if (Session["OrderID"] == null)
+                {
+                    int j = getLastOrder(int.Parse(Session["CustomerID"].ToString()));
+                    if (j > -1)
+                    {
+                        Session["OrderID"] = j;
+                    }
+                }
                 Response.Redirect("CustomerOrder.aspx");
             }
-            else if(isStaff(txtLogName.Text, txtLogPassword.Text) == true)
+            else if(isStaff(txtLogUserName.Text, txtLogPassword.Text) == true)
             {
                 Response.Redirect("Orders.aspx");
             }
             else
             {
                 //This is what happens when user not found
+                Response.Write("<script>alert('Username or Password is incorrect')</script>");
             }
         }
 
         protected void btnLRegister_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Resistration.aspx");
+            Response.Redirect("Registration.aspx");
         }
 
         protected bool isStaff(string usName, string psWord)
-        {//This way around is open to problems like 2 people having the same name and password
+        {//This one is open to problems like 2 people having the same name and password
             bool isStaff = false;
 
             Hash hPass = new Hash(psWord); //Making new Hash object to hash the entered password to compare to what is in the database
@@ -152,10 +163,10 @@ namespace Website
                 CommandText =
                 "SELECT * " +
                 "FROM Customer " +
-                "WHERE `First Name` = @fname " +
-                "AND `Password` = @pasw "
+                "WHERE `Username` = @uname " +
+                "AND `Password` = @pasw"
             };
-            comm.Parameters.AddWithValue("@fname", usName);
+            comm.Parameters.AddWithValue("@uname", usName);
             comm.Parameters.AddWithValue("@pasw", enteredPassword);
 
             using (conn)
@@ -169,8 +180,10 @@ namespace Website
                         while (rder.Read())
                         {
                             Session["Staff"] = false;
-                            Session["UserName"] = rder["First Name"];
+                            Session["UserName"] = rder["UserName"];
+                            Session["FirstName"] = rder["First name"];
                             Session["LastName"] = rder["Last Name"];
+                            Session["CustomerID"] = rder["Customer ID"];
                         }
                     }
                 }
@@ -178,5 +191,34 @@ namespace Website
             return isUser;
         }
 
+        public int getLastOrder(int customerID)
+        {
+            int id = -1;
+            MySqlCommand comm = new MySqlCommand
+            {
+                Connection = conn,
+                CommandText =
+                "SELECT `Order ID` " +
+                "FROM `Order` " +
+                "WHERE `Customer ID` = " + customerID +  " " +
+                "AND Paid = " + 0
+            };
+
+            using (conn)
+            {
+                conn.Open();
+                using (MySqlDataReader datr = comm.ExecuteReader())
+                {
+                    if (datr.HasRows)
+                    {
+                        while(datr.Read())
+                        {
+                            id = int.Parse(datr["Order ID"].ToString());
+                        }
+                    }
+                }
+            }
+            return id;
+        }
     }
 }

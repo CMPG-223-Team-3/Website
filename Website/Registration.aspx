@@ -24,6 +24,19 @@
             width: 199px;
             text-align: left;
         }
+        .auto-style6 {
+            width: 290px;
+            text-align: right;
+            height: 26px;
+        }
+        .auto-style7 {
+            width: 199px;
+            text-align: left;
+            height: 26px;
+        }
+        .auto-style8 {
+            height: 26px;
+        }
     </style>
 </head>
 <body>
@@ -32,12 +45,39 @@
             <strong>Registration Page</strong></div>
         <table class="auto-style2">
             <tr>
-                <td class="auto-style3">Name:</td>
-                <td class="auto-style5">
+                <td class="auto-style6">Name:</td>
+                <td class="auto-style7">
                     <asp:TextBox ID="txtName" runat="server" Width="180px"></asp:TextBox>
                 </td>
-                <td>
+                <td class="auto-style8">
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtName" ErrorMessage="Please enter User Name" ForeColor="Red"></asp:RequiredFieldValidator>
+                </td>
+            </tr>
+            <tr>
+                <td class="auto-style6">Surname:</td>
+                <td class="auto-style7">
+                    <asp:TextBox ID="txtSurname" runat="server" Width="180px"></asp:TextBox>
+                </td>
+                <td class="auto-style8">
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="txtSurname" ErrorMessage="Please enter Surname" ForeColor="Red"></asp:RequiredFieldValidator>
+                </td>
+            </tr>
+            <tr>
+                <td class="auto-style6">Username:</td>
+                <td class="auto-style7">
+                    <asp:TextBox ID="txtUsername" runat="server" Width="180px"></asp:TextBox>
+                </td>
+                <td class="auto-style8">
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ControlToValidate="txtUsername" ErrorMessage="Please enter Username" ForeColor="Red"></asp:RequiredFieldValidator>
+                </td>
+            </tr>
+            <tr>
+                <td class="auto-style3">e-Mail:</td>
+                <td class="auto-style5">
+                    <asp:TextBox ID="txtEmail" runat="server" Width="180px"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ErrorMessage="Please enter user e-mail" ForeColor="Red" ControlToValidate="txtEmail"></asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
@@ -55,18 +95,8 @@
                     <asp:TextBox ID="txtConfirmPass" runat="server" TextMode="Password" Width="180px"></asp:TextBox>
                 </td>
                 <td>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Confirm Password required" ForeColor="Red"></asp:RequiredFieldValidator>
                     <br />
                     <asp:CompareValidator ID="CompareValidator1" runat="server" ControlToCompare="txtPassword" ControlToValidate="txtConfirmPass" ErrorMessage="Both passwords must be the same" ForeColor="Red"></asp:CompareValidator>
-                </td>
-            </tr>
-            <tr>
-                <td class="auto-style3">e-Mail:</td>
-                <td class="auto-style5">
-                    <asp:TextBox ID="txtEmail" runat="server" Width="180px"></asp:TextBox>
-                </td>
-                <td>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ErrorMessage="Please enter user e-mail" ForeColor="Red"></asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>

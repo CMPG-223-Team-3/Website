@@ -41,10 +41,10 @@
             <strong>Login Page</strong></div>
         <table class="auto-style2">
             <tr>
-                <td class="auto-style3">User Name:</td>
+                <td class="auto-style3">Username:</td>
                 <td class="auto-style4">
-                    <asp:TextBox ID="txtLogName" runat="server" Width="180px"></asp:TextBox>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtLogName" ErrorMessage="Please enter User Name" ForeColor="Red"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtLogUserName" runat="server" Width="180px"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtLogUserName" ErrorMessage="Please enter Username" ForeColor="Red"></asp:RequiredFieldValidator>
                 </td>
                 <td>&nbsp;</td>
             </tr>

@@ -28,9 +28,6 @@ namespace Website
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["Username"] = "Johan";
-            Session["CustomerID"] = 69;
-            Session["OrderID"] = 100;
             Session["Error"] = null;
             Session["FromPage"] = pageName;
 
@@ -49,11 +46,12 @@ namespace Website
                     {
                         if (Session["OrderID"] != null)
                         {
-                            order = new Order(conn, int.Parse(Session["OrderID"].ToString()));
+                            order = new Order(conn, int.Parse(Session["OrderID"].ToString())); //at this point we need a customer ID to make a new order, have to fix
                         }
                         else
                         {
                             order = new Order(conn, int.Parse(Session["CustomerID"].ToString()), 0);
+                            Session["OrderID"] = order.getOrderID();
                         }
                     }
                     else
