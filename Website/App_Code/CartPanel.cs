@@ -27,8 +27,8 @@ namespace Website.App_Code
         private string menuIDCol = "Menu-Item ID";
         private string menuNameCol = "Name";
         private string menuPriceCol = "Price";
-        private string orderItemsMenuIDCol = "Menu-Item_ID";
-        private string orderItemsOrderIDCol = "Order_ID";
+        private string orderItemsMenuIDCol = "Menu-Item ID";
+        private string orderItemsOrderIDCol = "Order ID";
         private string orderItemsQuantityCol = "Quantity";
 
 
@@ -255,7 +255,7 @@ namespace Website.App_Code
             }
             catch(Exception c)
             {
-                throw c;
+                throwEx(c);
             }
         }
 

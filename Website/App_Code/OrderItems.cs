@@ -56,8 +56,8 @@ namespace Website
                         c.CommandText =
                             "UPDATE `Order Menu Item link` " +
                             "SET Quantity=@qu " +
-                            "WHERE `Order_ID`=@oID " +
-                            "AND `Menu-Item_ID`=@mID;";
+                            "WHERE `Order ID`=@oID " +
+                            "AND `Menu-Item ID`=@mID;";
                         c.Parameters.AddWithValue("@mID", productId);
                         c.Parameters.AddWithValue("@oID", orderID);
                         c.Parameters.AddWithValue("@qu", quantity + currentQuantity);
@@ -76,7 +76,7 @@ namespace Website
                         c.Connection = conn;
                         c.CommandText =
                             "INSERT INTO `Order Menu Item link` " +
-                            "(`Menu-Item_ID`, `Order_ID`, `Quantity`) " +
+                            "(`Menu-Item ID`, `Order ID`, `Quantity`) " +
                             "VALUES" +
                             "(@menuID, @orderID, @quan);";
                         c.Parameters.AddWithValue("@menuID", productId);
@@ -103,8 +103,8 @@ namespace Website
             c.CommandText =
                 "SELECT * " +
                 "FROM `Order Menu Item link` " +
-                "WHERE `Order_ID`=@oid " +
-                "AND `Menu-Item_ID`=@pid";
+                "WHERE `Order ID`=@oid " +
+                "AND `Menu-Item ID`=@pid";
             c.Parameters.AddWithValue("@oid", orderId);
             c.Parameters.AddWithValue("@pid", productId);
             try
@@ -143,8 +143,8 @@ namespace Website
                         c.CommandText =
                             "UPDATE `Order Menu Item link` " +
                             "SET Quantity=@quan " +
-                            "WHERE `Order_ID`=@orderID " +
-                            "AND `Menu-Item_ID`=@menuID;";
+                            "WHERE `Order ID`=@orderID " +
+                            "AND `Menu-Item ID`=@menuID;";
                         c.Parameters.AddWithValue("@menuID", productId);
                         c.Parameters.AddWithValue("@orderID", orderID);
                         c.Parameters.AddWithValue("@quan", (quantity - howmany));
@@ -164,22 +164,36 @@ namespace Website
 
         private int getQuantityOfAProduct(int menuItemID)
         {//Get the quantity of a product in the order
-            int quantity = -1;
+            int quantity = 0;
             try
             {
                 if(hasProduct(menuItemID, orderID))
                 {
                     MySqlCommand checkQuantity = new MySqlCommand();
                     checkQuantity.CommandText =
-                            "SELECT 'Quantity' " +
+                            "SELECT * " +
                             "FROM `Order Menu Item link` " +
-                            "WHERE `Order_ID`=" + orderID + " " +
-                            "AND `Menu-Item_ID`=" + menuItemID + ";";
+                            "WHERE `Order ID`=@oid " +
+                            "AND `Menu-Item ID`=@mid;";
                     checkQuantity.Connection = conn;
+                    checkQuantity.Parameters.AddWithValue("@oid",orderID);
+                    checkQuantity.Parameters.AddWithValue("@mid", menuItemID);
 
-                    conn.Open();
-                    quantity = int.Parse(checkQuantity.ExecuteScalar().ToString());
-                    conn.Close();
+                    using(conn) //idk why but executescalar did not want to work here
+                    {
+                        conn.Open();
+                        using (MySqlDataReader r = checkQuantity.ExecuteReader())
+                        {
+                            if (r.HasRows)
+                            {
+                                while (r.Read())
+                                {
+                                    quantity = int.Parse(r["Quantity"].ToString());
+                                }
+                            }
+                        }
+                    }
+                    
                 }
             }
             catch (Exception x)
@@ -198,8 +212,8 @@ namespace Website
                     MySqlCommand comm = new MySqlCommand();
                     comm.CommandText =
                         "DELETE FROM `Order Menu Item link` " +
-                        "WHERE `Menu-Item_ID` = @mid " +
-                        "AND `Order_ID` = @oid;";
+                        "WHERE `Menu-Item ID` = @mid " +
+                        "AND `Order ID` = @oid;";
                     comm.Connection = conn;
                     comm.Parameters.AddWithValue("@mid", productId);
                     comm.Parameters.AddWithValue("@oid", orderID);
@@ -232,7 +246,7 @@ namespace Website
                 comm.CommandText =
                     "DELETE " +
                     "FROM `Order Menu Item link`" +
-                    "WHERE `Order_ID`=" + ID + ";";
+                    "WHERE `Order ID`=" + ID + ";";
                 comm.Connection = conn;
                 executeNonQuery(comm);
             }
