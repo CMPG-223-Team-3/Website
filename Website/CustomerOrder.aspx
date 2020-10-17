@@ -35,15 +35,15 @@
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Home</a>
+                                <a class="nav-link" href="Default.aspx">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href="#">My Order</a>
+                                <a class="nav-link active" href="#">Order</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown" data-toggle="dropdown">List</a>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown" data-toggle="dropdown"><asp:Label ID="lblLogin" runat="server" Text="Login" href="#"></asp:Label></a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Item1</a>
+                                    <a class="dropdown-item" href="Checkout.aspx">My Order</a>
                                     <a class="dropdown-item" href="#">Item2</a>
                                     <a class="dropdown-item" href="#">Item3</a>
                                     <div class="dropdown-divider"></div>
@@ -51,7 +51,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <asp:Label ID="lblLogin" class="nav-link" runat="server" Text="Login" href="#"></asp:Label>
+                                
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Contact</a>

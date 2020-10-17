@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
+using Website.App_Code;
 
 //NOTE: Check username vs user name
 
@@ -200,8 +201,9 @@ namespace Website
                 CommandText =
                 "SELECT `Order ID` " +
                 "FROM `Order` " +
-                "WHERE `Customer ID` = " + customerID +  " " +
-                "AND Paid = " + 0
+                "WHERE `Customer ID` = " + customerID + " " +
+                "AND Paid = " + 0 + " " +
+                "AND Status = " + 0 + " " 
             };
 
             using (conn)

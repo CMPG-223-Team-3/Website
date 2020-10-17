@@ -1,12 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using Website.App_Code;
 
 /*NOTES:
  * The logged in user session name here is "UserName"
@@ -19,12 +15,31 @@ namespace Website
     public partial class CustomerOrder : System.Web.UI.Page
     {
         private Order order;
-        private OrderVisual ov;
+        private CartPanel ov;
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
         //Global variables and such
         private bool isSearched = false; //Has the user searched for something
+
+        protected void Page_Init(object o, EventArgs e)
+        {
+            try
+            {
+                //try to quickly connect to database to see if it works  
+                ConnectionClass connection = new ConnectionClass();
+                conn = connection.getConnection();
+
+                if(Session["UserName"] == null)
+                {
+                    throw new Exception("Username not logged in");
+                }
+            }
+            catch
+            {
+                Response.Redirect("Login.aspx");
+            }
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -33,10 +48,6 @@ namespace Website
 
             try
             {
-                //try to quickly connect to database to see if it works  
-                ConnectionClass connection = new ConnectionClass();
-                conn = connection.getConnection();
-
                 if (Session["UserName"] != null)
                 {
                     //if the user has logged in, display their name instead of the log in label on the navbar
@@ -46,30 +57,30 @@ namespace Website
                     {
                         if (Session["OrderID"] != null)
                         {
-                            order = new Order(conn, int.Parse(Session["OrderID"].ToString())); //at this point we need a customer ID to make a new order, have to fix
+                            order = new Order(int.Parse(Session["OrderID"].ToString())); //at this point we need a customer ID to make a new order, have to fix
                         }
                         else
                         {
-                            order = new Order(conn, int.Parse(Session["CustomerID"].ToString()), 0);
+                            order = new Order(int.Parse(Session["CustomerID"].ToString()), 0, 0);
                             Session["OrderID"] = order.getOrderID();
                         }
                     }
                     else
                     {
-                        Session["Error"] = "Could not find customer ID";
-                        Response.Redirect("Error.aspx");
+                        Page_Init(new object(), new EventArgs());
                     }
                 }
                 else
                 {
-                    Response.Redirect("Login.aspx");
+                    Response.Redirect("Login.aspx", false);
+                    Context.ApplicationInstance.CompleteRequest();
                 }
 
                 if (!IsPostBack || !isSearched)
                 {
                     //if the user hasn't searched anything or 1st time page loaded
 
-                    ov = new OrderVisual(order.getConnection(), order.getCustomerID(), order.getOrderID());
+                    ov = new CartPanel(order.getConnection(), order.getCustomerID(), order.getOrderID());
                     pnlOrder.Controls.Add(ov.getHeadPanel());
                     Button checkoutBtn = new Button();
                     checkoutBtn.Text = "Checkout";
@@ -188,13 +199,21 @@ namespace Website
         //Eventhandler/method for the add to cart buttons
         void addToCartBtnClicked(object sender, EventArgs evArgs)
         {
-            //Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
-            Button btn = sender as Button;
-            string[] i = btn.ID.Split('_');
-            int Id = int.Parse(i[0]);
+            try
+            {
+                //Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
+                Button btn = sender as Button;
+                string[] i = btn.ID.Split('_');
+                int Id = int.Parse(i[0]);
 
-            order.addNewProduct(Id, 1);
-            ov.update();
+                order.getOrderItemsObject().addProduct(Id, 1);
+                ov.update();
+            }
+            catch(Exception x)
+            {
+                Session["Error"] = x.Message + ":   " + x.StackTrace;
+                Response.Redirect("Error.aspx");
+            }
 
             //Second check if user is logged in so we can add the selected products to their cart
             if (Session["UserName"] != null)
@@ -233,9 +252,18 @@ namespace Website
 
         private void checkoutBtnClicked(object sender, EventArgs e)
         {
-            Session["UserID"] = this.order.getCustomerID();
-            Session["OrderID"] = this.order.getOrderID();
-            Response.Redirect("Checkout.aspx");
+            try
+            {
+                Session["UserID"] = this.order.getCustomerID();
+                Session["OrderID"] = this.order.getOrderID();
+                Response.Redirect("Checkout.aspx");
+            }
+            catch(Exception x)
+            {
+                Session["Erorr"] = x.Message;
+                Response.Redirect("Error.aspx");
+            }
+            
         }
     }
 }

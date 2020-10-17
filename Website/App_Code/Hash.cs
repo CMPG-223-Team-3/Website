@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 
-namespace Website
+namespace Website.App_Code
 {
     public class Hash
     {

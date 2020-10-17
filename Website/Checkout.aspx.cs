@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Website.App_Code;
 
 namespace Website
 {
@@ -20,7 +21,7 @@ namespace Website
 
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
-        OrderVisual cart;
+        CartPanel cart;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +35,7 @@ namespace Website
                 {//if user is signed in
                     if(Session["OrderID"] != null)
                     {//user has their order placed
-                        cart = new OrderVisual(conn,int.Parse(Session["CustomerID"].ToString()),int.Parse(Session["OrderID"].ToString()));
+                        cart = new CartPanel(conn,int.Parse(Session["CustomerID"].ToString()),int.Parse(Session["OrderID"].ToString()));
                         pnlCheckout.Controls.Add(cart.getHeadPanel());
 
 

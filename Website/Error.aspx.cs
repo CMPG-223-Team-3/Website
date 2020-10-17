@@ -11,7 +11,7 @@ namespace Website
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Error"].ToString() != null)
+            if (Session["Error"] != null)
                 lblError.Text = Session["Error"].ToString();
             else
                 lblError.Text = "Something went wrong...";
@@ -20,14 +20,17 @@ namespace Website
             i.Click += new EventHandler(btnClicked);
             i.Text = "Retry";
             pnlError.Controls.Add(i);
-
         }
 
         public void btnClicked(object sender, EventArgs e)
         {
-            if(Session["FromPage"].ToString() != null)
+            if (Session["FromPage"] != null)
             {
                 Response.Redirect(Session["FromPage"].ToString());
+            }
+            else
+            {
+                Response.Redirect("Default.aspx");
             }
         }
     }

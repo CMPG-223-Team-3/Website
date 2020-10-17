@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Website
+namespace Website.App_Code
 {
+    //This class depends on the current .NET Framework's MySql.Data's ability to reuse the same connection after .dispose() is called
     public class ConnectionClass
     {
         private MySqlConnection conn;
@@ -18,10 +19,10 @@ namespace Website
 
         public ConnectionClass()
         {
-            server = "sql7.freemysqlhosting.net";
+            server = "cmpg-223-db.ci6pbvbzz3x3.us-west-1.rds.amazonaws.com";
             database = "sql7368973";
-            userName = "sql7368973";
-            userPass = "1lFxsKtjXr";
+            userName = "admin";
+            userPass = "cmpg22310";
             connectionString = "Server=" + server + ";" + "Port=3306;" + "Database=" +
                 database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";
             conn = new MySqlConnection(connectionString);
