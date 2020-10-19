@@ -17,14 +17,13 @@ namespace Website.App_Code
     public class Order
     {
         /*
-         * This class's purpose is to give support to the pages in the form that it creates
-         * and modifies the order in the database in different ways
-         * 
-         * It creates and uses the OrderItems class to modify the order's items
-         * 
-         * It is also supposed to get the order information
+         * This class's purpose is to give support to the pages in the form in that it:
+         * 1. Creates and modifies the order in the database in different ways
+         * 2. It creates and uses the OrderItems class to modify the order's items
+         * 3. It is also supposed to get the order information
          */
-
+         
+        //The global vars for the specific instance of the order
         private int customerID;
         private MySqlConnection conn;
         private int orderID;
@@ -39,14 +38,17 @@ namespace Website.App_Code
         private string statusName = "Status";
 
         public Order(int orderId)
-        {//When you already know the order id, get the rest
+        {//Constructor for when you already know the order id, get the rest
             try
             {
-                orderItems = new OrderItems(orderId);
-                ConnectionClass connect = new ConnectionClass();
+                orderItems = new OrderItems(orderId);//Object for all the items in the database for this order
+                ConnectionClass connect = new ConnectionClass();//Class to connect to database
                 conn = connect.getConnection();
                 this.orderID = orderId;
-                getOrderInfo(orderId);
+                if(!getOrderInfo(orderId))//Go get orderID's info and store it in global vars
+                {
+                    throw new Exception("Could not get order info from getOrderInfo()");
+                }
             }
             catch(Exception x)
             {
@@ -54,18 +56,17 @@ namespace Website.App_Code
             }
         }
 
-        public Order(int customerID, int paid, int status)
-        {//Commonly the one you'd use making a new order
+        public Order(int customerID, int paid, int status)//Parameters of the customer so new order can be made
+        {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
-                ConnectionClass connect = new ConnectionClass();
+                ConnectionClass connect = new ConnectionClass();//Class to connect to database
                 conn = connect.getConnection();
             }
             catch(Exception x)
             {
                 throw x;
             }
-            
 
             this.customerID = customerID;
             try
@@ -83,7 +84,7 @@ namespace Website.App_Code
                 
                 executeNonQuery(cmmd);
                 orderID = getLastID();
-                orderItems = new OrderItems(orderID);
+                orderItems = new OrderItems(orderID);//Object for all the items in the database for this order
             }
             catch (Exception o)
             {
@@ -92,7 +93,10 @@ namespace Website.App_Code
         }
 
         private bool getOrderInfo(int orderId)
-        {
+        {//method to get the orderID's customerID, orderPaid, and orderStatus and
+            //assign them to the global vars
+            //NOTE: Exception handling returns false, instead of an exception
+
             bool success = false;
             MySqlCommand cmmd2 = new MySqlCommand();
             cmmd2.CommandText =
@@ -123,14 +127,14 @@ namespace Website.App_Code
                 }
                 return success;
             }
-            catch(Exception z)
+            catch
             {
-                throw z;
+                return false;
             }
         }
 
         private int getLastID()
-        {
+        {//Method for getting the last inserted OrderID from the database so we can use it as the Order object
             int x = -1;
             MySqlCommand cmmd2 = new MySqlCommand();
             cmmd2.CommandText =
@@ -155,12 +159,12 @@ namespace Website.App_Code
         }
 
         public void OrderPaid()
-        {
+        {//Method to update order so that the order has been paid
             throw new NotImplementedException();
         }
 
         public void executeNonQuery(MySqlCommand que)
-        {
+        {//Method to safely try do the ExecuteNonQuery() on a command
             try
             {
                 using (conn)
@@ -194,11 +198,12 @@ namespace Website.App_Code
             else if (orderPaid == 0)
                 return false;
             else
-                throw new NotImplementedException("Has not checked if order is paid");
+                throw new NotImplementedException("Has not checked if order is paid");//The global var is null
         }
         public OrderItems getOrderItemsObject()
         {
-            return orderItems;
+            return orderItems;//Return the OrderItems object (Will probably be used to add, remove and such from the items in the order)
+                                //for example: Order.getOrderItemsObject.addProduct(productId);
         }
     }
 }

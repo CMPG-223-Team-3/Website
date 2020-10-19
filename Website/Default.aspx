@@ -2,10 +2,10 @@
 
 <!DOCTYPE html>
 
-<!--html xmlns="http://www.w3.org/1999/xhtml">-->
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Landing Page</title>
-    <link rel="stylesheet" href="dist/style.css">
+    <link rel="stylesheet" href="dist/style.css"/>
     <script src="dist/general.js"></script>
     <script src="dist/jquery.js"></script>
     <script src="dist/popper.js"></script>
@@ -119,4 +119,4 @@
         </div>
     </form>
     </body>
-</!--html>
+</html>

@@ -11,10 +11,12 @@ namespace Website
     public class OrderItems
     {
         /*
-         * This class's purpose is to create and modify the order's items
-         * 
-         * It will act like a subclass of the Order class
-         * 
+         * This class's purpose is to create and modify the order's items:
+         * 1. It will act something like a subclass of the Order class
+         *      where it will be used in conjunction with the Order class as a global var
+         *      "storing" and modifying that specific order's items
+         * 2. Technically doesn't store the products in the order, but 
+         *      executes commands based on the order
          * 
          */
 
@@ -23,11 +25,10 @@ namespace Website
 
 
         public OrderItems(int OrderID)
-        {//this does not store the products in the order, but executes commands based on the order
-
+        {//Only constructor - needs the OrderID - will usually already be known if this class was to be used by Order class
             try
             {
-                ConnectionClass connection = new ConnectionClass();
+                ConnectionClass connection = new ConnectionClass();//Class to connect to database
                 conn = connection.getConnection();
                 orderID = OrderID;
             }
@@ -38,8 +39,9 @@ namespace Website
         }
 
         public void addProduct(int productId, int quantity)
-        {//The default adding of a product to be used... It uses the add1product class if the product exists in the order
-            //It checks if the product already in order (if is, then add the quantity, else create new product in order)
+        {//The default adding of a product to be used...
+         //It checks if the product already in order (if is, then add the quantity, else create new product in order)
+            
             if (quantity < 1)
             {
                 throw new Exception("Invalid quantity of products: " + quantity);
@@ -47,9 +49,9 @@ namespace Website
             try
             {
                 if (hasProduct(productId, orderID))
-                {
+                {//Does the orderId have this item in the database? Yes:
                     try
-                    {
+                    {//Update the quantity
                         int currentQuantity = getQuantityOfAProduct(productId);
                         MySqlCommand c = new MySqlCommand();
                         c.Connection = conn;
@@ -69,9 +71,9 @@ namespace Website
                     }
                 }
                 else
-                {
+                {//No, it does not have product in the database
                     try
-                    {
+                    {//Make a new entry in the database for the product
                         MySqlCommand c = new MySqlCommand();
                         c.Connection = conn;
                         c.CommandText =
@@ -97,7 +99,7 @@ namespace Website
         }
 
         public bool hasProduct(int productId, int orderId)
-        {//Method that checks if tableName has an orderId that has products productId
+        {//Method that checks if `Order Menu Item link` has an orderId that has product: productId
             MySqlCommand c = new MySqlCommand();
             c.Connection = conn;
             c.CommandText =
@@ -124,12 +126,12 @@ namespace Website
             catch(Exception x)
             {
                 return false;
-                //throw x;
             }
         }
 
         public void removeProduct(int productId, int howmany)
-        {//remove quantity of productId from order if the order contains the product
+        {//Remove quantity of productId from order (if the order contains the product)
+         //If quantity goes less than 0 (currentQuantity-howmany), delete the item from the order
             try
             {
                 if(hasProduct(productId, orderID))
@@ -179,7 +181,7 @@ namespace Website
                     checkQuantity.Parameters.AddWithValue("@oid",orderID);
                     checkQuantity.Parameters.AddWithValue("@mid", menuItemID);
 
-                    using(conn) //idk why but executescalar did not want to work here
+                    using(conn) //NOTE: idk why but executescalar did not want to work here - kept returning "Quantity" instead of the quantity value
                     {
                         conn.Open();
                         using (MySqlDataReader r = checkQuantity.ExecuteReader())
@@ -193,7 +195,6 @@ namespace Website
                             }
                         }
                     }
-                    
                 }
             }
             catch (Exception x)
@@ -227,10 +228,16 @@ namespace Website
         }
 
         public void deleteAllProducts()
-        {
+        {//Method to delete all of the products associated with the orderID in Order Menu Item link
             try
             {
-                delete(orderID);
+                MySqlCommand comm = new MySqlCommand();
+                comm.CommandText =
+                    "DELETE " +
+                    "FROM `Order Menu Item link`" +
+                    "WHERE `Order ID`=" + orderID + ";";
+                comm.Connection = conn;
+                executeNonQuery(comm);
             }
             catch(Exception x)
             {
@@ -238,26 +245,8 @@ namespace Website
             }
         }
 
-        private void delete(int ID)
-        {//delete something completely with id colomn with an int
-            try
-            {
-                MySqlCommand comm = new MySqlCommand();
-                comm.CommandText =
-                    "DELETE " +
-                    "FROM `Order Menu Item link`" +
-                    "WHERE `Order ID`=" + ID + ";";
-                comm.Connection = conn;
-                executeNonQuery(comm);
-            }
-            catch (Exception x)
-            {
-                throw x;
-            }
-        }
-
         private void executeNonQuery(MySqlCommand que)
-        {
+        {//Try and safely do the ExecuteNonQuery() on a command
             try
             {
                 using (conn)
@@ -273,7 +262,7 @@ namespace Website
         }
 
         public DataTable getOrderItemsTable()
-        {
+        {//Put all of the orderId's orderitems into a DataTable and return it
             MySqlCommand cmmd = new MySqlCommand();
             cmmd.CommandText =
                 "SELECT * " +

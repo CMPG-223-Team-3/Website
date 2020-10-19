@@ -14,12 +14,19 @@ namespace Website
 {
     public partial class CustomerOrder : System.Web.UI.Page
     {
+        /*
+         * This page is where the customer selects their order products, and clicks the checkout btn
+         * 1. The page.load is pretty messy - might need a bit of work
+         * 
+         * 
+         * 
+         * 
+         */
+
         private Order order;
         private CartPanel ov;
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
-
-        //Global variables and such
         private bool isSearched = false; //Has the user searched for something
 
         protected void Page_Init(object o, EventArgs e)
@@ -77,9 +84,7 @@ namespace Website
                 }
 
                 if (!IsPostBack || !isSearched)
-                {
-                    //if the user hasn't searched anything or 1st time page loaded
-
+                {//if the user hasn't searched anything or 1st time page loaded
                     ov = new CartPanel(order.getConnection(), order.getCustomerID(), order.getOrderID());
                     pnlOrder.Controls.Add(ov.getHeadPanel());
                     Button checkoutBtn = new Button();
@@ -98,7 +103,6 @@ namespace Website
             }
             catch(Exception ee)
             {
-
                 Session["Error"] = ee.Message + ee.StackTrace;
                 Response.Redirect("Error.aspx");
             }

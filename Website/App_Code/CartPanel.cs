@@ -34,6 +34,18 @@ namespace Website.App_Code
 
         public CartPanel(MySqlConnection c, int customerID, int orderID)
         {
+            /*
+             * This class's purpose is to create a way (panel) to visualize the 
+             *  customer's order (or rather the items in their order)
+             *  so they can manage their own order
+             *  
+             * 1. It runs really slow from my experience
+             * 2. I will try to upload a diagram of what it should look like
+             * 3. This one may still need a teeny bit of error handling
+             * 4. Check the diagrams folder for a visual of how this is supposed to look
+             * 
+             */
+
             this.conn = c;
             this.customerID = customerID;
             this.orderID = orderID;
@@ -54,8 +66,8 @@ namespace Website.App_Code
             }
         }
 
-        public CartPanel(Order ord, int customerID)
-        {
+        public CartPanel(Order ord)
+        {//Constructor that receives the person's Order object (already has all the info we need)
             this.conn = ord.getConnection();
             this.customerID = ord.getCustomerID();
             this.orderID = ord.getOrderID();
@@ -98,7 +110,7 @@ namespace Website.App_Code
         }
 
         public DataTable getMenuItems()
-        {//Method to fetch everything from the menu table
+        {//Method to fetch everything from the menu table and DataTabling it - should be faster than commanding it every time
             DataTable ds = new DataTable();
             try
             {
@@ -138,7 +150,7 @@ namespace Website.App_Code
 
             try
             {
-                orderItems = getOrderItems();
+                orderItems = getOrderItems();//Reloading the orderItems cuz it may have changed through adding/deleting new items
             }
             catch(Exception x)
             {
@@ -149,15 +161,16 @@ namespace Website.App_Code
             {//if there is no orderIems in order
                 return 0;
             }
+
             if(menuItems.Rows.Count <= 0)
-            {
+            {//if the menuItems table is empty
                 throwEx(new Exception("Menu Table is Empty"));
             }
 
             foreach (DataRow datr in orderItems.Rows)
             {//get every orderitem and make it pretty on the site
                 if (datr[orderItemsOrderIDCol].ToString() == orderID.ToString())
-                {
+                {//If orderID is found in the orderItems - to use the menuitemID and quantity - for use of building the headPanel pretty
                     try
                     {
                         productId = int.Parse(datr[orderItemsMenuIDCol].ToString());
@@ -171,7 +184,7 @@ namespace Website.App_Code
                     try
                     {
                         foreach (DataRow dr in menuItems.Rows)
-                        {
+                        {//Get the product's name, price and such to show in the headPanel
                             isFound3 = false;
                             if (dr[menuIDCol].ToString() == productId.ToString())
                             {
@@ -180,7 +193,7 @@ namespace Website.App_Code
                                 isFound3 = true;
                             }
                             if (isFound3)
-                            {
+                            {//If the menuitem with ID is found, stop traversing
                                 break;
                             }
                         }
@@ -190,7 +203,7 @@ namespace Website.App_Code
                         throwEx(ex);
                     }
                     if (!isFound3)
-                    {
+                    {//has not found the productId in the menuItems table
                         throwEx(new Exception("Could not find product: " + productId + " in database"));
                     }
 
@@ -211,7 +224,7 @@ namespace Website.App_Code
                     min.ID = productId.ToString() + "_min_" + counterer;
                     plus.ID = productId.ToString() + "_plus_" + counterer;
 
-                    //Eventhandlers for each button
+                    //Eventhandlers for each button - one for subtracting a product and the other for adding one
                     min.Click += new EventHandler(minBtnClicked);
                     plus.Click += new EventHandler(plusBtnClicked);
 
@@ -224,6 +237,7 @@ namespace Website.App_Code
                     plus.Text = "+";
                     quanlbl.Text = quantity.ToString() + " X ";
 
+                    //Build the first part of headPanel
                     headPanel.Controls.Add(min);
                     headPanel.Controls.Add(quanlbl);
                     headPanel.Controls.Add(name);
@@ -233,6 +247,7 @@ namespace Website.App_Code
                     counterer++;
                 }
             }
+            //Add the total label in the headPanel
             Label total = new Label();
             total.Text = "R" + totalPrice.ToString();
             total.CssClass = "";
@@ -246,6 +261,7 @@ namespace Website.App_Code
             try
             {
                 //get the button id which is set to the id of the product in update() that needs to be added 
+                //format: productID_plus_counter to make the buttons's id's unique
                 Button btn = sender as Button;
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
@@ -264,6 +280,7 @@ namespace Website.App_Code
             try
             {
                 //get the button id which is set to the id of the product in update() that needs to be added 
+                //format: productID_min_counter to make the buttons's id's unique
                 Button btn = sender as Button;
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
