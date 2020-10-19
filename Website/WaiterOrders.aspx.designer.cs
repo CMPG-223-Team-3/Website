@@ -105,6 +105,15 @@ namespace Website
         protected global::System.Web.UI.WebControls.Label lblTotal3;
 
         /// <summary>
+        /// UpdateOrder1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button UpdateOrder1;
+
+        /// <summary>
         /// btnDelivered1 control.
         /// </summary>
         /// <remarks>
@@ -114,6 +123,15 @@ namespace Website
         protected global::System.Web.UI.WebControls.Button btnDelivered1;
 
         /// <summary>
+        /// UpdateOrder2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button UpdateOrder2;
+
+        /// <summary>
         /// btnDelivered2 control.
         /// </summary>
         /// <remarks>
@@ -121,6 +139,15 @@ namespace Website
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnDelivered2;
+
+        /// <summary>
+        /// UpdateOrder3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button UpdateOrder3;
 
         /// <summary>
         /// btnDelivered3 control.

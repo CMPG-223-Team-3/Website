@@ -70,7 +70,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td><asp:Button ID="Button1" runat="server" Text="Submit" CssClass="btn-block btn-primary pull-right" /></td>
+                                        <td><asp:Button ID="Button1" runat="server" Text="Submit" CssClass="btn-block btn-primary pull-right" OnClick="Button1_Click" /></td>
                                     </tr>
                                 </table>
                             </p>

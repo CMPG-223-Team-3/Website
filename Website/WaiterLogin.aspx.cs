@@ -29,38 +29,55 @@ namespace Website
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            //#1 Make the connection String.
-            //#2 run the username and password to check if it is registered correct.
 
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[]);
-            conn.Open();
-            string checkUser = "select count(*) from UserData where UserName='" + txtUserName.Text + "'";
-            SqlCommand com = new SqlCommand(checkUser, conn);
-            int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
-            conn.Close();
-            if (temp == 1)
+
+
+            if (txtUserName.Text == " ")
             {
-                conn.Open();
-                string checkPassword = "select Password from UserData where UserName='" + txtUserName.Text + "'";
-                SqlCommand passcom = new SqlCommand(checkPassword, conn);
-                string password = passcom.ExecuteScalar().ToString().Replace(" ", "");
-
-                if (password == txtPassword.Text)
-                {
-                    Session["New"] = txtUserName.Text;
-                    Response.Write("Password is correct");
-                    //Redirect to the next page.
-                    Response.Redirect("WaiterOrders.aspx");
-                }
-                else
-                {
-                    Response.Write("Password is NOT correct");
-                }
+                RequiredFieldNAME.Visible = true;
+            }
+            else if(txtPassword.Text == " ")
+            {
+                RequiredFieldPASS.Visible = true;
             }
             else
             {
-                Response.Write("Username is NOT correct");
+                //#1 Make the connection String.
+                //#2 run the username and password to check if it is registered correct.
+
+                SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[]);
+                conn.Open();
+                string checkUser = "select * from sql7368973.Staff where Username ='" + txtUserName.Text + "'";
+                SqlCommand com = new SqlCommand(checkUser, conn);
+                int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
+                conn.Close();
+                if (temp == 1)
+                {
+                    conn.Open();
+                    string checkPassword = "select * from sql7368973.Staff where Password ='" + txtUserName.Text + "'";
+                    SqlCommand passcom = new SqlCommand(checkPassword, conn);
+                    string password = passcom.ExecuteScalar().ToString().Replace(" ", "");
+
+                    if (password == txtPassword.Text)
+                    {
+                        Session["New"] = txtUserName.Text;
+                        Response.Write("Password is correct");
+                        //Redirect to the next page.
+                        Response.Redirect("WaiterOrders.aspx");
+                    }
+                    else
+                    {
+                        Response.Write(" Username or Password is NOT correct");
+                    }
+                }
+                else
+                {
+                    Response.Write("Username is NOT correct");
+                }
             }
+            
+            
+           
         }
 
         protected void btnRegister_Click(object sender, EventArgs e)

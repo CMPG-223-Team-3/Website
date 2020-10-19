@@ -178,5 +178,10 @@ namespace Website
                 //Help the user log in without losing the selected item(s)
             }
         }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

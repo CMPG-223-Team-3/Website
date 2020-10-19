@@ -24,6 +24,9 @@ namespace Website
             database + ";" + " Uid=" + uid + ";" + "pwd=" + password + ";";
 
             conn = new MySqlConnection(connectionString);
+
+            //code to represent if the order is ready or not
+
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)
@@ -36,8 +39,8 @@ namespace Website
             conn.Open();
 
             //Delete orders that are delivered to table 1
-            string query = "DELETE FROM tableinfo WHERE name='John Smith'";
-
+            string query = "DELETE * FROM sql7368973.Staff WHERE Position ID = true";
+            
             MySqlCommand cmd = new MySqlCommand(query, conn);
             cmd.ExecuteNonQuery();
             conn.Close();
@@ -48,7 +51,7 @@ namespace Website
             conn.Open();
 
             //Delete orders that are delivered to table 2
-            string query = "DELETE FROM tableinfo WHERE name='John Smith'";
+            string query = "DELETE * FROM sql7368973.Staff WHERE Position ID = true";
 
             MySqlCommand cmd = new MySqlCommand(query, conn);
             cmd.ExecuteNonQuery();
@@ -60,11 +63,16 @@ namespace Website
             conn.Open();
 
             //Delete orders that are delivered to table 3
-            string query = "DELETE FROM table";
+            string query = "DELETE * FROM sql7368973.Staff WHERE Position ID = true";
 
             MySqlCommand cmd = new MySqlCommand(query, conn);
             cmd.ExecuteNonQuery();
             conn.Close();
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
