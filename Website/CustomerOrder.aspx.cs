@@ -23,11 +23,12 @@ namespace Website
          * 
          */
 
-        private Order order;
-        private CartPanel ov;
+        private static Order order;
+        private static CartPanel ov;
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
+
 
         protected void Page_Init(object o, EventArgs e)
         {
@@ -64,12 +65,18 @@ namespace Website
                     {
                         if (Session["OrderID"] != null)
                         {
-                            order = new Order(int.Parse(Session["OrderID"].ToString())); //at this point we need a customer ID to make a new order, have to fix
+                            if(order == null)
+                            {
+                                order = new Order(int.Parse(Session["OrderID"].ToString())); //at this point we need a customer ID to make a new order, have to fix
+                            }
                         }
                         else
                         {
-                            order = new Order(int.Parse(Session["CustomerID"].ToString()), 0, 0);
-                            Session["OrderID"] = order.getOrderID();
+                            if(order == null)
+                            {
+                                order = new Order(int.Parse(Session["CustomerID"].ToString()), 0, 0);
+                                Session["OrderID"] = order.getOrderID();
+                            }
                         }
                     }
                     else
@@ -85,7 +92,15 @@ namespace Website
 
                 if (!IsPostBack || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
-                    ov = new CartPanel(order.getConnection(), order.getCustomerID(), order.getOrderID());
+                    if(ov == null)
+                    {
+                        ov = new CartPanel(order.getConnection(), order.getCustomerID(), order.getOrderID());
+                    }
+                    else
+                    {
+                        ov.update();
+                    }
+                    
                     pnlOrder.Controls.Add(ov.getHeadPanel());
                     Button checkoutBtn = new Button();
                     checkoutBtn.Text = "Checkout";
@@ -139,22 +154,18 @@ namespace Website
 
                             //Create panel to serve as a card, so img, price, name can be added inside it
                             Panel pnl1 = new Panel();
-                            pnl1.CssClass = "card row bg-dark m-md-1";
+                            pnl1.CssClass = "card row bg-dark m-md-2 m-lg-3 text-light";
 
                             Panel pnlNameDesc = new Panel();
-                            pnlNameDesc.CssClass = "col-sm-8";
-                            pnlNameDesc.Attributes.CssStyle.Add("display","flex");
-                            pnlNameDesc.Attributes.CssStyle.Add("flex-direction", "column");
+                            pnlNameDesc.CssClass = "col-sm-8 pnlNameDesc";
 
                             Panel pnlPriceBtn = new Panel();
-                            pnlPriceBtn.CssClass = "col-sm-4";
-                            pnlPriceBtn.Attributes.CssStyle.Add("display", "flex");
-                            pnlPriceBtn.Attributes.CssStyle.Add("flex-direction", "column");
+                            pnlPriceBtn.CssClass = "col-sm-4 pnlPriceBtn";
 
                             //Label for the price
                             Label lblPrice = new Label();
                             lblPrice.Text = productPrice;
-                            //lblPrice.CssClass = "";
+                            lblPrice.CssClass = "text-light";
 
                             //Creating image object (for future implementation)
                             /*Image img1 = new Image();
@@ -258,8 +269,8 @@ namespace Website
         {
             try
             {
-                Session["UserID"] = this.order.getCustomerID();
-                Session["OrderID"] = this.order.getOrderID();
+                Session["UserID"] = order.getCustomerID();
+                Session["OrderID"] = order.getOrderID();
                 Response.Redirect("Checkout.aspx");
             }
             catch(Exception x)
@@ -267,6 +278,12 @@ namespace Website
                 Session["Erorr"] = x.Message;
                 Response.Redirect("Error.aspx");
             }
+        }
+
+        private void throwEx(Exception x)
+        {
+            Session["Error"] = x.Message + x.StackTrace;
+            HttpContext.Current.Response.Redirect("Error.aspx", false);
         }
     }
 }

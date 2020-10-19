@@ -9,6 +9,18 @@ namespace Website.App_Code
 {
     public class CartPanel : System.Web.UI.Page
     {
+        /*
+        * This class's purpose is to create a way (panel) to visualize the 
+        *  customer's order (or rather the items in their order)
+        *  so they can manage their own order
+        *  
+        * 1. It runs really slow from my experience
+        * 2. I will try to upload a diagram of what it should look like
+        * 3. This one may still need a teeny bit of error handling
+        * 4. Check the diagrams folder for a visual of how this is supposed to look
+        * 
+        */
+
         private MySqlConnection conn;
         private int customerID;
         private int orderID;
@@ -34,18 +46,6 @@ namespace Website.App_Code
 
         public CartPanel(MySqlConnection c, int customerID, int orderID)
         {
-            /*
-             * This class's purpose is to create a way (panel) to visualize the 
-             *  customer's order (or rather the items in their order)
-             *  so they can manage their own order
-             *  
-             * 1. It runs really slow from my experience
-             * 2. I will try to upload a diagram of what it should look like
-             * 3. This one may still need a teeny bit of error handling
-             * 4. Check the diagrams folder for a visual of how this is supposed to look
-             * 
-             */
-
             this.conn = c;
             this.customerID = customerID;
             this.orderID = orderID;
@@ -136,7 +136,7 @@ namespace Website.App_Code
         }
 
         public int update()
-        {
+         {
             //It's basically a reload method for every product in the order
             //returns the count of things updated
             float productPrice = 0;

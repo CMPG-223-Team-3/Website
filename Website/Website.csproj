@@ -113,6 +113,12 @@
     <Content Include="Checkout.aspx" />
     <Content Include="CustomerOrder.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="dist\bootstrap.js" />
+    <Content Include="dist\fontawesome.js" />
+    <Content Include="dist\general.js" />
+    <Content Include="dist\jquery.js" />
+    <Content Include="dist\popper.js" />
+    <Content Include="dist\style.css" />
     <Content Include="Error.aspx" />
     <Content Include="gulpfile.es5.js">
       <DependentUpon>gulpfile.js</DependentUpon>

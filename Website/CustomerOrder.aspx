@@ -5,14 +5,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Order</title>
-    
-    <!--Question: do we do Bootstrap thru the cdn way or no?-->
-    <!--
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
-    -->
 
     <link rel="stylesheet" href="dist/style.css"/>
     <script src="dist/general.js"></script>
@@ -22,13 +14,13 @@
     <script src="dist/bootstrap.js"></script>
 
 </head>
-<body style="background-color: #40404F;">
+<body>
     <form id="form1" runat="server">
 
         <!--Nav bar-->
-            <nav style="background-color: rgba(0, 0, 0, 0.562);" class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
+            <nav class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
                 <div class="container-fluid">
-                    <a class="navbar-brand thumbnail" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
+                    <a class="navbar-brand thumbnail navPic" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -61,11 +53,10 @@
                 </div>
             </nav>
 
-        <div class="container text-white">
-            <!--Search Nav-->
-            
-            <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label> <!--label just to check errors-->
+        <div class="container">
 
+
+            <!--Search Nav-->
             <div class="row mt-md- mb-md-4 mt-sm-2 mb-sm-2">
                 <asp:Button ID="btnSearch" class="btn btn-dark col-2" runat="server" Text="Search" OnClick="btnSearch_Click"/>
                 <asp:TextBox ID="txtSearch" class="form-control col-10" placeholder="Search term, keyword" runat="server"></asp:TextBox>
@@ -85,13 +76,9 @@
                     <asp:Panel class="col-xs-0 col-lg-5" ID="pnlOrder" runat="server"></asp:Panel>
                 </div>
             </div>
-            
-
         </div>
 
-        
-
-        <footer style="background-color: rgba(0, 0, 0, 0.562);" class="text-white page-footer font-small pt-md-4 pb-4 mt-4">
+        <footer class="page-footer font-small pt-md-4 pb-4 mt-4">
             <div class="container-fluid text-center text-sm-left">
                 <div class="row">
                     <div class="col">
@@ -124,18 +111,12 @@
             </div>
      </footer>
 
-    <div style="background-color: white;" class="footer-copyright text-center py-3">
+    <div class="footer-copyright text-center py-3">
         Copyright text
         <a href="#">2020</a>
     </div>
 
 
     </form>
-    <!--More Bootstrap cdn javascript links-->
-    <!--
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    -->
 </body>
 </html>

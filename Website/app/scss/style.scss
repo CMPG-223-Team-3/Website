@@ -1,8 +1,19 @@
 // Variable Overrides
-$theme-colors: ( "primary": #b6ff00);
-$body-bg: #ff0000;
-$blue:#000000;
+$theme-colors: ( "primary": #747474);
+$body-bg: #40404F;
+$body-color: white;
+$dark: rgba(0, 0, 0, 0.28);
+
+.navbar {
+    background-color: $dark;
+}
+
+.page-footer {
+    background-color: $dark;
+}
+
 .jumbotron {
+    color: black;
     background-color: #ffffff !important;
     border-top: 3px solid rgb(219, 219, 219);
 }
@@ -10,6 +21,21 @@ $blue:#000000;
 .dropdown:hover .dropdown-menu {
     display: block;
 }
+
+.footer-copyright {
+    background-color: rgba(198, 198, 198, 0.92);
+}
+
+.pnlNameDesc {
+    display: flex;
+    flex-direction: column;
+}
+
+.pnlPriceBtn {
+    display: flex;
+    flex-direction: column;
+}
+
 
 // Bootstrap Sass Imports
 @import "node_modules/bootstrap/scss/bootstrap";
