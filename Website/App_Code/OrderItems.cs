@@ -21,7 +21,9 @@ namespace Website.App_Code
 
         private static MySqlConnection conn;
         private int orderID;
-        private DataTable orderItems;
+        private static DataTable orderItems;
+        private static MySqlCommandBuilder build;
+        private static MySqlDataAdapter adap;
 
         public OrderItems(int OrderID)
         {//Only constructor - needs the OrderID - will usually already be known if this class was to be used by Order class
@@ -30,7 +32,7 @@ namespace Website.App_Code
                 ConnectionClass connection = new ConnectionClass();//Class to connect to database
                 conn = connection.getConnection();
                 orderID = OrderID;
-                orderItems = getOrderItemsTable();
+                getOrderItemsTable();
             }
             catch (Exception x)
             {
@@ -43,7 +45,7 @@ namespace Website.App_Code
             return orderItems;
         }
 
-        public DataTable getOrderItemsTable()
+        public void getOrderItemsTable()
         {//Put all of the orderId's orderitems into a DataTable and return it
             MySqlCommand cmmd = new MySqlCommand();
             cmmd.CommandText =
@@ -52,11 +54,13 @@ namespace Website.App_Code
             cmmd.Connection = conn;
             try
             {
-                MySqlDataAdapter adap = new MySqlDataAdapter(cmmd);
+                adap = new MySqlDataAdapter(cmmd);
+                build = new MySqlCommandBuilder(adap);
+                
                 DataTable ds = new DataTable();
                 adap.Fill(ds);
 
-                return ds;
+                orderItems = ds;
             }
             catch (Exception x)
             {
@@ -207,14 +211,15 @@ namespace Website.App_Code
         {
             try
             {
-                MySqlCommand cmmd = new MySqlCommand();
+                /*MySqlCommand cmmd = new MySqlCommand();
                 cmmd.CommandText =
                     "SELECT * " +
                     "FROM `Order Menu Item link`;";
                 cmmd.Connection = conn;
 
                 MySqlDataAdapter adap = new MySqlDataAdapter(cmmd);
-                DataTable ds = new DataTable();
+                adap.SelectCommand = new MySqlCommand("SELECT * FROM `Order Menu Item link`",conn);
+                MySqlCommandBuilder build = new MySqlCommandBuilder(adap);*/
 
                 using (conn)
                 {

@@ -273,7 +273,7 @@ namespace Website
                 order.getOrderItemsObject().close();
                 Session["UserID"] = order.getCustomerID();
                 Session["OrderID"] = order.getOrderID();
-                Response.Redirect("Checkout.aspx");
+                Response.Redirect("Checkout.aspx", false);
             }
             catch(Exception x)
             {
