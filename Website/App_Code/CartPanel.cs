@@ -26,7 +26,7 @@ namespace Website.App_Code
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
-        private Order order;
+        public Order order;
         private DataTable menuItems;
         private DataTable orderItems;
 
@@ -100,7 +100,7 @@ namespace Website.App_Code
             DataTable i = new DataTable();
             try
             {
-                i = order.getOrderItemsObject().getOrderItemsTable();
+                i = order.getOrderItemsObject().getCurrentTable();
             }
             catch(Exception x)
             {

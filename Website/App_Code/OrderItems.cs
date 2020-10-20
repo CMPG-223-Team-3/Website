@@ -1,12 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Web;
-using Website.App_Code;
 
-namespace Website
+namespace Website.App_Code
 {
     public class OrderItems
     {
@@ -15,14 +11,17 @@ namespace Website
          * 1. It will act something like a subclass of the Order class
          *      where it will be used in conjunction with the Order class as a global var
          *      "storing" and modifying that specific order's items
-         * 2. Technically doesn't store the products in the order, but 
-         *      executes commands based on the order
          * 
          */
 
-        private MySqlConnection conn;
-        private int orderID;
+        private string pkCol = "Order Menu-Item link ID";
+        private string MenuIDCol = "Menu-Item ID";
+        private string OrderIDCol = "Order ID";
+        private string QuantityCol = "Quantity";
 
+        private static MySqlConnection conn;
+        private int orderID;
+        private DataTable orderItems;
 
         public OrderItems(int OrderID)
         {//Only constructor - needs the OrderID - will usually already be known if this class was to be used by Order class
@@ -31,6 +30,7 @@ namespace Website
                 ConnectionClass connection = new ConnectionClass();//Class to connect to database
                 conn = connection.getConnection();
                 orderID = OrderID;
+                orderItems = getOrderItemsTable();
             }
             catch (Exception x)
             {
@@ -38,227 +38,9 @@ namespace Website
             }
         }
 
-        public void addProduct(int productId, int quantity)
-        {//The default adding of a product to be used...
-         //It checks if the product already in order (if is, then add the quantity, else create new product in order)
-            
-            if (quantity < 1)
-            {
-                throw new Exception("Invalid quantity of products: " + quantity);
-            }
-            try
-            {
-                if (hasProduct(productId, orderID))
-                {//Does the orderId have this item in the database? Yes:
-                    try
-                    {//Update the quantity
-                        int currentQuantity = getQuantityOfAProduct(productId);
-                        MySqlCommand c = new MySqlCommand();
-                        c.Connection = conn;
-                        c.CommandText =
-                            "UPDATE `Order Menu Item link` " +
-                            "SET Quantity=@qu " +
-                            "WHERE `Order ID`=@oID " +
-                            "AND `Menu-Item ID`=@mID;";
-                        c.Parameters.AddWithValue("@mID", productId);
-                        c.Parameters.AddWithValue("@oID", orderID);
-                        c.Parameters.AddWithValue("@qu", quantity + currentQuantity);
-                        executeNonQuery(c);
-                    }
-                    catch(Exception x)
-                    {
-                        throw x;
-                    }
-                }
-                else
-                {//No, it does not have product in the database
-                    try
-                    {//Make a new entry in the database for the product
-                        MySqlCommand c = new MySqlCommand();
-                        c.Connection = conn;
-                        c.CommandText =
-                            "INSERT INTO `Order Menu Item link` " +
-                            "(`Menu-Item ID`, `Order ID`, `Quantity`) " +
-                            "VALUES" +
-                            "(@menuID, @orderID, @quan);";
-                        c.Parameters.AddWithValue("@menuID", productId);
-                        c.Parameters.AddWithValue("@orderID", orderID);
-                        c.Parameters.AddWithValue("@quan", quantity);
-                        executeNonQuery(c);
-                    }
-                    catch (Exception x)
-                    {
-                        throw x;
-                    }
-                }
-            }
-            catch (Exception x)
-            {
-                throw x;
-            }
-        }
-
-        public bool hasProduct(int productId, int orderId)
-        {//Method that checks if `Order Menu Item link` has an orderId that has product: productId
-            MySqlCommand c = new MySqlCommand();
-            c.Connection = conn;
-            c.CommandText =
-                "SELECT * " +
-                "FROM `Order Menu Item link` " +
-                "WHERE `Order ID`=@oid " +
-                "AND `Menu-Item ID`=@pid";
-            c.Parameters.AddWithValue("@oid", orderId);
-            c.Parameters.AddWithValue("@pid", productId);
-            try
-            {
-                conn.Open();
-                if (c.ExecuteScalar() != null)
-                {
-                    conn.Close();
-                    return true;
-                }
-                else
-                {
-                    conn.Close();
-                    return false;
-                }
-            }
-            catch(Exception x)
-            {
-                return false;
-            }
-        }
-
-        public void removeProduct(int productId, int howmany)
-        {//Remove quantity of productId from order (if the order contains the product)
-         //If quantity goes less than 0 (currentQuantity-howmany), delete the item from the order
-            try
-            {
-                if(hasProduct(productId, orderID))
-                {
-                    int quantity = getQuantityOfAProduct(productId);
-
-                    if (quantity - howmany > 0)
-                    {
-                        MySqlCommand c = new MySqlCommand();
-                        c.Connection = conn;
-                        c.CommandText =
-                            "UPDATE `Order Menu Item link` " +
-                            "SET Quantity=@quan " +
-                            "WHERE `Order ID`=@orderID " +
-                            "AND `Menu-Item ID`=@menuID;";
-                        c.Parameters.AddWithValue("@menuID", productId);
-                        c.Parameters.AddWithValue("@orderID", orderID);
-                        c.Parameters.AddWithValue("@quan", (quantity - howmany));
-                        executeNonQuery(c);
-                    }
-                    else
-                    {
-                        removeAllOfAProduct(productId);
-                    }
-                }
-            }
-            catch (Exception x)
-            {
-                throw x;
-            }
-        }
-
-        private int getQuantityOfAProduct(int menuItemID)
-        {//Get the quantity of a product in the order
-            int quantity = 0;
-            try
-            {
-                if(hasProduct(menuItemID, orderID))
-                {
-                    MySqlCommand checkQuantity = new MySqlCommand();
-                    checkQuantity.CommandText =
-                            "SELECT * " +
-                            "FROM `Order Menu Item link` " +
-                            "WHERE `Order ID`=@oid " +
-                            "AND `Menu-Item ID`=@mid;";
-                    checkQuantity.Connection = conn;
-                    checkQuantity.Parameters.AddWithValue("@oid",orderID);
-                    checkQuantity.Parameters.AddWithValue("@mid", menuItemID);
-
-                    using(conn) //NOTE: idk why but executescalar did not want to work here - kept returning "Quantity" instead of the quantity value
-                    {
-                        conn.Open();
-                        using (MySqlDataReader r = checkQuantity.ExecuteReader())
-                        {
-                            if (r.HasRows)
-                            {
-                                while (r.Read())
-                                {
-                                    quantity = int.Parse(r["Quantity"].ToString());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception x)
-            {
-                throw new Exception(x.Message);
-            }
-            return quantity;
-        }
-
-        public void removeAllOfAProduct(int productId)
-        {//delete product from order - deletes all quantity, unlike removeproduct
-            try
-            {
-                if(hasProduct(productId, orderID))
-                {
-                    MySqlCommand comm = new MySqlCommand();
-                    comm.CommandText =
-                        "DELETE FROM `Order Menu Item link` " +
-                        "WHERE `Menu-Item ID` = @mid " +
-                        "AND `Order ID` = @oid;";
-                    comm.Connection = conn;
-                    comm.Parameters.AddWithValue("@mid", productId);
-                    comm.Parameters.AddWithValue("@oid", orderID);
-                    executeNonQuery(comm);
-                }
-            }
-            catch(Exception x)
-            {
-                throw x;
-            }
-        }
-
-        public void deleteAllProducts()
-        {//Method to delete all of the products associated with the orderID in Order Menu Item link
-            try
-            {
-                MySqlCommand comm = new MySqlCommand();
-                comm.CommandText =
-                    "DELETE " +
-                    "FROM `Order Menu Item link`" +
-                    "WHERE `Order ID`=" + orderID + ";";
-                comm.Connection = conn;
-                executeNonQuery(comm);
-            }
-            catch(Exception x)
-            {
-                throw x;
-            }
-        }
-
-        private void executeNonQuery(MySqlCommand que)
-        {//Try and safely do the ExecuteNonQuery() on a command
-            try
-            {
-                using (conn)
-                {
-                    conn.Open();
-                    que.ExecuteNonQuery();
-                }
-            }
-            catch (Exception x)
-            {
-                throw new Exception(x.Message);
-            }
+        public DataTable getCurrentTable()
+        {
+            return orderItems;
         }
 
         public DataTable getOrderItemsTable()
@@ -276,10 +58,179 @@ namespace Website
 
                 return ds;
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throw x;
             }
+        }
+
+        public void deleteAllProducts()
+        {//Method to delete all of the products associated with the orderID in Order Menu Item link
+
+            if (orderItems.Rows.Count > 0)
+            {
+                orderItems.Rows.Clear();
+            }
+        }
+
+        public void removeAllOfAProduct(int productId)
+        {//delete product from order - deletes all quantity, unlike removeproduct
+            try
+            {
+                if(hasProduct(productId))
+                {
+                    int place = whereProduct(productId);
+                    orderItems.Rows[place][OrderIDCol] = DBNull.Value;
+                }
+            }
+            catch (DeletedRowInaccessibleException x)
+            {
+                throw x;
+            }
+            catch (Exception xy)
+            {
+                throw xy;
+            }
+        }
+
+        public bool hasProduct(int productId)
+        {//Method that checks if `Order Menu Item link` has an orderId that has product: productId
+            if (orderItems.Rows.Count > 0)
+            {
+                foreach (DataRow r in orderItems.Rows)
+                {
+                    if ((r[OrderIDCol].ToString() == orderID.ToString()) && r[MenuIDCol].ToString() == productId.ToString())
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public int whereProduct(int productId)
+        {//Method that checks if `Order Menu Item link` has an orderId that has product: productId
+            int x = 0;
+            if (orderItems.Rows.Count > 0)
+            {
+                foreach (DataRow r in orderItems.Rows)
+                {
+                    if ((r[OrderIDCol].ToString() == orderID.ToString()) && r[MenuIDCol].ToString() == productId.ToString())
+                    {
+                        return x;
+                    }
+                    x++;
+                }
+            }
+            return x;
+        }
+
+        public void removeProduct(int productId, int howmany)
+        {//Remove quantity of productId from order (if the order contains the product)
+         //If quantity goes less than 0 (currentQuantity-howmany), delete the item from the order
+            if (orderItems.Rows.Count > 0)
+            {
+                if(hasProduct(productId))
+                {
+                    int place = whereProduct(productId);
+                    int quant = int.Parse(orderItems.Rows[place][QuantityCol].ToString());
+
+                    if (quant - howmany > 0)
+                    {
+                        orderItems.Rows[place][QuantityCol] = (quant - howmany);
+                    }
+                    else
+                    {
+                        removeAllOfAProduct(productId);
+                    }
+                }
+            }
+        }
+
+        private int getQuantityOfAProduct(int productId)
+        {//Get the quantity of a product in the order
+            if (orderItems.Rows.Count > 0)
+            {
+                foreach (DataRow r in orderItems.Rows)
+                {
+                    if ((r[OrderIDCol].ToString() == orderID.ToString()) && r[MenuIDCol].ToString() == productId.ToString())
+                    {
+                        try
+                        {
+                            return int.Parse(r[QuantityCol].ToString());
+                        }
+                        catch (Exception x)
+                        {
+                            throw x;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public void addProduct(int productId, int howmany)
+        {//The default adding of a product to be used...
+         //It checks if the product already in order (if is, then add the quantity, else create new product in order)
+            if (howmany < 0)
+            {
+                throw new Exception("Invalid quantity of products to add : addProduct() in OrderItems");
+            }
+            if (orderItems.Rows.Count > 0)
+            {
+                if (hasProduct(productId))
+                {
+                    int place = whereProduct(productId);
+                    int quant = int.Parse(orderItems.Rows[place][QuantityCol].ToString());
+                    orderItems.Rows[place][QuantityCol] = (quant + howmany);
+                }
+                else
+                {
+                    try
+                    {
+                        DataRow dr = orderItems.NewRow();
+                        dr[MenuIDCol] = productId;
+                        dr[OrderIDCol] = orderID;
+                        dr[QuantityCol] = howmany;
+
+                        orderItems.Rows.Add(dr);
+                    }
+                    catch (Exception x)
+                    {
+                        throw x;
+                    }
+                }
+            }
+        }
+
+        public void close()
+        {
+            try
+            {
+                MySqlCommand cmmd = new MySqlCommand();
+                cmmd.CommandText =
+                    "SELECT * " +
+                    "FROM `Order Menu Item link`;";
+                cmmd.Connection = conn;
+
+                MySqlDataAdapter adap = new MySqlDataAdapter(cmmd);
+                DataTable ds = new DataTable();
+
+                using (conn)
+                {
+                    conn.Open();
+                    adap.Update(orderItems);
+                }
+            }
+            catch (Exception z)
+            {
+                throw z;
+            }
+        }
+
+        public void dispose()
+        {
+            close();
         }
     }
 }
