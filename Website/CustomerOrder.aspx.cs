@@ -29,6 +29,18 @@ namespace Website
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
 
+        //session var names
+        private static string userNameSession = "UserName";
+        private static string errorSession = "Error";
+        private static string fromPageSession = "FromPage";
+        private static string orderIDSession = "OrderID";
+        private static string tableIDSession = "TableID";
+
+
+        private static string menuItemID = "Menu_Item_ID";
+        private static string menuItemName = "Item_Name";
+        private static string menuItemDesc = "Item_Description";
+        private static string menuItemPrice = "Price";
 
         protected void Page_Init(object o, EventArgs e)
         {
@@ -38,7 +50,7 @@ namespace Website
                 ConnectionClass connection = new ConnectionClass();
                 conn = connection.getConnection();
 
-                if(Session["UserName"] == null)
+                if(Session[userNameSession] == null)
                 {
                     throw new Exception("Username not logged in");
                 }
@@ -51,31 +63,31 @@ namespace Website
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["Error"] = null;
-            Session["FromPage"] = pageName;
+            Session[errorSession] = null;
+            Session[fromPageSession] = pageName;
 
             try
             {
-                if (Session["UserName"] != null)
+                if (Session[userNameSession] != null)
                 {
                     //if the user has logged in, display their name instead of the log in label on the navbar
-                    lblLogin.Text = Session["UserName"].ToString();
+                    lblLogin.Text = Session[userNameSession].ToString();
 
-                    if (Session["CustomerID"] != null)
+                    if (Session[tableIDSession] != null)
                     {
-                        if (Session["OrderID"] != null)
+                        if (Session[orderIDSession] != null)
                         {
                             if(order == null)
                             {
-                                order = new Order(int.Parse(Session["OrderID"].ToString())); //at this point we need a customer ID to make a new order, have to fix
+                                order = new Order(int.Parse(Session[orderIDSession].ToString())); //at this point we need a customer ID to make a new order, have to fix
                             }
                         }
                         else
                         {
                             if(order == null)
                             {
-                                order = new Order(int.Parse(Session["CustomerID"].ToString()), 0, 0);
-                                Session["OrderID"] = order.getOrderID();
+                                order = new Order(int.Parse(Session[tableIDSession].ToString()), 0, 0);
+                                Session[orderIDSession] = order.getOrderID();
                             }
                         }
                     }
@@ -99,16 +111,17 @@ namespace Website
                 {//if the user hasn't searched anything or 1st time page loaded
                     if(ov == null)
                     {
-                        ov = new CartPanel(order.getConnection(), order.getCustomerID(), order.getOrderID());
+                        ov = new CartPanel(order.getConnection(), order.getTableID(), order.getOrderID());
                     }
                     
                     pnlOrder.Controls.Add(ov.getHeadPanel());
                     Button checkoutBtn = new Button();
+                    checkoutBtn.CausesValidation = false;
                     checkoutBtn.Text = "Checkout";
                     checkoutBtn.CssClass = "btn btn-dark btn-lg";
                     checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
                     pnlOrder.Controls.Add(checkoutBtn);
-                    showProducts(conn, "SELECT * FROM Menu_Item");
+                    showProducts(conn, "SELECT * FROM MENU-ITEM");
                 }
 
                 if (isSearched)
@@ -119,7 +132,7 @@ namespace Website
             }
             catch(Exception ee)
             {
-                Session["Error"] = ee.Message + ee.StackTrace;
+                Session[errorSession] = ee.Message + ee.StackTrace;
                 Response.Redirect("Error.aspx");
             }
         }
@@ -138,76 +151,82 @@ namespace Website
                 {
                     mysqlConnection.Open();
                     MySqlCommand mysqlCommand = new MySqlCommand(command, mysqlConnection);
-                    MySqlDataReader mysqlReader = mysqlCommand.ExecuteReader();
 
-                    if(mysqlReader != null)
+                    using(MySqlDataReader mysqlReader = mysqlCommand.ExecuteReader())
                     {
-                        //While database has x many products searched in command parm
-                        while(mysqlReader.Read())
+                        if (mysqlReader != null)
                         {
-                            //Reading specific product info out of database to use for the cards
-                            //According to the data model columns are: 0-Menu-Item-ID; 1-Recipe-ID; 2-Category-ID; 3-Name; 4-Price
-                            string productId = mysqlReader.GetString("Menu-Item ID");
-                            string productName = mysqlReader.GetString("Name");
-                            string productPrice = mysqlReader.GetString("Price");
+                            //While database has x many products searched in command parm
+                            while (mysqlReader.Read())
+                            {
+                                //Reading specific product info out of database to use for the cards
+                                //According to the data model columns are: 0-Menu-Item-ID; 1-Recipe-ID; 2-Category-ID; 3-Name; 4-Price
+                                string productId = mysqlReader[menuItemID].ToString();
+                                string productName = mysqlReader[menuItemName].ToString();
+                                string productPrice = mysqlReader[menuItemPrice].ToString();
+                                string productDesc = mysqlReader[menuItemDesc].ToString();
+    
+                                countedProducts++;
 
-                            countedProducts++;
+                                //Create panel to serve as a card, so img, price, name can be added inside it
+                                Panel pnl1 = new Panel();
+                                pnl1.CssClass = "card row bg-dark m-md-2 m-lg-3 text-light";
 
-                            //Create panel to serve as a card, so img, price, name can be added inside it
-                            Panel pnl1 = new Panel();
-                            pnl1.CssClass = "card row bg-dark m-md-2 m-lg-3 text-light";
+                                Panel pnlNameDesc = new Panel();
+                                pnlNameDesc.CssClass = "col-sm-8 pnlNameDesc";
 
-                            Panel pnlNameDesc = new Panel();
-                            pnlNameDesc.CssClass = "col-sm-8 pnlNameDesc";
+                                Panel pnlPriceBtn = new Panel();
+                                pnlPriceBtn.CssClass = "col-sm-4 pnlPriceBtn";
 
-                            Panel pnlPriceBtn = new Panel();
-                            pnlPriceBtn.CssClass = "col-sm-4 pnlPriceBtn";
+                                //Label for the price
+                                Label lblPrice = new Label();
+                                lblPrice.Text = productPrice;
+                                lblPrice.CssClass = "text-light";
 
-                            //Label for the price
-                            Label lblPrice = new Label();
-                            lblPrice.Text = productPrice;
-                            lblPrice.CssClass = "text-light";
+                                //Creating image object (for future implementation)
+                                /*Image img1 = new Image();
+                                img1.ImageUrl = productImageUrl;
+                                //im1.CssClass = "";
+                                img1.AlternateText = "Product Image";*/
 
-                            //Creating image object (for future implementation)
-                            /*Image img1 = new Image();
-                            img1.ImageUrl = productImageUrl;
-                            //im1.CssClass = "";
-                            img1.AlternateText = "Product Image";*/
+                                //Creating the add to cart button
+                                Button btn1 = new Button();
+                                btn1.Text = "Add to cart";
+                                btn1.CssClass = "btn btn-light";
+                                btn1.ID = productId + "_addtocart_" + countedProducts; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
+                                btn1.Click += new EventHandler(addToCartBtnClicked); //To correctly link the event to the event handler
+                                btn1.CausesValidation = false;
 
-                            //Creating the add to cart button
-                            Button btn1 = new Button();
-                            btn1.Text = "Add to cart";
-                            btn1.CssClass = "btn btn-light";
-                            btn1.ID = productId + "_addtocart_" + countedProducts; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
-                            btn1.Click += new EventHandler(addToCartBtnClicked); //To correctly link the event to the event handler
-                            btn1.CausesValidation = false;
+                                //Label object for the name of the item
+                                Label lblName = new Label();
+                                lblName.Text = productName;
 
-                            //Label object for the name of the item
-                            Label lblName = new Label();
-                            lblName.Text = productName;
-                            //lblName.CssClass = 
+                                //Label object for the desc of the item
+                                Label lblDesc = new Label();
+                                lblDesc.Text = productDesc;
 
-                            //Add items to their respective panels
-                            pnlNameDesc.Controls.Add(lblName);
-                            pnlPriceBtn.Controls.Add(lblPrice);
-                            pnlPriceBtn.Controls.Add(btn1);
-                            pnl1.Controls.Add(pnlNameDesc);
-                            pnl1.Controls.Add(pnlPriceBtn);
+                                //Add items to their respective panels
+                                pnlNameDesc.Controls.Add(lblName);
+                                pnlNameDesc.Controls.Add(lblDesc);
+                                pnlPriceBtn.Controls.Add(lblPrice);
+                                pnlPriceBtn.Controls.Add(btn1);
+                                pnl1.Controls.Add(pnlNameDesc);
+                                pnl1.Controls.Add(pnlPriceBtn);
 
-                            //Add panel to master panel
-                            pnlMaster.Controls.Add(pnl1);
+                                //Add panel to master panel
+                                pnlMaster.Controls.Add(pnl1);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Could not access database items");
                         }
                     }
-                    else
-                    {
-                        throw new Exception("Could not access database items");
-                    }
-                    mysqlConnection.Close();
                 }
             }
             catch(Exception exc)
             {
-                Session["Error"] = exc.Message;
+                Session[errorSession] = exc.Message;
                 Response.Redirect("Erorr.aspx");
             }
         }
@@ -227,12 +246,12 @@ namespace Website
             }
             catch(Exception x)
             {
-                Session["Error"] = x.Message + ":   " + x.StackTrace;
+                Session[errorSession] = x.Message + ":   " + x.StackTrace;
                 Response.Redirect("Error.aspx");
             }
 
-            //Second check if user is logged in so we can add the selected products to their cart
-            if (Session["UserName"] != null)
+            //Second check if user is logged in (has name) so we can add the selected products to their cart
+            if (Session[userNameSession] != null)
             {
                 //Add the item to the cart
 
@@ -254,12 +273,12 @@ namespace Website
                 try
                 {
                     //Create new cmmd to ShowProducts() for filtered items
-                    string tmp = "SELECT * FROM Menu_Item WHERE Name LIKE '" + "%" + txtSearch.Text.ToLower() + "%" + "'";
+                    string tmp = "SELECT * FROM MENU-ITEM WHERE Item_Name LIKE '" + "%" + txtSearch.Text.ToLower() + "%" + "'";
                     showProducts(conn, tmp);
                 }
                 catch(Exception x)
                 {
-                    Session["Erorr"] = x.Message;
+                    Session[errorSession] = x.Message;
                     Response.Redirect("Error.aspx");
                 }
             }
@@ -271,20 +290,20 @@ namespace Website
             try
             {
                 order.getOrderItemsObject().close();
-                Session["UserID"] = order.getCustomerID();
-                Session["OrderID"] = order.getOrderID();
+                Session[tableIDSession] = order.getTableID();
+                Session[orderIDSession] = order.getOrderID();
                 Response.Redirect("Checkout.aspx", false);
             }
             catch(Exception x)
             {
-                Session["Erorr"] = x.Message;
+                Session[errorSession] = x.Message;
                 Response.Redirect("Error.aspx");
             }
         }
 
         private void throwEx(Exception x)
         {
-            Session["Error"] = x.Message + x.StackTrace;
+            Session[errorSession] = x.Message + x.StackTrace;
             HttpContext.Current.Response.Redirect("Error.aspx", false);
         }
     }

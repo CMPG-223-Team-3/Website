@@ -22,7 +22,7 @@ namespace Website.App_Code
         */
 
         private MySqlConnection conn;
-        private int customerID;
+        private int tableID;
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
@@ -36,18 +36,19 @@ namespace Website.App_Code
         private Label price;
         private Label quanlbl;
 
-        private string menuIDCol = "Menu-Item ID";
-        private string menuNameCol = "Name";
+        private string menuIDCol = "Menu_Item_ID";
+        private string menuNameCol = "Item_Name";
         private string menuPriceCol = "Price";
-        private string orderItemsMenuIDCol = "Menu-Item ID";
-        private string orderItemsOrderIDCol = "Order ID";
-        private string orderItemsQuantityCol = "Quantity";
+        private string orderItemsMenuIDCol = "Menu_Item_ID";
+        private string orderItemsOrderIDCol = "Order_ID";
+        private string orderItemsQuantityCol = "Quantity_Ordered";
 
+        private static string errorSession = "Error";
 
-        public CartPanel(MySqlConnection c, int customerID, int orderID)
+        public CartPanel(MySqlConnection c, int tableID, int orderID)
         {
             this.conn = c;
-            this.customerID = customerID;
+            this.tableID = tableID;
             this.orderID = orderID;
 
             headPanel = new Panel();
@@ -69,7 +70,7 @@ namespace Website.App_Code
         public CartPanel(Order ord)
         {//Constructor that receives the person's Order object (already has all the info we need)
             this.conn = ord.getConnection();
-            this.customerID = ord.getCustomerID();
+            this.tableID = ord.getTableID();
             this.orderID = ord.getOrderID();
 
             headPanel = new Panel();
@@ -91,7 +92,7 @@ namespace Website.App_Code
 
         private void throwEx(Exception x)
         {
-            Session["Error"] = x.Message + x.StackTrace;
+            Session[errorSession] = x.Message + x.StackTrace;
             HttpContext.Current.Response.Redirect("Error.aspx", false);
         }
 
@@ -118,7 +119,7 @@ namespace Website.App_Code
                 cm.Connection = conn;
                 cm.CommandText =
                     "SELECT * " +
-                    "FROM Menu_Item ";
+                    "FROM MENU-ITEM ";
                 //cm.Parameters.AddWithValue("@mm", menuTableName);
                 MySqlDataAdapter adap = new MySqlDataAdapter(cm);
                 adap.Fill(ds);

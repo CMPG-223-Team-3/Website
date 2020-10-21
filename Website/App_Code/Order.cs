@@ -24,16 +24,16 @@ namespace Website.App_Code
          */
          
         //The global vars for the specific instance of the order
-        private int customerID;
+        private int tableID;
         private MySqlConnection conn;
         private int orderID;
         private int orderPaid;
         private int orderStatus;
         private OrderItems orderItems;
 
-        private string tabName = "Order";
-        private string orderIDName = "Order ID";
-        private string customerIDName = "Customer ID";
+        private string tabName = "ORDER_DETAIL";
+        private string orderIDName = "Order_ID";
+        private string tableIDName = "Table_nr";
         private string paidName = "Paid";
         private string statusName = "Status";
 
@@ -56,7 +56,7 @@ namespace Website.App_Code
             }
         }
 
-        public Order(int customerID, int paid, int status)//Parameters of the customer so new order can be made
+        public Order(int tabID, int paid, int status)//Parameters of the customer so new order can be made
         {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
@@ -68,17 +68,17 @@ namespace Website.App_Code
                 throw x;
             }
 
-            this.customerID = customerID;
+            this.tableID = tabID;
             try
             {
                 MySqlCommand cmmd = new MySqlCommand();
                 cmmd.CommandText =
                     "INSERT " +
-                    "INTO `Order`" +
-                    "(`Customer ID`, `Paid`, `Status`) " +
+                    "INTO `ORDER`" +
+                    "(`Table_nr`, `Paid`, `Status`) " +
                     "VALUES(@cid, @pd, @st);";
                 cmmd.Connection = conn;
-                cmmd.Parameters.AddWithValue("@cid",customerID);
+                cmmd.Parameters.AddWithValue("@cid",tabID);
                 cmmd.Parameters.AddWithValue("@pd", paid);
                 cmmd.Parameters.AddWithValue("@st",status);
                 
@@ -93,7 +93,7 @@ namespace Website.App_Code
         }
 
         private bool getOrderInfo(int orderId)
-        {//method to get the orderID's customerID, orderPaid, and orderStatus and
+        {//method to get the orderID's tableID, orderPaid, and orderStatus and
             //assign them to the global vars
             //NOTE: Exception handling returns false, instead of an exception
 
@@ -101,8 +101,8 @@ namespace Website.App_Code
             MySqlCommand cmmd2 = new MySqlCommand();
             cmmd2.CommandText =
                 "SELECT * " +
-                "FROM `Order` " +
-                "WHERE `Order ID` = @oid;";
+                "FROM `ORDER` " +
+                "WHERE `Order_ID` = @oid;";
             cmmd2.Parameters.AddWithValue("@oid", orderId);
             cmmd2.Connection = conn;
 
@@ -117,7 +117,7 @@ namespace Website.App_Code
                         {
                             while (rd.Read())
                             {
-                                customerID = int.Parse(rd[customerIDName].ToString());
+                                tableID = int.Parse(rd[tableIDName].ToString());
                                 orderPaid = int.Parse(rd[paidName].ToString());
                                 orderStatus = int.Parse(rd[statusName].ToString());
                             }
@@ -138,9 +138,9 @@ namespace Website.App_Code
             int x = -1;
             MySqlCommand cmmd2 = new MySqlCommand();
             cmmd2.CommandText =
-                "SELECT `Order ID` " +
-                "FROM `Order` " +
-                "WHERE `Order ID` = (SELECT LAST_INSERT_ID());";
+                "SELECT `Order_ID` " +
+                "FROM `ORDER` " +
+                "WHERE `Order_ID` = (SELECT LAST_INSERT_ID());";
             cmmd2.Connection = conn;
 
             try
@@ -179,9 +179,9 @@ namespace Website.App_Code
             }
         }
 
-        public int getCustomerID()
+        public int getTableID()
         {
-            return customerID;
+            return tableID;
         }
         public MySqlConnection getConnection()
         {

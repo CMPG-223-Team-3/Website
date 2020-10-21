@@ -14,10 +14,9 @@ namespace Website.App_Code
          * 
          */
 
-        private string pkCol = "Order Menu-Item link ID";
-        private string MenuIDCol = "Menu-Item ID";
-        private string OrderIDCol = "Order ID";
-        private string QuantityCol = "Quantity";
+        private string MenuIDCol = "Menu_Item_ID";
+        private string OrderIDCol = "Order_ID";
+        private string QuantityCol = "Quantity_Ordered";
 
         private static MySqlConnection conn;
         private int orderID;
@@ -50,7 +49,7 @@ namespace Website.App_Code
             MySqlCommand cmmd = new MySqlCommand();
             cmmd.CommandText =
                 "SELECT * " +
-                "FROM `Order Menu Item link`;";
+                "FROM `ORDER-DETAIL`;";
             cmmd.Connection = conn;
             try
             {
@@ -211,16 +210,6 @@ namespace Website.App_Code
         {
             try
             {
-                /*MySqlCommand cmmd = new MySqlCommand();
-                cmmd.CommandText =
-                    "SELECT * " +
-                    "FROM `Order Menu Item link`;";
-                cmmd.Connection = conn;
-
-                MySqlDataAdapter adap = new MySqlDataAdapter(cmmd);
-                adap.SelectCommand = new MySqlCommand("SELECT * FROM `Order Menu Item link`",conn);
-                MySqlCommandBuilder build = new MySqlCommandBuilder(adap);*/
-
                 using (conn)
                 {
                     conn.Open();

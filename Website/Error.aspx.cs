@@ -9,10 +9,15 @@ namespace Website
 {
     public partial class Error : System.Web.UI.Page
     {
+        //session var names
+        private static string errorSession = "Error";
+        private static string fromPageSession = "FromPage";
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Error"] != null)
-                lblError.Text = Session["Error"].ToString();
+            if (Session[errorSession] != null)
+                lblError.Text = Session[errorSession].ToString();
             else
                 lblError.Text = "Something went wrong...";
 
@@ -24,9 +29,9 @@ namespace Website
 
         public void btnClicked(object sender, EventArgs e)
         {
-            if (Session["FromPage"] != null)
+            if (Session[fromPageSession] != null)
             {
-                Response.Redirect(Session["FromPage"].ToString());
+                Response.Redirect(Session[fromPageSession].ToString());
             }
             else
             {
