@@ -21,13 +21,17 @@ namespace Website
 
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
-        CartPanel cart;
+        private CartPanel cart;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["FromPage"] = pageName;
             try
             {
+                if(Session["FromPage"] != null)
+                {
+                    Session["FromPage"] = pageName;
+                }
+                
                 ConnectionClass connection = new ConnectionClass();
                 MySqlConnection conn = connection.getConnection();
 
@@ -38,7 +42,6 @@ namespace Website
                         cart = new CartPanel(conn,int.Parse(Session["CustomerID"].ToString()),int.Parse(Session["OrderID"].ToString()));
                         pnlCheckout.Controls.Add(cart.getHeadPanel());
 
-
                         Button checkOut = new Button();
                         checkOut.Text = "Pay";
                         checkOut.CssClass = "btn btn-dark";
@@ -48,7 +51,7 @@ namespace Website
                 }
                 else
                 {//send them to login/signup page
-                    Response.Redirect("Login.aspx");
+                    Response.Redirect("Login.aspx", false);
                 }
             }
             catch(Exception x)
