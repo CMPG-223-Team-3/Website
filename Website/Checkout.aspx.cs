@@ -11,13 +11,12 @@ namespace Website
 {
     public partial class Checkout : System.Web.UI.Page
     {
-        /*private MySqlConnection conn;
-        private static string server = "sql7.freemysqlhosting.net";
-        private static string database = "sql7368973";
-        private static string userName = "sql7368973";
-        private static string userPass = "1lFxsKtjXr";
-        String connectionString = "Server=" + server + ";" + "Port=3306;" + "Database=" +
-            database + ";" + " Uid=" + userName + ";" + "pwd=" + userPass + ";";*/
+        //session var names
+        private static string userNameSession = "UserName";
+        private static string errorSession = "Error";
+        private static string fromPageSession = "FromPage";
+        private static string orderIDSession = "OrderID";
+        private static string tableIDSession = "TableID";
 
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
@@ -27,19 +26,19 @@ namespace Website
         {
             try
             {
-                if(Session["FromPage"] != null)
+                if(Session[fromPageSession] != null)
                 {
-                    Session["FromPage"] = pageName;
+                    Session[fromPageSession] = pageName;
                 }
                 
                 ConnectionClass connection = new ConnectionClass();
                 MySqlConnection conn = connection.getConnection();
 
-                if (Session["CustomerID"] != null)
-                {//if user is signed in
-                    if(Session["OrderID"] != null)
+                if (Session[tableIDSession] != null)
+                {//if user is signed in with their table
+                    if(Session[orderIDSession] != null)
                     {//user has their order placed
-                        cart = new CartPanel(conn,int.Parse(Session["CustomerID"].ToString()),int.Parse(Session["OrderID"].ToString()));
+                        cart = new CartPanel(conn,int.Parse(Session[tableIDSession].ToString()),int.Parse(Session[orderIDSession].ToString()));
                         pnlCheckout.Controls.Add(cart.getHeadPanel());
 
                         Button checkOut = new Button();
@@ -56,14 +55,14 @@ namespace Website
             }
             catch(Exception x)
             {
-                Session["Error"] = x.Message.ToString();
+                Session[errorSession] = x.Message.ToString();
                 Response.Redirect("Error.aspx");
             }
         }
 
         private void checkoutBtnClicked(object sender, EventArgs e)
         {
-            Session["Error"] = new NotImplementedException().Message;
+            Session[errorSession] = new NotImplementedException().Message;
             Response.Redirect("Error.aspx");
         }
 
