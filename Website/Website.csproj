@@ -130,10 +130,11 @@
     <Content Include="gulpfile.js" />
     <Content Include="images\logo.jpg" />
     <Content Include="Login.aspx" />
-    <Content Include="LogOut.aspx" />
+    <Content Include="WaiterLogOut.aspx" />
     <Content Include="Orders.aspx" />
     <Content Include="Registration.aspx" />
     <Content Include="WaiterLogin.aspx" />
+    <Content Include="WaiterOrders.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -184,12 +185,12 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="LogOut.aspx.cs">
-      <DependentUpon>LogOut.aspx</DependentUpon>
+    <Compile Include="WaiterLogOut.aspx.cs">
+      <DependentUpon>WaiterLogOut.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="LogOut.aspx.designer.cs">
-      <DependentUpon>LogOut.aspx</DependentUpon>
+    <Compile Include="WaiterLogOut.aspx.designer.cs">
+      <DependentUpon>WaiterLogOut.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Code\Order.cs" />
     <Compile Include="App_Code\OrderItems.cs" />
@@ -214,6 +215,13 @@
     </Compile>
     <Compile Include="WaiterLogin.aspx.designer.cs">
       <DependentUpon>WaiterLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WaiterOrders.aspx.cs">
+      <DependentUpon>WaiterOrders.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WaiterOrders.aspx.designer.cs">
+      <DependentUpon>WaiterOrders.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
