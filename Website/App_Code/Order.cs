@@ -42,7 +42,7 @@ namespace Website.App_Code
             try
             {
                 orderItems = new OrderItems(orderId);//Object for all the items in the database for this order
-                ConnectionClass connect = new ConnectionClass();//Class to connect to database
+                DatabaseConnection connect = new DatabaseConnection();//Class to connect to database
                 conn = connect.getConnection();
                 this.orderID = orderId;
                 if(!getOrderInfo(orderId))//Go get orderID's info and store it in global vars
@@ -60,7 +60,7 @@ namespace Website.App_Code
         {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
-                ConnectionClass connect = new ConnectionClass();//Class to connect to database
+                DatabaseConnection connect = new DatabaseConnection();//Class to connect to database
                 conn = connect.getConnection();
             }
             catch(Exception x)

@@ -36,6 +36,11 @@ $dark: rgba(0, 0, 0, 0.28);
     flex-direction: column;
 }
 
+.Logo{
+    width: 60px;
+    margin: auto;
+    margin-bottom: 10px;
+}
 
 // Bootstrap Sass Imports
 @import "node_modules/bootstrap/scss/bootstrap";

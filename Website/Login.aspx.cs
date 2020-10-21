@@ -25,7 +25,6 @@ namespace Website
         private static string tableIDSession = "TableID";
 
 
-
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri; //Getting the pagename to store in session at page load so we can know which page to go back to after Error page is thrown
 
@@ -34,7 +33,7 @@ namespace Website
             Session[fromPageSession] = pageName;
             try
             {
-                ConnectionClass connection = new ConnectionClass(); //New connection object (See Connection.cs)
+                DatabaseConnection connection = new DatabaseConnection(); //New connection object (See Connection.cs)
                 conn = connection.getConnection();
             }
             catch(Exception x)

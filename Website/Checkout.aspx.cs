@@ -31,7 +31,7 @@ namespace Website
                     Session[fromPageSession] = pageName;
                 }
                 
-                ConnectionClass connection = new ConnectionClass();
+                DatabaseConnection connection = new DatabaseConnection();
                 MySqlConnection conn = connection.getConnection();
 
                 if (Session[tableIDSession] != null)

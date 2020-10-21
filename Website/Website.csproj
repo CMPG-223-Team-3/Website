@@ -111,6 +111,7 @@
   <ItemGroup>
     <Content Include="app\js\script.js" />
     <Content Include="Checkout.aspx" />
+    <Content Include="CustomerLogin.aspx" />
     <Content Include="CustomerOrder.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="dist\bootstrap.js" />
@@ -132,19 +133,27 @@
     <Content Include="LogOut.aspx" />
     <Content Include="Orders.aspx" />
     <Content Include="Registration.aspx" />
+    <Content Include="WaiterLogin.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\CartPanel.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="App_Code\ConnectionClass.cs" />
+    <Compile Include="App_Code\DatabaseConnection.cs" />
     <Compile Include="Checkout.aspx.cs">
       <DependentUpon>Checkout.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Checkout.aspx.designer.cs">
       <DependentUpon>Checkout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerLogin.aspx.cs">
+      <DependentUpon>CustomerLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerLogin.aspx.designer.cs">
+      <DependentUpon>CustomerLogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="CustomerOrder.aspx.cs">
       <DependentUpon>CustomerOrder.aspx</DependentUpon>
@@ -198,6 +207,13 @@
     </Compile>
     <Compile Include="Registration.aspx.designer.cs">
       <DependentUpon>Registration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WaiterLogin.aspx.cs">
+      <DependentUpon>WaiterLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WaiterLogin.aspx.designer.cs">
+      <DependentUpon>WaiterLogin.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

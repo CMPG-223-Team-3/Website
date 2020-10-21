@@ -28,7 +28,7 @@ namespace Website.App_Code
         {//Only constructor - needs the OrderID - will usually already be known if this class was to be used by Order class
             try
             {
-                ConnectionClass connection = new ConnectionClass();//Class to connect to database
+                DatabaseConnection connection = new DatabaseConnection();//Class to connect to database
                 conn = connection.getConnection();
                 orderID = OrderID;
                 getOrderItemsTable();
