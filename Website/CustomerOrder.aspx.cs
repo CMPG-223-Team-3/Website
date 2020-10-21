@@ -102,16 +102,15 @@ namespace Website
                     Context.ApplicationInstance.CompleteRequest();
                 }
 
-                if(ov != null)
-                {
-                    ov.update();
-                }
-
                 if (!IsPostBack || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
                     if(ov == null)
                     {
                         ov = new CartPanel(order.getConnection(), order.getTableID(), order.getOrderID());
+                    }
+                    else
+                    {
+                        ov.update();
                     }
                     
                     pnlOrder.Controls.Add(ov.getHeadPanel());
@@ -241,7 +240,7 @@ namespace Website
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                ov.order.getOrderItemsObject().addProduct(Id, 1);
+                order.getOrderItemsObject().addProduct(Id, 1);
                 ov.update();
             }
             catch(Exception x)
