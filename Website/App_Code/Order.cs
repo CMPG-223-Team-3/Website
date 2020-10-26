@@ -157,13 +157,13 @@ namespace Website.App_Code
                         {
                             while (rd.Read())
                             {
-                                if(rd[tableIDName] != null)
+                                if(rd[tableIDName] != System.DBNull.Value)
                                     tableID = int.Parse(rd[tableIDName].ToString());
-                                if (rd[paidName] != null)
+                                if (rd[paidName] != System.DBNull.Value)
                                     orderPaid = int.Parse(rd[paidName].ToString());
-                                if (rd[statusName] != null)
+                                if (rd[statusName] != System.DBNull.Value)
                                     orderStatus = int.Parse(rd[statusName].ToString());
-                                if (rd[orderCustomerName] != null)
+                                if (rd[orderCustomerName] != System.DBNull.Value)
                                     orderName = rd[orderCustomerName].ToString();
                             }
                             success = true;

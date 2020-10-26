@@ -29,7 +29,6 @@ namespace Website.App_Code
         private DataTable menuItems;
         private DataTable orderItemsTable;
         private OrderItems orderItems;
-        public TempOrder torder;
 
         private Button min;
         private Button plus;
@@ -91,28 +90,6 @@ namespace Website.App_Code
             }
         }
 
-        public CartPanel(TempOrder ord)
-        {//Constructor that receives the person's Order object (already has all the info we need)
-            this.conn = ord.getConnection();
-
-            headPanel = new Panel();
-            headPanel.CssClass = "row";
-
-            torder = ord;
-            orderItems = ord.getOrderItemsObject();
-
-            try
-            {
-                menuItems = getMenuItems();
-                orderItemsTable = getOrderItems();
-                update();
-            }
-            catch (Exception x)
-            {
-                throwEx(x);
-            }
-        }
-
         private void throwEx(Exception x)
         {
             Session[errorSession] = x.Message + x.StackTrace;
@@ -124,7 +101,7 @@ namespace Website.App_Code
             DataTable i = new DataTable();
             try
             {
-                i = orderItems.getThisOrderItems();
+                i = order.getOrderItemsObject().getThisOrderItems();
             }
             catch(Exception x)
             {
@@ -191,82 +168,85 @@ namespace Website.App_Code
                 throwEx(new Exception("Menu Table is Empty"));
             }
 
-            foreach(DataRow datrow in orderItems.getThisOrderItems().Rows)
+            foreach(DataRow datrow in orderItemsTable.Rows)
             {
-                try
+                if(datrow[orderItemsOrderIDCol].ToString() == orderID.ToString())
                 {
-                    productId = int.Parse(datrow[orderItemsMenuIDCol].ToString());
-                    quantity = int.Parse(datrow[orderItemsQuantityCol].ToString());
-                }
-                catch (Exception ex)
-                {
-                    throwEx(ex);
-                }
+                    try
+                    {
+                        productId = int.Parse(datrow[orderItemsMenuIDCol].ToString());
+                        quantity = int.Parse(datrow[orderItemsQuantityCol].ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        throwEx(ex);
+                    }
 
-                try
-                {
-                    foreach (DataRow dr in menuItems.Rows)
-                    {//Get the product's name, price and such to show in the headPanel
-                        isFound3 = false;
-                        if (dr[menuIDCol].ToString() == productId.ToString())
-                        {
-                            productPrice = float.Parse(dr[menuPriceCol].ToString());
-                            productName = dr[menuNameCol].ToString();
-                            isFound3 = true;
-                        }
-                        if (isFound3)
-                        {//If the menuitem with ID is found, stop traversing
-                            break;
+                    try
+                    {
+                        foreach (DataRow dr in menuItems.Rows)
+                        {//Get the product's name, price and such to show in the headPanel
+                            isFound3 = false;
+                            if (dr[menuIDCol].ToString() == productId.ToString())
+                            {
+                                productPrice = float.Parse(dr[menuPriceCol].ToString());
+                                productName = dr[menuNameCol].ToString();
+                                isFound3 = true;
+                            }
+                            if (isFound3)
+                            {//If the menuitem with ID is found, stop traversing
+                                break;
+                            }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        throwEx(ex);
+                    }
+                    if (!isFound3)
+                    {//has not found the productId in the menuItems table
+                        throwEx(new Exception("Could not find product: " + productId + " in database"));
+                    }
+
+                    min = new Button();
+                    plus = new Button();
+                    name = new Label();
+                    price = new Label();
+                    quanlbl = new Label();
+                    this.totalPrice += productPrice * quantity;
+
+                    min.CssClass = "btn btn-dark col-3";
+                    plus.CssClass = "btn btn-dark col-3";
+                    price.CssClass = "col-2";
+                    quanlbl.CssClass = "col-2";
+                    name.CssClass = "col-2";
+
+                    //Putting the id of the product as the buttons' ids for the eventhandler so it distinguishes what button was pressed
+                    min.ID = productId.ToString() + "_min_" + counterer;
+                    plus.ID = productId.ToString() + "_plus_" + counterer;
+
+                    //Eventhandlers for each button - one for subtracting a product and the other for adding one
+                    min.Click += new EventHandler(minBtnClicked);
+                    plus.Click += new EventHandler(plusBtnClicked);
+
+                    min.CausesValidation = false;
+                    plus.CausesValidation = false;
+
+                    name.Text = productName;
+                    price.Text = "R" + productPrice;
+                    min.Text = "-";
+                    plus.Text = "+";
+                    quanlbl.Text = quantity.ToString() + " X ";
+
+                    //Build the first part of headPanel
+                    headPanel.Controls.Add(min);
+                    headPanel.Controls.Add(quanlbl);
+                    headPanel.Controls.Add(name);
+                    headPanel.Controls.Add(price);
+                    headPanel.Controls.Add(plus);
+
+                    counterer++;
                 }
-                catch (Exception ex)
-                {
-                    throwEx(ex);
-                }
-                if (!isFound3)
-                {//has not found the productId in the menuItems table
-                    throwEx(new Exception("Could not find product: " + productId + " in database"));
-                }
-
-                min = new Button();
-                plus = new Button();
-                name = new Label();
-                price = new Label();
-                quanlbl = new Label();
-                this.totalPrice += productPrice * quantity;
-
-                min.CssClass = "btn btn-dark col-3";
-                plus.CssClass = "btn btn-dark col-3";
-                price.CssClass = "col-2";
-                quanlbl.CssClass = "col-2";
-                name.CssClass = "col-2";
-
-                //Putting the id of the product as the buttons' ids for the eventhandler so it distinguishes what button was pressed
-                min.ID = productId.ToString() + "_min_" + counterer;
-                plus.ID = productId.ToString() + "_plus_" + counterer;
-
-                //Eventhandlers for each button - one for subtracting a product and the other for adding one
-                min.Click += new EventHandler(minBtnClicked);
-                plus.Click += new EventHandler(plusBtnClicked);
-
-                min.CausesValidation = false;
-                plus.CausesValidation = false;
-
-                name.Text = productName;
-                price.Text = "R" + productPrice;
-                min.Text = "-";
-                plus.Text = "+";
-                quanlbl.Text = quantity.ToString() + " X ";
-
-                //Build the first part of headPanel
-                headPanel.Controls.Add(min);
-                headPanel.Controls.Add(quanlbl);
-                headPanel.Controls.Add(name);
-                headPanel.Controls.Add(price);
-                headPanel.Controls.Add(plus);
-
-                counterer++;
             }
 
             //Add the total label in the headPanel
@@ -281,15 +261,11 @@ namespace Website.App_Code
         public void addItem(int id, int count)
         {
             if (order != null)
-            {//if it's an order
+            {
                 order.getOrderItemsObject().addProduct(id, count);
                 orderItems = order.getOrderItemsObject();
             }
-            else if (torder != null)
-            {//if it's a temporary order
-                torder.getOrderItemsObject().addProduct(id, count);
-                orderItems = torder.getOrderItemsObject();
-            }
+
         }
 
         public void removeItem(int id, int count)
@@ -298,11 +274,6 @@ namespace Website.App_Code
             {//if it's an order
                 order.getOrderItemsObject().removeProduct(id, count);
                 orderItems = order.getOrderItemsObject();
-            }
-            else if (torder != null)
-            {//if it's a temporary order
-                torder.getOrderItemsObject().removeProduct(id, count);
-                orderItems = torder.getOrderItemsObject();
             }
         }
 
