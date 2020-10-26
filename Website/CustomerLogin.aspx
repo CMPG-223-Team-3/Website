@@ -57,7 +57,7 @@
                         </div>
                             <div><asp:RangeValidator ID="RangeValidator1" runat="server" ErrorMessage="Please input table number larger than 0 and smaller than 101" ControlToValidate="txtTable" MinimumValue="1" MaximumValue="100"></asp:RangeValidator> </div>
                         <div class="row">
-                            <asp:Button ID="Button1" runat="server" Text="Sign In" CssClass="btn btn-dark"/>
+                            <asp:Button ID="btnSignIn" runat="server" Text="Sign In" CssClass="btn btn-dark" OnClick="btnSignIn_Click"/>
                         </div>
                     </fieldset>
                 </div>

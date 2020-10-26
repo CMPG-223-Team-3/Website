@@ -63,15 +63,12 @@ namespace Website.App_Code
         {
             int counter = 0;
             DataTable send = new DataTable();
-            if (orderItems.Rows.Count > 0)
+            for (int i = 0; i < orderItems.Rows.Count; i++)
             {
-                for (int i = 0; i <= orderItems.Rows.Count; i++)
+                if (orderItems.Rows[i][OrderIDCol].ToString() == getOrderID().ToString())
                 {
-                    if (orderItems.Rows[i][OrderIDCol].ToString() == getOrderID().ToString())
-                    {
-                        send.Rows.Add(orderItems.Rows[i]);
-                        counter++;
-                    }
+                    send.Rows.Add(orderItems.Rows[i]);
+                    counter++;
                 }
             }
             if(counter == 0)

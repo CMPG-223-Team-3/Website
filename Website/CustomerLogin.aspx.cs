@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Website.App_Code;
 
 namespace Website
 {
@@ -50,7 +52,7 @@ namespace Website
                 "AND Customer_Name = @csn"
             };
             comm.Parameters.AddWithValue("@tnr", tableNr);
-            comm.Parameters.AddWithValue("@csn", customerName.ToUpper());
+            comm.Parameters.AddWithValue("@csn", customerName);
 
             try
             {
@@ -99,11 +101,11 @@ namespace Website
                 {//dunno how table nums work - rn can't be less than 1\
                     //this what happens if an order found matching tableID & name entered
                     Session[orderIDSession] = ordNr;
-                    Response.Redirect("IsThisYourOrder.aspx"); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
+                    Response.Redirect("IsThisYourOrder.aspx", true); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
                 }
                 if (ordNr == -1)
                 {//if no order was found, no worries, go to where the customer can order
-                    Response.Redirect("CustomerOrder.aspx", true);
+                    Response.Redirect("CustomerOrder.aspx", false);
                 }
 
                 Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");

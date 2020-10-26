@@ -29,7 +29,6 @@ namespace Website.App_Code
         private DataTable menuItems;
         private DataTable orderItemsTable;
         private OrderItems orderItems;
-        public TempOrder torder;
 
         private Button min;
         private Button plus;
@@ -91,28 +90,6 @@ namespace Website.App_Code
             }
         }
 
-        public CartPanel(TempOrder ord)
-        {//Constructor that receives the person's Order object (already has all the info we need)
-            this.conn = ord.getConnection();
-
-            headPanel = new Panel();
-            headPanel.CssClass = "row";
-
-            torder = ord;
-            orderItems = ord.getOrderItemsObject();
-
-            try
-            {
-                menuItems = getMenuItems();
-                orderItemsTable = getOrderItems();
-                update();
-            }
-            catch (Exception x)
-            {
-                throwEx(x);
-            }
-        }
-
         private void throwEx(Exception x)
         {
             Session[errorSession] = x.Message + x.StackTrace;
@@ -124,7 +101,7 @@ namespace Website.App_Code
             DataTable i = new DataTable();
             try
             {
-                i = orderItems.getThisOrderItems();
+              i = order.getOrderItemsObject().getThisOrderItems();
             }
             catch(Exception x)
             {
@@ -191,7 +168,7 @@ namespace Website.App_Code
                 throwEx(new Exception("Menu Table is Empty"));
             }
 
-            foreach(DataRow datrow in orderItems.getThisOrderItems().Rows)
+            foreach(DataRow datrow in orderItemsTable.Rows)
             {
                 try
                 {
@@ -281,15 +258,11 @@ namespace Website.App_Code
         public void addItem(int id, int count)
         {
             if (order != null)
-            {//if it's an order
+            {
                 order.getOrderItemsObject().addProduct(id, count);
                 orderItems = order.getOrderItemsObject();
             }
-            else if (torder != null)
-            {//if it's a temporary order
-                torder.getOrderItemsObject().addProduct(id, count);
-                orderItems = torder.getOrderItemsObject();
-            }
+
         }
 
         public void removeItem(int id, int count)
@@ -298,11 +271,6 @@ namespace Website.App_Code
             {//if it's an order
                 order.getOrderItemsObject().removeProduct(id, count);
                 orderItems = order.getOrderItemsObject();
-            }
-            else if (torder != null)
-            {//if it's a temporary order
-                torder.getOrderItemsObject().removeProduct(id, count);
-                orderItems = torder.getOrderItemsObject();
             }
         }
 
