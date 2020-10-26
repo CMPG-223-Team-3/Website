@@ -46,11 +46,16 @@
                             <asp:Label ID="lblStatus" runat="server" Text="" CssClass="text"></asp:Label>
                         </div>
                         <div class="row">
+                            <asp:Label ID="Label1" CssClass="col-3" runat="server" Text="Your Name: "></asp:Label>
+                            <asp:TextBox ID="txtName" runat="server" placeholder="Name" CssClass="form-control col-9"></asp:TextBox>
+                            <div><asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="txtName" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
+                        </div>
+                        <div class="row">
                             <asp:Label ID="Label2" CssClass="col-3" runat="server" Text="Table Number: "></asp:Label>
                             <asp:TextBox ID="txtTable" runat="server" placeholder="Table Number" CssClass="form-control col-9" TextMode="Number"></asp:TextBox>
                             <div><asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtTable" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
-                            <div><asp:RangeValidator ID="RangeValidator1" runat="server" ErrorMessage="Please input value larger than 0 and smaller than 101" ControlToValidate="txtTable" MinimumValue="1" MaximumValue="100"></asp:RangeValidator> </div>
                         </div>
+                            <div><asp:RangeValidator ID="RangeValidator1" runat="server" ErrorMessage="Please input table number larger than 0 and smaller than 101" ControlToValidate="txtTable" MinimumValue="1" MaximumValue="100"></asp:RangeValidator> </div>
                         <div class="row">
                             <asp:Button ID="btnSignIn" runat="server" Text="Sign In" CssClass="btn btn-dark" CausesValidation="True" OnClick="btnSignIn_Click" />
                         </div>

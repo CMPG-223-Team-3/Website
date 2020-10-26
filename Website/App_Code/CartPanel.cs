@@ -22,7 +22,6 @@ namespace Website.App_Code
         */
 
         private MySqlConnection conn;
-        private int tableID;
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
@@ -45,10 +44,9 @@ namespace Website.App_Code
 
         private static string errorSession = "Error";
 
-        public CartPanel(MySqlConnection c, int tableID, int orderID)
+        public CartPanel(MySqlConnection c, int orderID)
         {
             this.conn = c;
-            this.tableID = tableID;
             this.orderID = orderID;
 
             headPanel = new Panel();
@@ -70,7 +68,6 @@ namespace Website.App_Code
         public CartPanel(Order ord)
         {//Constructor that receives the person's Order object (already has all the info we need)
             this.conn = ord.getConnection();
-            this.tableID = ord.getTableID();
             this.orderID = ord.getOrderID();
 
             headPanel = new Panel();
@@ -101,7 +98,7 @@ namespace Website.App_Code
             DataTable i = new DataTable();
             try
             {
-                i = order.getOrderItemsObject().getCurrentTable();
+                i = order.getOrderItemsObject().getThisOrderItems();
             }
             catch(Exception x)
             {
@@ -119,7 +116,7 @@ namespace Website.App_Code
                 cm.Connection = conn;
                 cm.CommandText =
                     "SELECT * " +
-                    "FROM MENU-ITEM ";
+                    "FROM `MENU-ITEM` ";
                 //cm.Parameters.AddWithValue("@mm", menuTableName);
                 MySqlDataAdapter adap = new MySqlDataAdapter(cm);
                 adap.Fill(ds);
@@ -168,86 +165,84 @@ namespace Website.App_Code
                 throwEx(new Exception("Menu Table is Empty"));
             }
 
-            foreach (DataRow datr in orderItems.Rows)
-            {//get every orderitem and make it pretty on the site
-                if (datr[orderItemsOrderIDCol].ToString() == orderID.ToString())
-                {//If orderID is found in the orderItems - to use the menuitemID and quantity - for use of building the headPanel pretty
-                    try
-                    {
-                        productId = int.Parse(datr[orderItemsMenuIDCol].ToString());
-                        quantity = int.Parse(datr[orderItemsQuantityCol].ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        throwEx(ex);
-                    }
+            foreach(DataRow datrow in order.getOrderItemsObject().getThisOrderItems().Rows)
+            {
+                try
+                {
+                    productId = int.Parse(datrow[orderItemsMenuIDCol].ToString());
+                    quantity = int.Parse(datrow[orderItemsQuantityCol].ToString());
+                }
+                catch (Exception ex)
+                {
+                    throwEx(ex);
+                }
 
-                    try
-                    {
-                        foreach (DataRow dr in menuItems.Rows)
-                        {//Get the product's name, price and such to show in the headPanel
-                            isFound3 = false;
-                            if (dr[menuIDCol].ToString() == productId.ToString())
-                            {
-                                productPrice = float.Parse(dr[menuPriceCol].ToString());
-                                productName = dr[menuNameCol].ToString();
-                                isFound3 = true;
-                            }
-                            if (isFound3)
-                            {//If the menuitem with ID is found, stop traversing
-                                break;
-                            }
+                try
+                {
+                    foreach (DataRow dr in menuItems.Rows)
+                    {//Get the product's name, price and such to show in the headPanel
+                        isFound3 = false;
+                        if (dr[menuIDCol].ToString() == productId.ToString())
+                        {
+                            productPrice = float.Parse(dr[menuPriceCol].ToString());
+                            productName = dr[menuNameCol].ToString();
+                            isFound3 = true;
+                        }
+                        if (isFound3)
+                        {//If the menuitem with ID is found, stop traversing
+                            break;
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        throwEx(ex);
-                    }
-                    if (!isFound3)
-                    {//has not found the productId in the menuItems table
-                        throwEx(new Exception("Could not find product: " + productId + " in database"));
-                    }
-
-                    min = new Button();
-                    plus = new Button();
-                    name = new Label();
-                    price = new Label();
-                    quanlbl = new Label();
-                    this.totalPrice += productPrice * quantity;
-
-                    min.CssClass = "btn btn-dark col-3";
-                    plus.CssClass = "btn btn-dark col-3";
-                    price.CssClass = "col-2";
-                    quanlbl.CssClass = "col-2";
-                    name.CssClass = "col-2";
-
-                    //Putting the id of the product as the buttons' ids for the eventhandler so it distinguishes what button was pressed
-                    min.ID = productId.ToString() + "_min_" + counterer;
-                    plus.ID = productId.ToString() + "_plus_" + counterer;
-
-                    //Eventhandlers for each button - one for subtracting a product and the other for adding one
-                    min.Click += new EventHandler(minBtnClicked);
-                    plus.Click += new EventHandler(plusBtnClicked);
-
-                    min.CausesValidation = false;
-                    plus.CausesValidation = false;
-
-                    name.Text = productName;
-                    price.Text = "R" + productPrice;
-                    min.Text = "-";
-                    plus.Text = "+";
-                    quanlbl.Text = quantity.ToString() + " X ";
-
-                    //Build the first part of headPanel
-                    headPanel.Controls.Add(min);
-                    headPanel.Controls.Add(quanlbl);
-                    headPanel.Controls.Add(name);
-                    headPanel.Controls.Add(price);
-                    headPanel.Controls.Add(plus);
-
-                    counterer++;
                 }
+                catch (Exception ex)
+                {
+                    throwEx(ex);
+                }
+                if (!isFound3)
+                {//has not found the productId in the menuItems table
+                    throwEx(new Exception("Could not find product: " + productId + " in database"));
+                }
+
+                min = new Button();
+                plus = new Button();
+                name = new Label();
+                price = new Label();
+                quanlbl = new Label();
+                this.totalPrice += productPrice * quantity;
+
+                min.CssClass = "btn btn-dark col-3";
+                plus.CssClass = "btn btn-dark col-3";
+                price.CssClass = "col-2";
+                quanlbl.CssClass = "col-2";
+                name.CssClass = "col-2";
+
+                //Putting the id of the product as the buttons' ids for the eventhandler so it distinguishes what button was pressed
+                min.ID = productId.ToString() + "_min_" + counterer;
+                plus.ID = productId.ToString() + "_plus_" + counterer;
+
+                //Eventhandlers for each button - one for subtracting a product and the other for adding one
+                min.Click += new EventHandler(minBtnClicked);
+                plus.Click += new EventHandler(plusBtnClicked);
+
+                min.CausesValidation = false;
+                plus.CausesValidation = false;
+
+                name.Text = productName;
+                price.Text = "R" + productPrice;
+                min.Text = "-";
+                plus.Text = "+";
+                quanlbl.Text = quantity.ToString() + " X ";
+
+                //Build the first part of headPanel
+                headPanel.Controls.Add(min);
+                headPanel.Controls.Add(quanlbl);
+                headPanel.Controls.Add(name);
+                headPanel.Controls.Add(price);
+                headPanel.Controls.Add(plus);
+
+                counterer++;
             }
+
             //Add the total label in the headPanel
             Label total = new Label();
             total.Text = "R" + totalPrice.ToString();

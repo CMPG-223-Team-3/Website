@@ -38,7 +38,7 @@ namespace Website
                 {//if user is signed in with their table
                     if(Session[orderIDSession] != null)
                     {//user has their order placed
-                        cart = new CartPanel(conn,int.Parse(Session[tableIDSession].ToString()),int.Parse(Session[orderIDSession].ToString()));
+                        cart = new CartPanel(conn,int.Parse(Session[orderIDSession].ToString()));
                         pnlCheckout.Controls.Add(cart.getHeadPanel());
 
                         Button checkOut = new Button();

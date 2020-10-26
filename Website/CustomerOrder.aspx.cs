@@ -24,10 +24,11 @@ namespace Website
          */
 
         private static Order order;
-        private static CartPanel ov;
+        private static CartPanel cartPanel;
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
+        private static TempOrder torder;
 
         //session var names
         private static string userNameSession = "UserName";
@@ -35,6 +36,7 @@ namespace Website
         private static string fromPageSession = "FromPage";
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
+        private static string orderObjectSession = "OrderObject";
 
 
         private static string menuItemID = "Menu_Item_ID";
@@ -49,15 +51,10 @@ namespace Website
                 //try to quickly connect to database to see if it works  
                 DatabaseConnection connection = new DatabaseConnection();
                 conn = connection.getConnection();
-
-                if(Session[userNameSession] == null)
-                {
-                    throw new Exception("Username not logged in");
-                }
             }
-            catch
+            catch(Exception x)
             {
-                Response.Redirect("Login.aspx");
+                throwEx(x);
             }
         }
 
@@ -69,60 +66,48 @@ namespace Website
             try
             {
                 if (Session[userNameSession] != null)
-                {
-                    //if the user has logged in, display their name instead of the log in label on the navbar
+                {//if the user has logged in, display their name instead of the log in label on the navbar
                     lblLogin.Text = Session[userNameSession].ToString();
-
-                    if (Session[tableIDSession] != null)
-                    {
-                        if (Session[orderIDSession] != null)
-                        {
-                            if(order == null)
-                            {
-                                order = new Order(int.Parse(Session[orderIDSession].ToString())); //at this point we need a customer ID to make a new order, have to fix
-                            }
-                        }
-                        else
-                        {
-                            if(order == null)
-                            {
-                                order = new Order(int.Parse(Session[tableIDSession].ToString()), 0, 0);
-                                Session[orderIDSession] = order.getOrderID();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Page_Init(new object(), new EventArgs());
-                    }
-                }
-                else
-                {
-                    Response.Redirect("Login.aspx", false);
-                    Context.ApplicationInstance.CompleteRequest();
                 }
 
-                if(ov != null)
-                {
-                    ov.update();
+                if (cartPanel != null)
+                {//if the cart panel has been initialized
+                    cartPanel.update();
                 }
 
-                if (!IsPostBack || !isSearched)
+                if (!IsPostBack)
                 {//if the user hasn't searched anything or 1st time page loaded
-                    if(ov == null)
-                    {
-                        ov = new CartPanel(order.getConnection(), order.getTableID(), order.getOrderID());
+                    //this is where order global val should be initialized
+                    if (Session[tableIDSession] != null && Session[userNameSession] != null)
+                    {//if the user has logged in - (remember this part runs only on first load)
+                        if (Session[orderIDSession] != null && order == null)
+                        {//if they already have an order, but not paid yet
+                            order = new Order(int.Parse(Session[orderIDSession].ToString()));
+                        }
+                        else if(Session[orderIDSession] == null && order == null)
+                        {//where we create a temp order if they have logged in
+                            order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0);
+                            Session[orderIDSession] = order.getOrderID();
+                        }
                     }
-                    
-                    pnlOrder.Controls.Add(ov.getHeadPanel());
-                    Button checkoutBtn = new Button();
-                    checkoutBtn.CausesValidation = false;
-                    checkoutBtn.Text = "Checkout";
-                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
-                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
-                    pnlOrder.Controls.Add(checkoutBtn);
-                    showProducts(conn, "SELECT * FROM MENU-ITEM");
+                    if (cartPanel == null)
+                    {//this is where the cartpanel should be made to show the customer's order
+                        if (order != null)
+                        {
+                            cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                            pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+                            Button checkoutBtn = new Button();
+                            checkoutBtn.CausesValidation = false;
+                            checkoutBtn.Text = "Checkout";
+                            checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                            checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                            pnlOrder.Controls.Add(checkoutBtn);
+                        }
+                    }
+                    showProducts(conn, "SELECT * FROM `MENU-ITEM`");
                 }
+
+
 
                 if (isSearched)
                 {
@@ -161,10 +146,20 @@ namespace Website
                             {
                                 //Reading specific product info out of database to use for the cards
                                 //According to the data model columns are: 0-Menu-Item-ID; 1-Recipe-ID; 2-Category-ID; 3-Name; 4-Price
-                                string productId = mysqlReader[menuItemID].ToString();
-                                string productName = mysqlReader[menuItemName].ToString();
-                                string productPrice = mysqlReader[menuItemPrice].ToString();
-                                string productDesc = mysqlReader[menuItemDesc].ToString();
+
+                                string productId = countedProducts + "";
+                                string productName = "";
+                                string productPrice = "";
+                                string productDesc = "";
+
+                                if (mysqlReader[menuItemID] != null)
+                                    productId = mysqlReader[menuItemID].ToString();
+                                if (mysqlReader[menuItemName] != null)
+                                    productName = mysqlReader[menuItemName].ToString();
+                                if (mysqlReader[menuItemPrice] != null)
+                                    productPrice = mysqlReader[menuItemPrice].ToString();
+                                if (mysqlReader[menuItemDesc] != null)
+                                    productDesc = mysqlReader[menuItemDesc].ToString();
     
                                 countedProducts++;
 
@@ -226,54 +221,62 @@ namespace Website
             }
             catch(Exception exc)
             {
-                Session[errorSession] = exc.Message;
-                Response.Redirect("Erorr.aspx");
+                throwEx(exc);
             }
         }
 
-        //Eventhandler/method for the add to cart buttons
-        void addToCartBtnClicked(object sender, EventArgs evArgs)
-        {
-            try
+        
+        protected void addToCartBtnClicked(object sender, EventArgs evArgs)
+        {//Eventhandler/method for the add to cart buttons
+
+            
+            if (Session[tableIDSession] == null && Session[userNameSession] == null && order == null)
             {
-                //Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
+                order = new Order();
+                Session[orderIDSession] = order.getOrderID();
+            }
+            if (cartPanel == null)
+            {
+                if (order != null)
+                {
+                    cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                    pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+                    Button checkoutBtn = new Button();
+                    checkoutBtn.CausesValidation = false;
+                    checkoutBtn.Text = "Checkout";
+                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                    pnlOrder.Controls.Add(checkoutBtn);
+                }
+            }
+
+            try
+            {//Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
                 Button btn = sender as Button;
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                ov.order.getOrderItemsObject().addProduct(Id, 1);
-                ov.update();
+                cartPanel.order.getOrderItemsObject().addProduct(Id, 1);
+                cartPanel.update();
             }
             catch(Exception x)
             {
-                Session[errorSession] = x.Message + ":   " + x.StackTrace;
-                Response.Redirect("Error.aspx");
-            }
-
-            //Second check if user is logged in (has name) so we can add the selected products to their cart
-            if (Session[userNameSession] != null)
-            {
-                //Add the item to the cart
-
-
-                //If user does not have a cart assigned to them, this is where you'd want to choose what happens next
-            }
-            else
-            {
-                //Help the user log in without losing the selected item(s)
+                throwEx(x);
             }
         }
 
-        //When user searched for product
+        
         protected void btnSearch_Click(object sender, EventArgs e)
-        {
-            //If searchbar isn't empty
+        {//When user searched for product
             if(txtSearch.Text != null)
-            {
+            {//If searchbar isn't empty
                 try
-                {
-                    //Create new cmmd to ShowProducts() for filtered items
-                    string tmp = "SELECT * FROM MENU-ITEM WHERE Item_Name LIKE '" + "%" + txtSearch.Text.ToLower() + "%" + "'";
+                {//Create new cmmd to ShowProducts() for filtered items
+                    string tmp = 
+                        "SELECT * " +
+                        "FROM `MENU-ITEM` " +
+                        "WHERE Item_Name " +
+                        "LIKE '" + "%" + txtSearch.Text.ToLower() + "%" + "'";
                     showProducts(conn, tmp);
                 }
                 catch(Exception x)
@@ -286,18 +289,24 @@ namespace Website
         }
 
         private void checkoutBtnClicked(object sender, EventArgs e)
-        {
+        {//if the user hasn't logged in, put order object into session , send them to the login page and then let them checkout
             try
             {
-                order.getOrderItemsObject().close();
-                Session[tableIDSession] = order.getTableID();
-                Session[orderIDSession] = order.getOrderID();
-                Response.Redirect("Checkout.aspx", false);
+                if (Session[userNameSession] != null && Session[tableIDSession] != null && Session[orderIDSession] != null)
+                {
+                    order.getOrderItemsObject().close();
+                    Session[tableIDSession] = order.getTableID();
+                    Session[orderIDSession] = order.getOrderID();
+                    Response.Redirect("Checkout.aspx", false);
+                }
+                else
+                {
+                    Session[orderObjectSession] = order;
+                }
             }
-            catch(Exception x)
+            catch (Exception x)
             {
-                Session[errorSession] = x.Message;
-                Response.Redirect("Error.aspx");
+                throwEx(x);
             }
         }
 

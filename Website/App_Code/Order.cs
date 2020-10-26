@@ -9,7 +9,7 @@ using System.Web;
 /*NOTES:
  * ExecuteScalar() only returns the value from the first column of first row of your query
  * ExecuteReader() returns an object that can iterate over the entire result set
- * ExecuteNonQuery() returns no value
+ * ExecuteNonQuery() returns how many rows have been affected
  */
 
 namespace Website.App_Code
@@ -30,12 +30,51 @@ namespace Website.App_Code
         private int orderPaid;
         private int orderStatus;
         private OrderItems orderItems;
+        private string orderName;
 
-        private string tabName = "ORDER_DETAIL";
+        private string tabName = "ORDER";
         private string orderIDName = "Order_ID";
         private string tableIDName = "Table_nr";
         private string paidName = "Paid";
         private string statusName = "Status";
+        private string orderCustomerName = "Customer_Name";
+
+        public Order()
+        {
+            int paid = 0; //i'm leaving these as default cus i don't know which vals mean what
+            int stat = 0;
+            try
+            {
+                DatabaseConnection connect = new DatabaseConnection();//Class to connect to database
+                conn = connect.getConnection();
+            }
+            catch (Exception x)
+            {
+                throw x;
+            }
+
+            try
+            {
+                MySqlCommand cmmd = new MySqlCommand();
+                cmmd.CommandText =
+                    "INSERT " +
+                    "INTO `ORDER`" +
+                    "(`Paid`, `Status`) " +
+                    "VALUES(@pd, @st);";
+                cmmd.Connection = conn;
+                cmmd.Parameters.AddWithValue("@pd", paid);
+                cmmd.Parameters.AddWithValue("@st", stat);
+
+                executeNonQuery(cmmd);
+                orderID = getLastID();
+                orderItems = new OrderItems(orderID);//Object for all the items in the database for this order
+            }
+            catch (Exception o)
+            {
+                throw o;
+            }
+        }
+
 
         public Order(int orderId)
         {//Constructor for when you already know the order id, get the rest
@@ -56,7 +95,7 @@ namespace Website.App_Code
             }
         }
 
-        public Order(int tabID, int paid, int status)//Parameters of the customer so new order can be made
+        public Order(string name, int tabID, int paid, int status)//Parameters of the customer so new order can be made
         {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
@@ -75,9 +114,10 @@ namespace Website.App_Code
                 cmmd.CommandText =
                     "INSERT " +
                     "INTO `ORDER`" +
-                    "(`Table_nr`, `Paid`, `Status`) " +
-                    "VALUES(@cid, @pd, @st);";
+                    "(`Customer_Name`, `Table_nr`, `Paid`, `Status`) " +
+                    "VALUES(@nm, @cid, @pd, @st);";
                 cmmd.Connection = conn;
+                cmmd.Parameters.AddWithValue("@nm", name.ToUpper());
                 cmmd.Parameters.AddWithValue("@cid",tabID);
                 cmmd.Parameters.AddWithValue("@pd", paid);
                 cmmd.Parameters.AddWithValue("@st",status);
@@ -117,9 +157,14 @@ namespace Website.App_Code
                         {
                             while (rd.Read())
                             {
-                                tableID = int.Parse(rd[tableIDName].ToString());
-                                orderPaid = int.Parse(rd[paidName].ToString());
-                                orderStatus = int.Parse(rd[statusName].ToString());
+                                if(rd[tableIDName] != null)
+                                    tableID = int.Parse(rd[tableIDName].ToString());
+                                if (rd[paidName] != null)
+                                    orderPaid = int.Parse(rd[paidName].ToString());
+                                if (rd[statusName] != null)
+                                    orderStatus = int.Parse(rd[statusName].ToString());
+                                if (rd[orderCustomerName] != null)
+                                    orderName = rd[orderCustomerName].ToString();
                             }
                             success = true;
                         }
@@ -127,9 +172,10 @@ namespace Website.App_Code
                 }
                 return success;
             }
-            catch
+            catch(Exception x)
             {
-                return false;
+                throw x;
+                //return false;
             }
         }
 
@@ -179,8 +225,200 @@ namespace Website.App_Code
             }
         }
 
+        public bool updateOrderNameAndTable(string name, int table)
+        {
+            try
+            {
+                MySqlCommand i = new MySqlCommand
+                {
+                    Connection = conn,
+                    CommandText =
+                    "UPDATE ORDER " +
+                    "SET Customer_Name = @cus ," +
+                    "Table_nr = @tab " +
+                    "WHERE Order_ID = @oid"
+                };
+                i.Parameters.AddWithValue("@cus", name.ToUpper());
+                i.Parameters.AddWithValue("@oid", orderID);
+                i.Parameters.AddWithValue("@tab", table);
+
+                conn.Open();
+                if (i.ExecuteNonQuery() > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
+                conn.Close();
+                return false;
+            }
+            catch (Exception x)
+            {
+                return false;
+            }
+        }
+
+
+        public bool updateOrderName(string name)
+        {
+            try
+            {
+                MySqlCommand i = new MySqlCommand
+                {
+                    Connection = conn,
+                    CommandText =
+                    "UPDATE ORDER " +
+                    "SET Customer_Name = @cus " +
+                    "WHERE Order_ID = @oid"
+                };
+                i.Parameters.AddWithValue("@cus", name.ToUpper());
+                i.Parameters.AddWithValue("@oid", orderID);
+
+                conn.Open();
+                if (i.ExecuteNonQuery() > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
+                conn.Close();
+                return false;
+            }
+            catch(Exception x)
+            {
+                return false;
+            }
+        }
+
+        public bool updateOrderTable(int table)
+        {
+            try
+            {
+                MySqlCommand i = new MySqlCommand
+                {
+                    Connection = conn,
+                    CommandText =
+                    "UPDATE ORDER " +
+                    "SET Table_nr = @cus " +
+                    "WHERE Order_ID = @oid "
+                };
+                i.Parameters.AddWithValue("@cus", table);
+                i.Parameters.AddWithValue("@oid", orderID);
+
+                conn.Open();
+                if (i.ExecuteNonQuery() > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
+                conn.Close();
+                return false;
+
+            }
+            catch (Exception x)
+            {
+                return false;
+            }
+        }
+
+        public bool updateOrderWaiter(int waiterID)
+        {
+            try
+            {
+                MySqlCommand i = new MySqlCommand
+                {
+                    Connection = conn,
+                    CommandText =
+                    "UPDATE ORDER " +
+                    "SET Waiter_ID = @cus " +
+                    "WHERE Order_ID = @oid "
+                };
+                i.Parameters.AddWithValue("@cus", waiterID);
+                i.Parameters.AddWithValue("@oid", orderID);
+
+                conn.Open();
+                if (i.ExecuteNonQuery() > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
+                conn.Close();
+                return false;
+
+            }
+            catch (Exception x)
+            {
+                return false;
+            }
+        }
+
+        public bool updateOrderCashOrCard(int cashorcard)
+        {
+            try
+            {
+                MySqlCommand i = new MySqlCommand
+                {
+                    Connection = conn,
+                    CommandText =
+                    "UPDATE ORDER " +
+                    "SET CashOrCard = @cus " +
+                    "WHERE Order_ID = @oid "
+                };
+                i.Parameters.AddWithValue("@cus", cashorcard);
+                i.Parameters.AddWithValue("@oid", orderID);
+
+                conn.Open();
+                if (i.ExecuteNonQuery() > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
+                conn.Close();
+                return false;
+
+            }
+            catch (Exception x)
+            {
+                return false;
+            }
+        }
+
+        public bool updateOrderStatus(int status)
+        {
+            try
+            {
+                MySqlCommand i = new MySqlCommand
+                {
+                    Connection = conn,
+                    CommandText =
+                    "UPDATE ORDER " +
+                    "SET Status = @cus " +
+                    "WHERE Order_ID = @oid "
+                };
+                i.Parameters.AddWithValue("@cus", status);
+                i.Parameters.AddWithValue("@oid", orderID);
+
+                conn.Open();
+                if (i.ExecuteNonQuery() > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
+                conn.Close();
+                return false;
+
+            }
+            catch (Exception x)
+            {
+                return false;
+            }
+        }
+
+
         public int getTableID()
         {
+            if(tableID == 0)
+            {
+                throw new Exception("User has no table yet");
+            }
             return tableID;
         }
         public MySqlConnection getConnection()
