@@ -35,11 +35,12 @@ namespace Website.App_Code
                 orderRow = order.NewRow();
                 orderItems = new OrderItems();
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throw x;
             }
         }
+
 
         public void setOrderPaid(int paid)
         {
@@ -47,7 +48,7 @@ namespace Website.App_Code
             {
                 orderRow[paidName] = paid;
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throw x;
             }
@@ -117,20 +118,20 @@ namespace Website.App_Code
         {
             try
             {
-                using(conn)
+                using (conn)
                 {
                     conn.Open();
                     adap.Update(order);
                 }
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throw x;
             }
         }
 
-        public void closeAll()
-        {
+        public int closeAll()
+        {//returns the order id
             try
             {
                 using (conn)
@@ -139,12 +140,14 @@ namespace Website.App_Code
                     adap.Update(order);
                     orderItems.setOrderID(getLastID());
                     orderItems.close();
+                    return orderItems.getOrderID();
                 }
             }
             catch (Exception x)
             {
                 throw x;
             }
+            return -1;
         }
 
 
@@ -197,5 +200,15 @@ namespace Website.App_Code
             }
         }
 
+        public OrderItems getOrderItemsObject()
+        {
+            return orderItems;
+        }
+
+        public MySqlConnection getConnection()
+        {
+            return conn;
+        }
     }
+
 }

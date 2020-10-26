@@ -26,9 +26,10 @@ namespace Website
         private static Order order;
         private static CartPanel cartPanel;
         private MySqlConnection conn;
+        private static TempOrder torder;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
-        private static TempOrder torder;
+
 
         //session var names
         private static string userNameSession = "UserName";
@@ -85,16 +86,28 @@ namespace Website
                             order = new Order(int.Parse(Session[orderIDSession].ToString()));
                         }
                         else if(Session[orderIDSession] == null && order == null)
-                        {//where we create a temp order if they have logged in
-                            order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0);
-                            Session[orderIDSession] = order.getOrderID();
+                        {//where we create a temp order if they have logged in, but no order yet
+                            torder = new TempOrder();
+                            torder.setCustomerName(Session[userNameSession].ToString());
+                            torder.setTable(int.Parse(Session[tableIDSession].ToString()));
                         }
                     }
                     if (cartPanel == null)
                     {//this is where the cartpanel should be made to show the customer's order
-                        if (order != null)
+                        if (order != null || torder != null)
                         {
-                            cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                            if(order != null)
+                            {
+                                cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                            }
+                            else if(torder != null)
+                            {
+                                cartPanel = new CartPanel(torder);
+                            }
+                            else
+                            {
+                                throwEx(new Exception("I can't do the cartpanel"));
+                            }
                             pnlOrder.Controls.Add(cartPanel.getHeadPanel());
                             Button checkoutBtn = new Button();
                             checkoutBtn.CausesValidation = false;
@@ -106,7 +119,7 @@ namespace Website
                     }
                     showProducts(conn, "SELECT * FROM `MENU-ITEM`");
                 }
-
+                showProducts(conn, "SELECT * FROM `MENU-ITEM`");
 
 
                 if (isSearched)
@@ -229,35 +242,17 @@ namespace Website
         protected void addToCartBtnClicked(object sender, EventArgs evArgs)
         {//Eventhandler/method for the add to cart buttons
 
-            
-            if (Session[tableIDSession] == null && Session[userNameSession] == null && order == null)
-            {
-                order = new Order();
-                Session[orderIDSession] = order.getOrderID();
-            }
-            if (cartPanel == null)
-            {
-                if (order != null)
-                {
-                    cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
-                    pnlOrder.Controls.Add(cartPanel.getHeadPanel());
-                    Button checkoutBtn = new Button();
-                    checkoutBtn.CausesValidation = false;
-                    checkoutBtn.Text = "Checkout";
-                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
-                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
-                    pnlOrder.Controls.Add(checkoutBtn);
-                }
-            }
-
             try
             {//Code to identify which product clicked by getting the button's id which was programmed as the product's id in showProducts()
                 Button btn = sender as Button;
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                cartPanel.order.getOrderItemsObject().addProduct(Id, 1);
-                cartPanel.update();
+                if(cartPanel != null)
+                {
+                    cartPanel.addItem(Id, 1);
+                    cartPanel.update();
+                }
             }
             catch(Exception x)
             {
@@ -294,9 +289,18 @@ namespace Website
             {
                 if (Session[userNameSession] != null && Session[tableIDSession] != null && Session[orderIDSession] != null)
                 {
-                    order.getOrderItemsObject().close();
-                    Session[tableIDSession] = order.getTableID();
-                    Session[orderIDSession] = order.getOrderID();
+                    if(cartPanel.order != null)
+                    {//if it was not a temp order
+                        cartPanel.order.getOrderItemsObject().close();
+                        Session[tableIDSession] = cartPanel.order.getTableID();
+                        Session[orderIDSession] = cartPanel.order.getOrderID();
+                    }
+                    else if(cartPanel.torder != null)
+                    {
+                        Session[orderIDSession] = cartPanel.torder.closeAll();
+                        order = new Order(int.Parse(Session[orderIDSession].ToString()));
+                    }
+                    
                     Response.Redirect("Checkout.aspx", false);
                 }
                 else

@@ -27,7 +27,9 @@ namespace Website.App_Code
         private float totalPrice;
         public Order order;
         private DataTable menuItems;
-        private DataTable orderItems;
+        private DataTable orderItemsTable;
+        private OrderItems orderItems;
+        public TempOrder torder;
 
         private Button min;
         private Button plus;
@@ -56,7 +58,8 @@ namespace Website.App_Code
             {
                 order = new Order(orderID);
                 menuItems = getMenuItems();
-                orderItems = getOrderItems();
+                orderItemsTable = getOrderItems();
+                orderItems = order.getOrderItemsObject();
                 update();
             }
             catch(Exception x)
@@ -78,10 +81,33 @@ namespace Website.App_Code
             try
             {
                 menuItems = getMenuItems();
-                orderItems = getOrderItems();
+                orderItemsTable = getOrderItems();
+                orderItems = order.getOrderItemsObject();
                 update();
             }
             catch(Exception x)
+            {
+                throwEx(x);
+            }
+        }
+
+        public CartPanel(TempOrder ord)
+        {//Constructor that receives the person's Order object (already has all the info we need)
+            this.conn = ord.getConnection();
+
+            headPanel = new Panel();
+            headPanel.CssClass = "row";
+
+            torder = ord;
+            orderItems = ord.getOrderItemsObject();
+
+            try
+            {
+                menuItems = getMenuItems();
+                orderItemsTable = getOrderItems();
+                update();
+            }
+            catch (Exception x)
             {
                 throwEx(x);
             }
@@ -98,7 +124,7 @@ namespace Website.App_Code
             DataTable i = new DataTable();
             try
             {
-                i = order.getOrderItemsObject().getThisOrderItems();
+                i = orderItems.getThisOrderItems();
             }
             catch(Exception x)
             {
@@ -148,14 +174,14 @@ namespace Website.App_Code
 
             try
             {
-                orderItems = getOrderItems();//Reloading the orderItems cuz it may have changed through adding/deleting new items
+                orderItemsTable = getOrderItems();//Reloading the orderItems cuz it may have changed through adding/deleting new items
             }
             catch(Exception x)
             {
                 throwEx(x);
             }
 
-            if (orderItems.Rows.Count <= 0)
+            if (orderItemsTable.Rows.Count <= 0)
             {//if there is no orderIems in order
                 return 0;
             }
@@ -165,7 +191,7 @@ namespace Website.App_Code
                 throwEx(new Exception("Menu Table is Empty"));
             }
 
-            foreach(DataRow datrow in order.getOrderItemsObject().getThisOrderItems().Rows)
+            foreach(DataRow datrow in orderItems.getThisOrderItems().Rows)
             {
                 try
                 {
@@ -252,6 +278,34 @@ namespace Website.App_Code
             return counterer;
         }
 
+        public void addItem(int id, int count)
+        {
+            if (order != null)
+            {//if it's an order
+                order.getOrderItemsObject().addProduct(id, count);
+                orderItems = order.getOrderItemsObject();
+            }
+            else if (torder != null)
+            {//if it's a temporary order
+                torder.getOrderItemsObject().addProduct(id, count);
+                orderItems = torder.getOrderItemsObject();
+            }
+        }
+
+        public void removeItem(int id, int count)
+        {
+            if (order != null)
+            {//if it's an order
+                order.getOrderItemsObject().removeProduct(id, count);
+                orderItems = order.getOrderItemsObject();
+            }
+            else if (torder != null)
+            {//if it's a temporary order
+                torder.getOrderItemsObject().removeProduct(id, count);
+                orderItems = torder.getOrderItemsObject();
+            }
+        }
+
         private void plusBtnClicked(object sender, EventArgs e)
         {//when the plus btn is clicked on a product
             try
@@ -262,7 +316,7 @@ namespace Website.App_Code
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                order.getOrderItemsObject().addProduct(Id, 1);
+                addItem(Id, 1);
                 update();
             }
             catch(Exception c)
@@ -281,7 +335,7 @@ namespace Website.App_Code
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                order.getOrderItemsObject().removeProduct(Id, 1);
+                removeItem(Id, 1);
                 update();
             }
             catch(Exception x)
