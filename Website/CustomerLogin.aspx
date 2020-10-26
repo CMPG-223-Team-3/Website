@@ -46,8 +46,8 @@
                             <asp:Label ID="lblStatus" runat="server" Text="" CssClass="text"></asp:Label>
                         </div>
                         <div class="row">
-                            <asp:Label ID="Label1" CssClass="col-3" runat="server" Text="Your Name: "></asp:Label>
-                            <asp:TextBox ID="txtName" runat="server" placeholder="Name" CssClass="form-control col-9"></asp:TextBox>
+                            <asp:Label ID="Label1" CssClass="col-3" runat="server" Text="Name: "></asp:Label>
+                            <asp:TextBox AutoCompleteType="FirstName" ID="txtName" runat="server" placeholder="First Name" CssClass="form-control col-9"></asp:TextBox>
                             <div><asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="txtName" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
                         </div>
                         <div class="row">
@@ -57,7 +57,7 @@
                         </div>
                             <div><asp:RangeValidator ID="RangeValidator1" runat="server" ErrorMessage="Please input table number larger than 0 and smaller than 101" ControlToValidate="txtTable" MinimumValue="1" MaximumValue="100"></asp:RangeValidator> </div>
                         <div class="row">
-                            <asp:Button ID="btnSignIn" runat="server" Text="Sign In" CssClass="btn btn-dark" CausesValidation="True" OnClick="btnSignIn_Click" />
+                            <asp:Button ID="Button1" runat="server" Text="Sign In" CssClass="btn btn-dark"/>
                         </div>
                     </fieldset>
                 </div>

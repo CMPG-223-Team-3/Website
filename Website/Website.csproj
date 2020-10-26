@@ -132,7 +132,6 @@
     </Content>
     <Content Include="gulpfile.js" />
     <Content Include="images\logo.jpg" />
-    <Content Include="IsThisYourOrder.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="WaiterLogOut.aspx" />
     <Content Include="Orders.aspx" />
@@ -182,13 +181,6 @@
       <DependentUpon>Error.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Code\Hash.cs" />
-    <Compile Include="IsThisYourOrder.aspx.cs">
-      <DependentUpon>IsThisYourOrder.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="IsThisYourOrder.aspx.designer.cs">
-      <DependentUpon>IsThisYourOrder.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
