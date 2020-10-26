@@ -52,7 +52,7 @@ namespace Website
                 "AND Customer_Name = @csn"
             };
             comm.Parameters.AddWithValue("@tnr", tableNr);
-            comm.Parameters.AddWithValue("@csn", customerName.ToUpper());
+            comm.Parameters.AddWithValue("@csn", customerName);
 
             try
             {
@@ -96,9 +96,7 @@ namespace Website
             {//if no order was found, no worries, go to where the customer can order
                 Response.Redirect("CustomerOrder.aspx", true);
             }
-
             Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
-
         }
 
         private void throwEx(Exception x)

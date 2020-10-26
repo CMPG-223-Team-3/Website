@@ -71,31 +71,22 @@ namespace Website
                     lblLogin.Text = Session[userNameSession].ToString();
                 }
 
-                if (cartPanel != null)
+                /*if (cartPanel != null)
                 {//if the cart panel has been initialized
                     cartPanel.update();
-                }
+                }*/
 
-                if (!IsPostBack || order == null)
-                {//if the user hasn't searched anything or 1st time page loaded
-                    //this is where order global val should be initialized
-                    
-                    
-                    
-                    showProducts(conn, "SELECT * FROM `MENU-ITEM`");
-                }
+
 
                 if (Session[tableIDSession] != null && Session[userNameSession] != null)
                 {//if the user has logged in - (remember this part runs only on first load)
                     if (Session[orderIDSession] != null && order == null)
                     {//if they already have an order, but not paid yet
                         order = new Order(int.Parse(Session[orderIDSession].ToString()));
-                        order.updateOrderNameAndTable(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()));
                     }
                     else if (Session[orderIDSession] == null && order == null)
                     {//where we create a temp order if they have logged in, but no order yet
                         order = new Order();
-                        order.updateOrderNameAndTable(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()));
                     }
 
 
@@ -111,20 +102,32 @@ namespace Website
                 {
                     throwEx(new Exception("Something it seems as if the log in process has failed..."));
                 }
+                if (!IsPostBack || order == null  || !isSearched)
+                {//if the user hasn't searched anything or 1st time page loaded
+                 //this is where order global val should be initialized
+
+                    cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                    pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+                    Button checkoutBtn = new Button();
+                    checkoutBtn.Text = "Checkout";
+                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                    pnlOrder.Controls.Add(checkoutBtn);
+                    showProducts(conn, "SELECT * FROM `MENU-ITEM`");
 
 
-
-                if (cartPanel == null)
-                {//this is where the cartpanel should be made to show the customer's order
-                    if (order != null)
-                    {
+                    /*if (cartPanel == null)
+                    {//this is where the cartpanel should be made to show the customer's order
                         if (order != null)
                         {
-                            cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
-                        }
-                        else
-                        {
-                            throwEx(new Exception("I can't do the cartpanel"));
+                            if (order != null)
+                            {
+                                cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                            }
+                            else
+                            {
+                                throwEx(new Exception("I can't do the cartpanel"));
+                            }
                         }
                         
                     }
@@ -139,9 +142,8 @@ namespace Website
                     checkoutBtn.CssClass = "btn btn-dark btn-lg";
                     checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
                     pnlOrder.Controls.Add(checkoutBtn);
-                }
-                showProducts(conn, "SELECT * FROM `MENU-ITEM`");
 
+                }
 
                 if (isSearched)
                 {
@@ -271,7 +273,7 @@ namespace Website
 
                 if(cartPanel != null)
                 {
-                    cartPanel.addItem(Id, 1);
+                    order.getOrderItemsObject().addProduct(Id, 1);
                     cartPanel.update();
                 }
             }
@@ -310,11 +312,11 @@ namespace Website
             {
                 if (Session[userNameSession] != null && Session[tableIDSession] != null && Session[orderIDSession] != null)
                 {
-                    if(cartPanel.order != null)
+                    if(order != null)
                     {//if it was not a temp order
                         cartPanel.order.getOrderItemsObject().close();
-                        Session[tableIDSession] = cartPanel.order.getTableID();
-                        Session[orderIDSession] = cartPanel.order.getOrderID();
+                        Session[tableIDSession] = order.getTableID();
+                        Session[orderIDSession] = order.getOrderID();
                     }
                     Response.Redirect("Checkout.aspx", true);
                 }
@@ -322,6 +324,7 @@ namespace Website
                 {
                     Session[orderObjectSession] = cartPanel.order;
                     Response.Redirect("CustomerLogin.aspx", true);
+
                 }
             }
             catch (Exception x)
