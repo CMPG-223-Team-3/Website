@@ -120,7 +120,6 @@ namespace Website.App_Code
                 cm.CommandText =
                     "SELECT * " +
                     "FROM `MENU-ITEM` ";
-                //cm.Parameters.AddWithValue("@mm", menuTableName);
                 MySqlDataAdapter adap = new MySqlDataAdapter(cm);
                 adap.Fill(ds);
 

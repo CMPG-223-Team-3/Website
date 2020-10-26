@@ -46,13 +46,12 @@ namespace Website
             {
                 Connection = conn,
                 CommandText =
-                "SELECT Order_ID " +
-                "FROM ORDER " +
-                "WHERE Table_nr = @tnr " +
-                "AND Customer_Name = @csn"
+                "SELECT * " +
+                "FROM `ORDER` " +
+                "WHERE `Table_nr` = @tnr " +
+                "AND `Customer_Name` = '" + customerName.ToUpper() + "'"
             };
             comm.Parameters.AddWithValue("@tnr", tableNr);
-            comm.Parameters.AddWithValue("@csn", customerName.ToUpper());
 
             try
             {
@@ -82,7 +81,7 @@ namespace Website
         protected void btnSignIn_Click(object sender, EventArgs e)
         {
             Session[tableIDSession] = int.Parse(txtTable.Text);
-            Session[userNameSession] = txtName.Text.Trim();
+            Session[userNameSession] = txtName.Text.Trim().ToUpper();
 
             int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
 
@@ -90,15 +89,13 @@ namespace Website
             {//dunno how table nums work - rn can't be less than 1\
                 //this what happens if an order found matching tableID & name entered
                 Session[orderIDSession] = ordNr;
-                Response.Redirect("IsThisYourOrder.aspx", true); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
+                Response.Redirect("IsThisYourOrder.aspx", false); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
             }
             if (ordNr == -1)
             {//if no order was found, no worries, go to where the customer can order
-                Response.Redirect("CustomerOrder.aspx", true);
+                Response.Redirect("CustomerOrder.aspx", false);
             }
-
             Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
-
         }
 
         private void throwEx(Exception x)

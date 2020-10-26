@@ -129,6 +129,15 @@ namespace Website
                     //if the user did search in the products for what the user wants
                     isSearched = false;
                 }
+
+                if (cartPanel.getTotalPrice() == 0)
+                {
+                    pnlOrder.Visible = false;
+                }
+                else
+                {
+                    pnlOrder.Visible = true;
+                }
             }
             catch(Exception ee)
             {
