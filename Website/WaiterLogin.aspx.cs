@@ -47,14 +47,14 @@ namespace Website
 
                 SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[]);
                 conn.Open();
-                string checkUser = "select * from sql7368973.Staff where Username ='" + txtUserName.Text + "'";
+                string checkUser = "SELECT * from Location where Name'%" + txtUserName.Text + "%'";
                 SqlCommand com = new SqlCommand(checkUser, conn);
                 int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
                 conn.Close();
                 if (temp == 1)
                 {
                     conn.Open();
-                    string checkPassword = "select * from sql7368973.Staff where Password ='" + txtUserName.Text + "'";
+                    string checkPassword = "SELECT * from Location where Password ='%" + txtUserName.Text + "%'";
                     SqlCommand passcom = new SqlCommand(checkPassword, conn);
                     string password = passcom.ExecuteScalar().ToString().Replace(" ", "");
 
