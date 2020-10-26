@@ -17,6 +17,8 @@ namespace Website
         private static string fromPageSession = "FromPage";
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
+        private static string orderObjectSession = "OrderObject";
+
 
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri; //Getting the pagename to store in session at page load so we can know which page to go back to after Error page is thrown
@@ -36,7 +38,7 @@ namespace Website
             }
         }
 
-        protected int lastOrderID(int tableNr)
+        protected int lastOrderID(int tableNr, string customerName)
         {
             int orderIdnum = -1;
 
@@ -44,22 +46,24 @@ namespace Website
             {
                 Connection = conn,
                 CommandText =
-                "SELECT * " +
+                "SELECT Order_ID " +
                 "FROM ORDER " +
-                "WHERE Table_nr = @tnr "
+                "WHERE Table_nr = @tnr " +
+                "AND Customer_Name = @csn"
             };
             comm.Parameters.AddWithValue("@tnr", tableNr);
+            comm.Parameters.AddWithValue("@csn", customerName.ToUpper());
 
             try
             {
                 using (conn)
                 {
                     conn.Open();
-                    using(MySqlDataReader r = comm.ExecuteReader())
+                    using (MySqlDataReader r = comm.ExecuteReader())
                     {//using a reader here cus i need the last value
-                        if(r.HasRows)
+                        if (r.HasRows)
                         {
-                            while(r.Read())
+                            while (r.Read())
                             {
                                 orderIdnum = int.Parse(r["Order_ID"].ToString());
                             }
@@ -67,7 +71,7 @@ namespace Website
                     }
                 }
             }
-            catch(Exception xx)
+            catch (Exception xx)
             {
                 throwEx(xx);
             }
@@ -77,18 +81,24 @@ namespace Website
 
         protected void btnSignIn_Click(object sender, EventArgs e)
         {
-            int ordNr = lastOrderID(int.Parse(txtTable.Text));
+            Session[tableIDSession] = int.Parse(txtTable.Text);
+            Session[userNameSession] = txtName.Text.Trim();
 
-            if(ordNr > 0)
-            {//dunno how table nums work - rn can't be less than 1
+            int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
+
+            if (ordNr > 0)
+            {//dunno how table nums work - rn can't be less than 1\
+                //this what happens if an order found matching tableID & name entered
                 Session[orderIDSession] = ordNr;
-                Session[tableIDSession] = int.Parse(txtTable.Text);
-                Response.Redirect("IsThisYourOrder.aspx");
+                Response.Redirect("IsThisYourOrder.aspx", true); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
             }
-            else
-            {
-                Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
+            if (ordNr == -1)
+            {//if no order was found, no worries, go to where the customer can order
+                Response.Redirect("CustomerOrder.aspx", true);
             }
+
+            Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
+
         }
 
         private void throwEx(Exception x)

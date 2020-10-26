@@ -42,6 +42,21 @@ $dark: rgba(0, 0, 0, 0.28);
     margin-bottom: 10px;
 }
 
+.FormBox{
+    background-color: $dark;
+    border-radius: 3px;
+    border: 2px solid black;
+    margin: 6px;
+}
+
+.field{
+    padding: 10px;
+}
+.middle{
+    margin-left: auto;
+    margin-right:auto;
+}
+
 // Bootstrap Sass Imports
 @import "node_modules/bootstrap/scss/bootstrap";
 @import "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";

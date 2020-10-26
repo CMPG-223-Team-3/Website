@@ -34,7 +34,7 @@ namespace Website
             {
                 conn = new DatabaseConnection().getConnection();
 
-                CartPanel panel = new CartPanel(conn, tNr, oNr);
+                CartPanel panel = new CartPanel(conn, oNr);
                 this.Controls.Add(panel);
 
                 Button yes = new Button();

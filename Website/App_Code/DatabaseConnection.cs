@@ -20,7 +20,7 @@ namespace Website.App_Code
         public DatabaseConnection()
         {
             server = "cmpg-223-db.ci6pbvbzz3x3.us-west-1.rds.amazonaws.com";
-            database = "sql7368973";
+            database = "CMPG_223_DB";
             userName = "admin";
             userPass = "cmpg22310";
             connectionString = "Server=" + server + ";" + "Port=3306;" + "Database=" +

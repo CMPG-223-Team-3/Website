@@ -15,6 +15,10 @@
 <body>
     <form id="form1" runat="server">
         <div>
+            <h1>Checkout</h1>
+            <h3>Please confirm your order - </h3>
+        </div>
+        <div>
             <asp:Panel class="container m-4" ID="pnlCheckout" runat="server"></asp:Panel>
         </div>
     </form>
