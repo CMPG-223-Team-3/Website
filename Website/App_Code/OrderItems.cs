@@ -65,10 +65,13 @@ namespace Website.App_Code
             DataTable send = new DataTable();
             for (int i = 0; i < orderItems.Rows.Count; i++)
             {
-                if (orderItems.Rows[i][OrderIDCol].ToString() == getOrderID().ToString())
+                for (int i = 0; i < orderItems.Rows.Count; i++)
                 {
-                    send.Rows.Add(orderItems.Rows[i]);
-                    counter++;
+                    if (orderItems.Rows[i][OrderIDCol].ToString() == getOrderID().ToString())
+                    {
+                        send.ImportRow(orderItems.Rows[i]);
+                        counter++;
+                    }
                 }
             }
             if(counter == 0)

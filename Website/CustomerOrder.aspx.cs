@@ -102,9 +102,6 @@ namespace Website
                 {
                     throwEx(new Exception("Something it seems as if the log in process has failed..."));
                 }
-
-
-
                 if (!IsPostBack || order == null  || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
                  //this is where order global val should be initialized
@@ -131,22 +128,21 @@ namespace Website
                             {
                                 throwEx(new Exception("I can't do the cartpanel"));
                             }
-
                         }
+                        
                     }
-                    else
-                    {
-                        pnlOrder.Controls.Add(cartPanel.getHeadPanel());
-                        Button checkoutBtn = new Button();
-                        checkoutBtn.CausesValidation = false;
-                        checkoutBtn.Text = "Checkout";
-                        checkoutBtn.CssClass = "btn btn-dark btn-lg";
-                        checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
-                        pnlOrder.Controls.Add(checkoutBtn);
-                    }*/
+                }
+                else
+                {
+                    cartPanel.update();
+                    pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+                    Button checkoutBtn = new Button();
+                    checkoutBtn.CausesValidation = false;
+                    checkoutBtn.Text = "Checkout";
+                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                    pnlOrder.Controls.Add(checkoutBtn);
 
-
-                    showProducts(conn, "SELECT * FROM `MENU-ITEM`");
                 }
 
                 if (isSearched)
@@ -254,7 +250,7 @@ namespace Website
                         }
                         else
                         {
-                            throw new Exception("Could not access database items");
+                            throwEx(new Exception("Could not access database items"));
                         }
                     }
                 }
@@ -322,12 +318,13 @@ namespace Website
                         Session[tableIDSession] = order.getTableID();
                         Session[orderIDSession] = order.getOrderID();
                     }
-                    Response.Redirect("Checkout.aspx", false);
+                    Response.Redirect("Checkout.aspx", true);
                 }
-                else if(order != null)
+                else if(cartPanel.order != null)
                 {
-                    Session[orderObjectSession] = order;
-                    Response.Redirect("CustomerLogin.aspx", false);
+                    Session[orderObjectSession] = cartPanel.order;
+                    Response.Redirect("CustomerLogin.aspx", true);
+
                 }
             }
             catch (Exception x)

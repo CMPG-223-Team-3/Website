@@ -82,34 +82,21 @@ namespace Website
         protected void btnSignIn_Click(object sender, EventArgs e)
         {
             Session[tableIDSession] = int.Parse(txtTable.Text);
-            Session[userNameSession] = txtName.Text;
+            Session[userNameSession] = txtName.Text.Trim();
+ 
+            int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
 
-            if (Session[orderObjectSession] != null)
-            {//this part is here when the customer tried to order without logging in first
-                Order i = (Order)Session[orderObjectSession];
-                i.updateOrderNameAndTable(txtName.Text, int.Parse(txtTable.Text));
-                i.getOrderItemsObject().close();
-                Session[orderIDSession] = i.getOrderID();
-
-                Response.Redirect("Checkout.aspx");
+            if (ordNr > 0)
+            {//dunno how table nums work - rn can't be less than 1\
+                //this what happens if an order found matching tableID & name entered
+                Session[orderIDSession] = ordNr;
+                Response.Redirect("IsThisYourOrder.aspx", true); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
             }
-            else
-            {
-                int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
-
-                if (ordNr > 0)
-                {//dunno how table nums work - rn can't be less than 1\
-                    //this what happens if an order found matching tableID & name entered
-                    Session[orderIDSession] = ordNr;
-                    Response.Redirect("IsThisYourOrder.aspx", true); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
-                }
-                if (ordNr == -1)
-                {//if no order was found, no worries, go to where the customer can order
-                    Response.Redirect("CustomerOrder.aspx", false);
-                }
-
-                Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
+            if (ordNr == -1)
+            {//if no order was found, no worries, go to where the customer can order
+                Response.Redirect("CustomerOrder.aspx", true);
             }
+            Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
         }
 
         private void throwEx(Exception x)
