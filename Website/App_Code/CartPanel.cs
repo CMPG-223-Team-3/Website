@@ -25,7 +25,7 @@ namespace Website.App_Code
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
-        public Order order;
+        private Order order;
         private DataTable menuItems;
         private DataTable orderItemsTable;
         private OrderItems orderItems;

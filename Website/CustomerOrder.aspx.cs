@@ -108,7 +108,6 @@ namespace Website
                     Response.Redirect("CustomerLogin.aspx", false);
                     Context.ApplicationInstance.CompleteRequest();
                 }
-
                 if(cartPanel == null)
                 {
                     cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
@@ -258,7 +257,6 @@ namespace Website
                 Button btn = sender as Button;
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
-
                 cartPanel.order.getOrderItemsObject().addProduct(Id, 1);
                 cartPanel.update();
             }
