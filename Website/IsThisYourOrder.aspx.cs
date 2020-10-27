@@ -213,23 +213,26 @@ namespace Website
                         throwEx(new Exception("Could not find product: " + productId + " in database"));
                     }
 
+                    Panel temp = new Panel();
+
                     name = new Label();
                     price = new Label();
                     quanlbl = new Label();
                     this.totalPrice += productPrice * quantity;
 
-                    price.CssClass = "col-2";
-                    quanlbl.CssClass = "col-2";
-                    name.CssClass = "col-2";
+                    price.CssClass = "col-4";
+                    quanlbl.CssClass = "col-4";
+                    name.CssClass = "col-4";
 
                     name.Text = productName;
                     price.Text = "R" + productPrice;
                     quanlbl.Text = quantity.ToString() + " X ";
 
                     //Build the first part of headPanel
-                    pnl1.Controls.Add(quanlbl);
-                    pnl1.Controls.Add(name);
-                    pnl1.Controls.Add(price);
+                    temp.Controls.Add(quanlbl);
+                    temp.Controls.Add(name);
+                    temp.Controls.Add(price);
+                    pnl1.Controls.Add(temp);
 
                     counterer++;
                 }

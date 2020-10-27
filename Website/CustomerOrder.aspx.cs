@@ -28,6 +28,7 @@ namespace Website
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
+        private bool isTheThing = false;
 
         //session var names
         private static string userNameSession = "UserName";
@@ -54,6 +55,11 @@ namespace Website
                 {
                     throw new Exception("Username not logged in");
                 }
+
+                if (cartPanel != null)
+                {
+                    cartPanel.update();
+                }
             }
             catch
             {
@@ -68,6 +74,7 @@ namespace Website
 
             try
             {
+                btnSearch_Click(new object(), new EventArgs());
                 if (Session[userNameSession] != null)
                 {//if the user has logged in, display their name instead of the log in label on the navbar
                     lblLogin.Text = Session[userNameSession].ToString();
@@ -102,7 +109,17 @@ namespace Website
                     Context.ApplicationInstance.CompleteRequest();
                 }
 
-                cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                if(cartPanel == null)
+                {
+                    cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                }
+                else
+                {
+                    cartPanel.update();
+                    isTheThing = true;
+                }
+
+                pnlOrder.Controls.Clear();
                 pnlOrder.Controls.Add(cartPanel.getHeadPanel());
                 Button checkoutBtn = new Button();
                 checkoutBtn.CausesValidation = false;
@@ -130,6 +147,7 @@ namespace Website
                 {
                     pnlOrder.Visible = true;
                 }
+
             }
             catch(Exception ee)
             {
@@ -249,6 +267,8 @@ namespace Website
                 Session[errorSession] = x.Message + ":   " + x.StackTrace;
                 Response.Redirect("Error.aspx");
             }
+            btnSearch_Click(new object(), new EventArgs());
+            Page_Load(new object(), new EventArgs());
         }
 
         //When user searched for product
@@ -285,6 +305,7 @@ namespace Website
             {
                 throwEx(x);
             }
+            Page_Load(new object(), new EventArgs());
         }
 
         private void throwEx(Exception x)

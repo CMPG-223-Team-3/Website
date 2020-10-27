@@ -16,9 +16,18 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <asp:Panel ID="pnl1" runat="server"></asp:Panel>
-            <asp:Panel ID="pnl2" runat="server"></asp:Panel>
+        <div class="container">
+            <div>
+                <h1 style="margin: auto;">Pending order found with your credentials</h1>
+                <h3 style="margin: auto;">Is this your order?</h3>
+            </div>
+            <div>
+                <asp:Panel style="margin: auto;" ID="pnl1" runat="server"></asp:Panel>
+                <asp:Panel style="margin: auto;" ID="pnl2" runat="server"></asp:Panel>
+            </div>
+            <div>
+                <asp:Panel style="margin: auto;" class="container m-4" ID="pnlCheckout" runat="server"></asp:Panel>
+            </div>
         </div>
     </form>
 </body>

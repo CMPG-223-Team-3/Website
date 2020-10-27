@@ -41,7 +41,19 @@ namespace Website
                 {//if user is signed in with their table
                     if(Session[orderIDSession] != null)
                     {//user has their order placed
-                        cart = new CartPanel(new Order(int.Parse(Session[orderIDSession].ToString())));
+                        if(cart == null)
+                        {
+                            cart = new CartPanel(new Order(int.Parse(Session[orderIDSession].ToString())));
+                        }
+                        else
+                        {
+                            cart.update();
+                        }
+                        if (cart.getTotalPrice() == 0)
+                        {
+                            cart.order.getOrderItemsObject().close();
+                            Response.Redirect(Session[fromPageSession].ToString(), false);
+                        }
                         pnlCheckout.Controls.Add(cart.getHeadPanel());
 
                         Button checkOut = new Button();
@@ -49,10 +61,6 @@ namespace Website
                         checkOut.CssClass = "btn btn-dark";
                         checkOut.Click += new EventHandler(checkoutBtnClicked);
                         pnlCheckout.Controls.Add(checkOut);
-                        if(cart.getTotalPrice() <= 0)
-                        {
-                            Response.Redirect(Session[fromPageSession].ToString());
-                        }
                     }
                 }
                 else
@@ -71,6 +79,7 @@ namespace Website
         {
             try
             {
+                cart.update();
                 cart.order.getOrderItemsObject().close();
                 try
                 {
@@ -84,18 +93,21 @@ namespace Website
                     throw new HttpException();
                 }
 
+                Session[orderIDSession] = null;
+
                 Response.Write("<script>alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
-                Response.Redirect("OrderStatus.aspx");
+                Response.Redirect("OrderStatus.aspx", false);
             }
             catch(HttpException x)
             {
                 Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
-                Response.Redirect("default.aspx");
+                Response.Redirect("default.aspx", false);
             }
             catch(Exception x)
             {
                 throwEx(x);
             }
+            Page_Load(new object(), new EventArgs());
         }
 
         private void throwEx(Exception x)

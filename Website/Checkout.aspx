@@ -14,12 +14,14 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <h1>Checkout</h1>
-            <h3>Please confirm your order - </h3>
-        </div>
-        <div>
-            <asp:Panel class="container m-4" ID="pnlCheckout" runat="server"></asp:Panel>
+        <div class="container">
+            <div>
+                <h1 style="margin: auto;">Checkout</h1>
+                <h3 style="margin: auto;">Please confirm your order</h3>
+            </div>
+            <div>
+                <asp:Panel class="container m-4" ID="pnlCheckout" runat="server"></asp:Panel>
+            </div>
         </div>
     </form>
 </body>
