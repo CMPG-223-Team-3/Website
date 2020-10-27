@@ -7,7 +7,7 @@ using System.Web;
 namespace Website.App_Code
 {
     //This class depends on the current .NET Framework's MySql.Data's ability to reuse the same connection after .dispose() is called
-    public class ConnectionClass
+    public class DatabaseConnection
     {
         private MySqlConnection conn;
         private static string server;
@@ -17,10 +17,10 @@ namespace Website.App_Code
         private string connectionString;
         private Exception x = new NotImplementedException();
 
-        public ConnectionClass()
+        public DatabaseConnection()
         {
             server = "cmpg-223-db.ci6pbvbzz3x3.us-west-1.rds.amazonaws.com";
-            database = "sql7368973";
+            database = "CMPG_223_DB";
             userName = "admin";
             userPass = "cmpg22310";
             connectionString = "Server=" + server + ";" + "Port=3306;" + "Database=" +

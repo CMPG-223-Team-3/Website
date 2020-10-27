@@ -19,7 +19,7 @@ namespace Website
         protected void Page_Load(object sender, EventArgs e)
         {
             Session["FromPage"] = pageName;
-            ConnectionClass connection = new ConnectionClass();
+            DatabaseConnection connection = new DatabaseConnection();
             conn = connection.getConnection();
         }
 

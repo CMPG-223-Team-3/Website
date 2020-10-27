@@ -36,6 +36,29 @@ $dark: rgba(0, 0, 0, 0.28);
     flex-direction: column;
 }
 
+.Logo{
+    width: 60px;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.FormBox{
+    background-color: $dark;
+    border-radius: 3px;
+    border: 2px solid black;
+}
+
+.field{
+    padding: 10px;
+}
+
+.linkActive{
+    color: $dark;;
+}
+
+.linkInAtive{
+    color:white;
+}
 
 // Bootstrap Sass Imports
 @import "node_modules/bootstrap/scss/bootstrap";

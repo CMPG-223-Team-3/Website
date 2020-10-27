@@ -28,10 +28,25 @@ namespace Website.App_Code
         {//Only constructor - needs the OrderID - will usually already be known if this class was to be used by Order class
             try
             {
-                ConnectionClass connection = new ConnectionClass();//Class to connect to database
+                DatabaseConnection connection = new DatabaseConnection();//Class to connect to database
                 conn = connection.getConnection();
-                orderID = OrderID;
+                this.orderID = OrderID;
                 getOrderItemsTable();
+            }
+            catch (Exception x)
+            {
+                throw x;
+            }
+        }
+
+        public OrderItems()
+        {//this constructor is for to use for a temporary table - only to be uploaded to db when orderID set and stuff
+            try
+            {
+                DatabaseConnection connection = new DatabaseConnection();//Class to connect to database
+                conn = connection.getConnection();
+                getOrderItemsTable();
+                this.orderID = -1;
             }
             catch (Exception x)
             {
@@ -44,8 +59,34 @@ namespace Website.App_Code
             return orderItems;
         }
 
-        public void getOrderItemsTable()
-        {//Put all of the orderId's orderitems into a DataTable and return it
+        public DataTable getThisOrderItems()
+        {
+            int counter = 0;
+            DataTable send = new DataTable();
+            send = orderItems.Clone();//clone orderItems datatable structure not the values
+            if (orderItems.Rows.Count > 0)
+            {
+                for (int i = 0; i < orderItems.Rows.Count; i++)
+                {
+                    if (orderItems.Rows[i][OrderIDCol].ToString() == getOrderID().ToString())
+                    {
+                        send.ImportRow(orderItems.Rows[i]);
+                        counter++;
+                    }
+                }
+            }
+            if (counter == 0)
+            {
+                return new DataTable();
+            }
+            else
+            {
+                return send;
+            }
+        }
+
+        private void getOrderItemsTable()
+        {//Put all of the orderId's orderitems into a DataTable and global var it
             MySqlCommand cmmd = new MySqlCommand();
             cmmd.CommandText =
                 "SELECT * " +
@@ -55,7 +96,7 @@ namespace Website.App_Code
             {
                 adap = new MySqlDataAdapter(cmmd);
                 build = new MySqlCommandBuilder(adap);
-                
+
                 DataTable ds = new DataTable();
                 adap.Fill(ds);
 
@@ -80,7 +121,7 @@ namespace Website.App_Code
         {//delete product from order - deletes all quantity, unlike removeproduct
             try
             {
-                if(hasProduct(productId))
+                if (hasProduct(productId))
                 {
                     int place = whereProduct(productId);
                     orderItems.Rows[place][OrderIDCol] = DBNull.Value;
@@ -102,7 +143,7 @@ namespace Website.App_Code
             {
                 foreach (DataRow r in orderItems.Rows)
                 {
-                    if ((r[OrderIDCol].ToString() == orderID.ToString()) && r[MenuIDCol].ToString() == productId.ToString())
+                    if ((r[OrderIDCol].ToString() == getOrderID().ToString()) && r[MenuIDCol].ToString() == productId.ToString())
                     {
                         return true;
                     }
@@ -118,7 +159,7 @@ namespace Website.App_Code
             {
                 foreach (DataRow r in orderItems.Rows)
                 {
-                    if ((r[OrderIDCol].ToString() == orderID.ToString()) && r[MenuIDCol].ToString() == productId.ToString())
+                    if ((r[OrderIDCol].ToString() == getOrderID().ToString()) && r[MenuIDCol].ToString() == productId.ToString())
                     {
                         return x;
                     }
@@ -133,7 +174,7 @@ namespace Website.App_Code
          //If quantity goes less than 0 (currentQuantity-howmany), delete the item from the order
             if (orderItems.Rows.Count > 0)
             {
-                if(hasProduct(productId))
+                if (hasProduct(productId))
                 {
                     int place = whereProduct(productId);
                     int quant = int.Parse(orderItems.Rows[place][QuantityCol].ToString());
@@ -156,7 +197,7 @@ namespace Website.App_Code
             {
                 foreach (DataRow r in orderItems.Rows)
                 {
-                    if ((r[OrderIDCol].ToString() == orderID.ToString()) && r[MenuIDCol].ToString() == productId.ToString())
+                    if ((r[OrderIDCol].ToString() == getOrderID().ToString()) && r[MenuIDCol].ToString() == productId.ToString())
                     {
                         try
                         {
@@ -193,7 +234,7 @@ namespace Website.App_Code
                     {
                         DataRow dr = orderItems.NewRow();
                         dr[MenuIDCol] = productId;
-                        dr[OrderIDCol] = orderID;
+                        dr[OrderIDCol] = getOrderID();
                         dr[QuantityCol] = howmany;
 
                         orderItems.Rows.Add(dr);
@@ -208,23 +249,65 @@ namespace Website.App_Code
 
         public void close()
         {
-            try
+            if (getOrderID() != -1)
             {
-                using (conn)
+                try
                 {
-                    conn.Open();
-                    adap.Update(orderItems);
+                    using (conn)
+                    {
+                        conn.Open();
+                        adap.Update(orderItems);
+                    }
+                }
+                catch (Exception z)
+                {
+                    throw z;
                 }
             }
-            catch (Exception z)
+            else
             {
-                throw z;
+                throw new NotImplementedException("Order ID not yet set...");
             }
         }
 
         public void dispose()
         {
             close();
+        }
+
+        public int getOrderID()
+        {
+            return this.orderID;
+        }
+
+        public int setOrderID(int id)
+        {
+            if (getOrderID() != -1)
+            {
+                throw new Exception("Can't change the ID of a non-temporary instance");
+            }
+            else
+            {
+                return setNewOrderID(id);
+            }
+        }
+
+        private int setNewOrderID(int id)
+        {//set all order details (THAT ARE NOT YET SENT TO THE DATABASE) to the new orderid
+            int counter = 0;
+            if (orderItems.Rows.Count > 0)
+            {
+                for (int i = 0; i <= orderItems.Rows.Count; i++)
+                {
+                    if (orderItems.Rows[i][OrderIDCol].ToString() == getOrderID().ToString())
+                    {
+                        orderItems.Rows[i][OrderIDCol] = id;
+                        counter++;
+                    }
+                }
+                return counter;
+            }
+            return 0;
         }
     }
 }

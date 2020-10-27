@@ -18,6 +18,9 @@ namespace Website
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
 
+        private static string orderCookieName = "OrderCookie";
+        private static string orderCookieSubName = "OrderIDCookie";
+
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
         private CartPanel cart;
@@ -31,18 +34,30 @@ namespace Website
                     Session[fromPageSession] = pageName;
                 }
                 
-                ConnectionClass connection = new ConnectionClass();
+                DatabaseConnection connection = new DatabaseConnection();
                 MySqlConnection conn = connection.getConnection();
 
-                if (Session[tableIDSession] != null)
+                if (Session[tableIDSession] != null && Session[userNameSession] != null)
                 {//if user is signed in with their table
                     if(Session[orderIDSession] != null)
                     {//user has their order placed
-                        cart = new CartPanel(conn,int.Parse(Session[tableIDSession].ToString()),int.Parse(Session[orderIDSession].ToString()));
+                        if(cart == null)
+                        {
+                            cart = new CartPanel(new Order(int.Parse(Session[orderIDSession].ToString())));
+                        }
+                        else
+                        {
+                            cart.update();
+                        }
+                        if (cart.getTotalPrice() == 0)
+                        {
+                            cart.order.getOrderItemsObject().close();
+                            Response.Redirect(Session[fromPageSession].ToString(), false);
+                        }
                         pnlCheckout.Controls.Add(cart.getHeadPanel());
 
                         Button checkOut = new Button();
-                        checkOut.Text = "Pay";
+                        checkOut.Text = "Confirm Order";
                         checkOut.CssClass = "btn btn-dark";
                         checkOut.Click += new EventHandler(checkoutBtnClicked);
                         pnlCheckout.Controls.Add(checkOut);
@@ -50,7 +65,7 @@ namespace Website
                 }
                 else
                 {//send them to login/signup page
-                    Response.Redirect("Login.aspx", false);
+                    Response.Redirect("CustomerLogin.aspx", false);
                 }
             }
             catch(Exception x)
@@ -62,8 +77,43 @@ namespace Website
 
         private void checkoutBtnClicked(object sender, EventArgs e)
         {
-            Session[errorSession] = new NotImplementedException().Message;
-            Response.Redirect("Error.aspx");
+            try
+            {
+                cart.update();
+                cart.order.getOrderItemsObject().close();
+                try
+                {
+                    HttpCookie userCookie = new HttpCookie(orderCookieName);
+                    userCookie[orderCookieSubName] = cart.order.getOrderID().ToString();
+                    Response.Cookies.Add(userCookie);
+                    userCookie.Expires = DateTime.Now.AddHours(5);
+                }
+                catch(Exception x)
+                {
+                    throw new HttpException();
+                }
+
+                Session[orderIDSession] = null;
+
+                Response.Write("<script>alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
+                Response.Redirect("OrderStatus.aspx", false);
+            }
+            catch(HttpException x)
+            {
+                Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
+                Response.Redirect("default.aspx", false);
+            }
+            catch(Exception x)
+            {
+                throwEx(x);
+            }
+            Page_Load(new object(), new EventArgs());
+        }
+
+        private void throwEx(Exception x)
+        {
+            Session[errorSession] = x.Message + x.StackTrace;
+            HttpContext.Current.Response.Redirect("Error.aspx", false);
         }
 
     }

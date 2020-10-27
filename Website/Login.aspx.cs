@@ -17,20 +17,28 @@ namespace Website
 {
     public partial class Login : System.Web.UI.Page
     {
+        //session var names
+        private static string userNameSession = "UserName";
+        private static string errorSession = "Error";
+        private static string fromPageSession = "FromPage";
+        private static string orderIDSession = "OrderID";
+        private static string tableIDSession = "TableID";
+
+
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri; //Getting the pagename to store in session at page load so we can know which page to go back to after Error page is thrown
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["FromPage"] = pageName;
+            Session[fromPageSession] = pageName;
             try
             {
-                ConnectionClass connection = new ConnectionClass(); //New connection object (See Connection.cs)
+                DatabaseConnection connection = new DatabaseConnection(); //New connection object (See Connection.cs)
                 conn = connection.getConnection();
             }
             catch(Exception x)
             {//Note how we're doing the error handling on the site: put Exception message into error session and redirect to Error.aspx
-                Session["Error"] = x.Message;
+                Session[errorSession] = x.Message;
                 Response.Redirect("Error.aspx");
             }
         }
@@ -40,63 +48,21 @@ namespace Website
             Response.Redirect("Registration.aspx");
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e) //NOTE to @Skroef: Check the isUser and isStaff methods i made (might execute faster)
+        protected void btnLogin_Click(object sender, EventArgs e)
         {
-            //#1 Make the connection String.
-            //#2 run the username and password to check if it is registered correct.
-                //#2.1 check the users database table if user exist
-                //#2.2 check the staff database table if user is staff
-
-            /*conn.Open();
-            string checkUser = "select count(*) from UserData where UserName='" + txtLogName.Text + "'";
-            MySqlCommand com = new MySqlCommand(checkUser, conn);
-            int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
-            conn.Close();
-            if (temp == 1)
-            {
-                conn.Open();
-                string checkPassword = "select Password from UserData where UserName='" + txtLogName.Text + "'";
-                MySqlCommand passcom = new MySqlCommand(checkPassword, conn);
-                string password = passcom.ExecuteScalar().ToString().Replace(" ", "");
-
-                Hash hPass = new Hash(txtLogPassword.Text); //Making new Hash object to hash the entered password to compare to what is in the database
-                string enteredPassword = hPass.getHash(); //Getting the hash object's hash
-
-                if (password == enteredPassword)
-                {//If the user's UserName and Password is correct, get the user's data for the customerorder page, if the user is staff, send them to Orders page
-                    Session["Username"] = txtLogName.Text;
-                    Response.Write("Password is correct");
-                    //Redirect to the next page.
-                    Response.Redirect("Orders.aspx");
-                }
-                else
-                {
-                    Response.Write("Password is NOT correct");
-                }
-            }
-            else
-            {
-                Response.Write("Username is NOT correct");
-            }*/
-
-
-
-            Hash i = new Hash(txtLogPassword.Text);
-
-            //Alternate way of doing the login btn
             if(isCustomer(txtLogUserName.Text, txtLogPassword.Text) == true)
             {//Remember that the isStaff and isCustomer already sets the sessions for the respected whatevers
-                if (Session["OrderID"] == null)
+                if (Session[orderIDSession] == null)
                 {
-                    int j = getLastOrder(int.Parse(Session["CustomerID"].ToString()));
+                    int j = getLastOrder(int.Parse(Session[tableIDSession].ToString()));
                     if (j > -1)
                     {
-                        Session["OrderID"] = j;
+                        Session[orderIDSession] = j;
                     }
                 }
                 Response.Redirect("CustomerOrder.aspx");
             }
-            else if(isStaff(txtLogUserName.Text, txtLogPassword.Text) == true)
+            else if(isWaiter(txtLogUserName.Text, txtLogPassword.Text) == true)
             {
                 Response.Redirect("Orders.aspx");
             }
@@ -112,7 +78,7 @@ namespace Website
             Response.Redirect("Registration.aspx");
         }
 
-        protected bool isStaff(string usName, string psWord)
+        protected bool isWaiter(string usName, string psWord)
         {//This one is open to problems like 2 people having the same name and password
             bool isStaff = false;
 
@@ -124,9 +90,9 @@ namespace Website
                 Connection = conn,
                 CommandText =
                 "SELECT * " +
-                "FROM Staff " +
-                "WHERE `First name`= @fname " +
-                "AND `Password`= @pasw "
+                "FROM WAITER " +
+                "WHERE `Waiter_FirstName`= @fname " +
+                "AND `Password`= @pasw"
             };
             comm.Parameters.AddWithValue("@fname", usName);
             comm.Parameters.AddWithValue("@pasw", enteredPassword);
@@ -152,7 +118,7 @@ namespace Website
         }
 
         protected bool isCustomer(string usName, string psWord)
-        {//Check isStaff comments, it does the same
+        {
             bool isUser = false;
 
             Hash hPass = new Hash(psWord);

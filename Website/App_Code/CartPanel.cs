@@ -22,13 +22,13 @@ namespace Website.App_Code
         */
 
         private MySqlConnection conn;
-        private int tableID;
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
         private Order order;
         private DataTable menuItems;
-        private DataTable orderItems;
+        private DataTable orderItemsTable;
+        private OrderItems orderItems;
 
         private Button min;
         private Button plus;
@@ -45,10 +45,9 @@ namespace Website.App_Code
 
         private static string errorSession = "Error";
 
-        public CartPanel(MySqlConnection c, int tableID, int orderID)
+        public CartPanel(MySqlConnection c, int orderID)
         {
             this.conn = c;
-            this.tableID = tableID;
             this.orderID = orderID;
 
             headPanel = new Panel();
@@ -58,10 +57,11 @@ namespace Website.App_Code
             {
                 order = new Order(orderID);
                 menuItems = getMenuItems();
-                orderItems = getOrderItems();
+                orderItemsTable = getOrderItems();
+                orderItems = order.getOrderItemsObject();
                 update();
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throwEx(x);
             }
@@ -70,7 +70,6 @@ namespace Website.App_Code
         public CartPanel(Order ord)
         {//Constructor that receives the person's Order object (already has all the info we need)
             this.conn = ord.getConnection();
-            this.tableID = ord.getTableID();
             this.orderID = ord.getOrderID();
 
             headPanel = new Panel();
@@ -81,10 +80,11 @@ namespace Website.App_Code
             try
             {
                 menuItems = getMenuItems();
-                orderItems = getOrderItems();
+                orderItemsTable = getOrderItems();
+                orderItems = order.getOrderItemsObject();
                 update();
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throwEx(x);
             }
@@ -101,9 +101,9 @@ namespace Website.App_Code
             DataTable i = new DataTable();
             try
             {
-                i = order.getOrderItemsObject().getOrderItemsTable();
+                i = order.getOrderItemsObject().getThisOrderItems();
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throwEx(x);
             }
@@ -119,17 +119,16 @@ namespace Website.App_Code
                 cm.Connection = conn;
                 cm.CommandText =
                     "SELECT * " +
-                    "FROM MENU-ITEM ";
-                //cm.Parameters.AddWithValue("@mm", menuTableName);
+                    "FROM `MENU-ITEM` ";
                 MySqlDataAdapter adap = new MySqlDataAdapter(cm);
                 adap.Fill(ds);
 
-                if(ds.Rows.Count == 0 || ds == null)
+                if (ds.Rows.Count == 0 || ds == null)
                 {
                     throw new Exception("Found empty menu database");
                 }
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throwEx(x);
             }
@@ -137,7 +136,7 @@ namespace Website.App_Code
         }
 
         public int update()
-         {
+        {
             //It's basically a reload method for every product in the order
             //returns the count of things updated
             float productPrice = 0;
@@ -151,31 +150,31 @@ namespace Website.App_Code
 
             try
             {
-                orderItems = getOrderItems();//Reloading the orderItems cuz it may have changed through adding/deleting new items
+                orderItemsTable = getOrderItems();//Reloading the orderItems cuz it may have changed through adding/deleting new items
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throwEx(x);
             }
 
-            if (orderItems.Rows.Count <= 0)
+            if (orderItemsTable.Rows.Count <= 0)
             {//if there is no orderIems in order
                 return 0;
             }
 
-            if(menuItems.Rows.Count <= 0)
+            if (menuItems.Rows.Count <= 0)
             {//if the menuItems table is empty
                 throwEx(new Exception("Menu Table is Empty"));
             }
 
-            foreach (DataRow datr in orderItems.Rows)
-            {//get every orderitem and make it pretty on the site
-                if (datr[orderItemsOrderIDCol].ToString() == orderID.ToString())
-                {//If orderID is found in the orderItems - to use the menuitemID and quantity - for use of building the headPanel pretty
+            foreach (DataRow datrow in orderItemsTable.Rows)
+            {
+                if (datrow[orderItemsOrderIDCol].ToString() == orderID.ToString())
+                {
                     try
                     {
-                        productId = int.Parse(datr[orderItemsMenuIDCol].ToString());
-                        quantity = int.Parse(datr[orderItemsQuantityCol].ToString());
+                        productId = int.Parse(datrow[orderItemsMenuIDCol].ToString());
+                        quantity = int.Parse(datrow[orderItemsQuantityCol].ToString());
                     }
                     catch (Exception ex)
                     {
@@ -248,6 +247,7 @@ namespace Website.App_Code
                     counterer++;
                 }
             }
+
             //Add the total label in the headPanel
             Label total = new Label();
             total.Text = "R" + totalPrice.ToString();
@@ -255,6 +255,25 @@ namespace Website.App_Code
 
             headPanel.Controls.Add(total);
             return counterer;
+        }
+
+        public void addItem(int id, int count)
+        {
+            if (order != null)
+            {
+                order.getOrderItemsObject().addProduct(id, count);
+                orderItems = order.getOrderItemsObject();
+            }
+
+        }
+
+        public void removeItem(int id, int count)
+        {
+            if (order != null)
+            {//if it's an order
+                order.getOrderItemsObject().removeProduct(id, count);
+                orderItems = order.getOrderItemsObject();
+            }
         }
 
         private void plusBtnClicked(object sender, EventArgs e)
@@ -267,10 +286,10 @@ namespace Website.App_Code
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                order.getOrderItemsObject().addProduct(Id, 1);
+                addItem(Id, 1);
                 update();
             }
-            catch(Exception c)
+            catch (Exception c)
             {
                 throwEx(c);
             }
@@ -286,10 +305,10 @@ namespace Website.App_Code
                 string[] i = btn.ID.Split('_');
                 int Id = int.Parse(i[0]);
 
-                order.getOrderItemsObject().removeProduct(Id, 1);
+                removeItem(Id, 1);
                 update();
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throwEx(x);
             }
