@@ -135,6 +135,11 @@
     <Content Include="IsThisYourOrder.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="OrderStatus.aspx" />
+    <None Include="Scripts\jquery-1.8.0.intellisense.js" />
+    <Content Include="Scripts\jquery-1.8.0.js" />
+    <Content Include="Scripts\jquery-1.8.0.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="WaiterLogOut.aspx" />
     <Content Include="Orders.aspx" />
     <Content Include="Registration.aspx" />

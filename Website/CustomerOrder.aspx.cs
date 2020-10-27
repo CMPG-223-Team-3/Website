@@ -44,6 +44,9 @@ namespace Website
 
         protected void Page_Init(object o, EventArgs e)
         {
+            Session[userNameSession] = "ROOIES";
+            Session[tableIDSession] = 15;
+            Session[orderIDSession] = 81;
             try
             {
                 //try to quickly connect to database to see if it works  
@@ -102,8 +105,13 @@ namespace Website
                     Context.ApplicationInstance.CompleteRequest();
                 }
 
-                cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
-                pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+                if(cartPanel == null)
+                {
+                    cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                }
+                Panel1.Controls.Add(cartPanel.getUpdatePanel());
+                /*pnl.ContentTemplateContainer.Controls.Clear();
+                pnl.ContentTemplateContainer.Controls.Add(cartPanel.getUpdatePanel());*/
                 Button checkoutBtn = new Button();
                 checkoutBtn.CausesValidation = false;
                 checkoutBtn.Text = "Checkout";
@@ -197,6 +205,7 @@ namespace Website
                                 btn1.ID = productId + "_addtocart_" + countedProducts; //Using the product id as the button pressed id for the event that the button is pressed, so we can see which button was pressed
                                 btn1.Click += new EventHandler(addToCartBtnClicked); //To correctly link the event to the event handler
                                 btn1.CausesValidation = false;
+                                
 
                                 //Label object for the name of the item
                                 Label lblName = new Label();
@@ -215,7 +224,9 @@ namespace Website
                                 pnl1.Controls.Add(pnlPriceBtn);
 
                                 //Add panel to master panel
-                                pnlMaster.Controls.Add(pnl1);
+                                pnl2.ContentTemplateContainer.Controls.Clear();
+                                pnl2.ContentTemplateContainer.Controls.Add(pnl1);
+                                //pnlMaster.Controls.Add(pnl1);
                             }
                         }
                         else
@@ -243,6 +254,8 @@ namespace Website
 
                 cartPanel.order.getOrderItemsObject().addProduct(Id, 1);
                 cartPanel.update();
+                pnl.ContentTemplateContainer.Controls.Clear();
+                pnl.ContentTemplateContainer.Controls.Add(cartPanel.getUpdatePanel());
             }
             catch(Exception x)
             {

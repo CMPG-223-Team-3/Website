@@ -2,6 +2,8 @@
 using System;
 using System.Data;
 using System.Web;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Website;
 
@@ -23,6 +25,7 @@ namespace Website.App_Code
 
         private MySqlConnection conn;
         private int orderID;
+        private UpdatePanel updatePanel;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
         public Order order;
@@ -45,11 +48,9 @@ namespace Website.App_Code
 
         private static string errorSession = "Error";
 
-        public delegate void UpdateEventHandler();
-        public event UpdateEventHandler Update();
-
         public CartPanel(MySqlConnection c, int orderID)
         {
+            
             this.conn = c;
             this.orderID = orderID;
 
@@ -92,6 +93,15 @@ namespace Website.App_Code
                 throwEx(x);
             }
         }
+
+        private void HandleUpdateCart()
+        {
+            updatePanel.Controls.Add(new HtmlGenericControl("ContentTemplate"));
+            updatePanel.ContentTemplateContainer.Controls.Clear();
+            updatePanel.ContentTemplateContainer.Controls.Add(getHeadPanel());
+        }
+
+
 
         private void throwEx(Exception x)
         {
@@ -257,6 +267,7 @@ namespace Website.App_Code
             total.CssClass = "";
 
             headPanel.Controls.Add(total);
+            HandleUpdateCart();
             return counterer;
         }
 
@@ -325,6 +336,12 @@ namespace Website.App_Code
         public float getTotalPrice()
         {
             return this.totalPrice;
+        }
+
+        public UpdatePanel getUpdatePanel()
+        {
+            
+            return updatePanel;
         }
     }
 }

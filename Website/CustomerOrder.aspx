@@ -16,6 +16,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
 
         <!--Nav bar-->
             <nav class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
@@ -72,10 +73,36 @@
 
             <div class="container">
                 <div class="row">
-                    <asp:Panel class="col-xs-12 col-lg-7" ID="pnlMaster" runat="server"></asp:Panel>
-                    <asp:Panel class="col-xs-0 col-lg-5" ID="pnlOrder" runat="server"></asp:Panel>
+                    <asp:UpdatePanel ID="pnl" runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <asp:Panel class="col-xs-12 col-lg-7" ID="pnlMaster" runat="server"></asp:Panel>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                    <asp:UpdateProgress runat="server" AssociatedUpdatePanelID="pnl">
+                        <ProgressTemplate>
+                            Loading Order...
+                        </ProgressTemplate>
+                    </asp:UpdateProgress>
+
+                    <asp:UpdatePanel ID="pnl2" runat="server" UpdateMode="Always">
+                        <ContentTemplate>
+                            <asp:Panel class="col-xs-0 col-lg-5" ID="pnlOrder" runat="server"></asp:Panel>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                    <asp:UpdateProgress runat="server" AssociatedUpdatePanelID="pnl">
+                        <ProgressTemplate>
+                            Loading Menu...
+                        </ProgressTemplate>
+                    </asp:UpdateProgress>
+
+                    
                 </div>
             </div>
+
+
+            <asp:Panel class="col-xs-0 col-lg-5" ID="Panel1" runat="server"></asp:Panel>
+
+
         </div>
 
         <footer class="page-footer font-small pt-md-4 pb-4 mt-4">

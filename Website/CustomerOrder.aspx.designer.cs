@@ -24,6 +24,15 @@ namespace Website
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// ScriptManager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
+
+        /// <summary>
         /// lblLogin control.
         /// </summary>
         /// <remarks>
@@ -60,6 +69,15 @@ namespace Website
         protected global::System.Web.UI.WebControls.Panel pnlDotd;
 
         /// <summary>
+        /// pnl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel pnl;
+
+        /// <summary>
         /// pnlMaster control.
         /// </summary>
         /// <remarks>
@@ -69,6 +87,15 @@ namespace Website
         protected global::System.Web.UI.WebControls.Panel pnlMaster;
 
         /// <summary>
+        /// pnl2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel pnl2;
+
+        /// <summary>
         /// pnlOrder control.
         /// </summary>
         /// <remarks>
@@ -76,5 +103,14 @@ namespace Website
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlOrder;
+
+        /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
     }
 }
