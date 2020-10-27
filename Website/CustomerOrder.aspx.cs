@@ -102,25 +102,17 @@ namespace Website
                     Context.ApplicationInstance.CompleteRequest();
                 }
 
-                if(cartPanel != null)
-                {
-                    cartPanel.update();
-                }
+                cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+                Button checkoutBtn = new Button();
+                checkoutBtn.CausesValidation = false;
+                checkoutBtn.Text = "Checkout";
+                checkoutBtn.CssClass = "btn btn-dark btn-lg";
+                checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
+                pnlOrder.Controls.Add(checkoutBtn);
 
                 if (!IsPostBack || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
-                    if(cartPanel == null)
-                    {
-                        cartPanel = new CartPanel(order.getConnection(),order.getOrderID());
-                    }
-                    
-                    pnlOrder.Controls.Add(cartPanel.getHeadPanel());
-                    Button checkoutBtn = new Button();
-                    checkoutBtn.CausesValidation = false;
-                    checkoutBtn.Text = "Checkout";
-                    checkoutBtn.CssClass = "btn btn-dark btn-lg";
-                    checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
-                    pnlOrder.Controls.Add(checkoutBtn);
                     showProducts(conn, "SELECT * FROM `MENU-ITEM`");
                 }
 

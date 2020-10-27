@@ -18,6 +18,9 @@ namespace Website
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
 
+        private static string orderCookieName = "OrderCookie";
+        private static string orderCookieSubName = "OrderIDCookie";
+
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
         private CartPanel cart;
@@ -69,7 +72,24 @@ namespace Website
             try
             {
                 cart.order.getOrderItemsObject().close();
-                Response.Write("<script>alert: Thank you! Your waiter will be with you soon to confirm payment");
+                try
+                {
+                    HttpCookie userCookie = new HttpCookie(orderCookieName);
+                    userCookie[orderCookieSubName] = cart.order.getOrderID().ToString();
+                    Response.Cookies.Add(userCookie);
+                    userCookie.Expires = DateTime.Now.AddHours(5);
+                }
+                catch(Exception x)
+                {
+                    throw new HttpException();
+                }
+
+                Response.Write("<script>alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
+                Response.Redirect("OrderStatus.aspx");
+            }
+            catch(HttpException x)
+            {
+                Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
                 Response.Redirect("default.aspx");
             }
             catch(Exception x)

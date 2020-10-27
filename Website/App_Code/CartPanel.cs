@@ -45,6 +45,9 @@ namespace Website.App_Code
 
         private static string errorSession = "Error";
 
+        public delegate void UpdateEventHandler();
+        public event UpdateEventHandler Update();
+
         public CartPanel(MySqlConnection c, int orderID)
         {
             this.conn = c;

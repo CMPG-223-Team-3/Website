@@ -10,9 +10,8 @@ using Website.App_Code;
 
 namespace Website
 {
-    public partial class IsThisYourOrder : System.Web.UI.Page
+    public partial class OrderStatus : System.Web.UI.Page
     {
-        //session var names
         private static string userNameSession = "UserName";
         private static string errorSession = "Error";
         private static string fromPageSession = "FromPage";
@@ -26,92 +25,55 @@ namespace Website
         private string orderItemsOrderIDCol = "Order_ID";
         private string orderItemsQuantityCol = "Quantity_Ordered";
 
-        private MySqlConnection conn;
-        private Order order;
-        private DataTable orderItemsTable;
-        private DataTable menuItems;
-        private float totalPrice;
+        private static string orderCookieName = "OrderCookie";
+        private static string orderCookieSubName = "OrderIDCookie";
 
+        private Order order;
+        private float totalPrice;
+        private DataTable orderItemsTable;
+        private object menuItems;
         private Label name;
         private Label price;
         private Label quanlbl;
-        private Panel headPanel;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session[userNameSession] != null || Session[tableIDSession] != null)
+            HttpCookie cookie = Request.Cookies[orderCookieName];
+            if(cookie != null)
             {
-                if (Session[orderIDSession] != null)
+                if(cookie[orderCookieSubName] != null)
                 {
                     try
                     {
-                        menuItems = getMenuItems();
-                    }
-                    catch (Exception x)
-                    {
-                        throwEx(x);
-                    }
-
-                    int tNr = int.Parse(Session[tableIDSession].ToString());
-                    int oNr = int.Parse(Session[orderIDSession].ToString());
-                    try
-                    {
-                        order = new Order(oNr);
+                        order = new Order(int.Parse(cookie[orderCookieSubName]));
 
                         update();
-                        if(totalPrice <= 0)
-                        {
-                            noBtnClicked(totalPrice,new EventArgs());
+                        if (totalPrice <= 0)
+                        {//just to make sure that order isn't empty
+                            throwEx(new Exception("It looks as if the order saved is empty"));
                         }
-                        
-
-                        Button yes = new Button();
-                        Button no = new Button();
-
-                        yes.Text = "Yes";
-                        no.Text = "No";
-
-                        yes.CssClass = "btn btn-dark btn-lg";
-                        no.CssClass = "btn btn-dark btn-lg";
-
-                        yes.Click += new EventHandler(yesBtnClicked);
-                        no.Click += new EventHandler(noBtnClicked);
-
-                        pnl2.Controls.Add(yes);
-                        pnl2.Controls.Add(no);
                     }
                     catch (Exception x)
                     {
                         throwEx(x);
                     }
-                }
-                else
-                {
-                    Response.Redirect("CustomerLogin.aspx", true);
                 }
             }
             else
             {
-                Response.Redirect("CustomerLogin.aspx", true);
+                Response.Write("<script>alert('It seems that we could not retrieve your order cookie, please contact you waiter for order status')<script>");
+                Response.Redirect("default.aspx", false);
             }
-        }
-
-        private void noBtnClicked(object sender, EventArgs e)
-        {
-            Session[orderIDSession] = null;
-            Response.Redirect("CustomerOrder.aspx", false);
-        }
-
-        private void yesBtnClicked(object sender, EventArgs e)
-        {
-            Response.Redirect("CustomerOrder.aspx", false);
         }
 
         private void throwEx(Exception x)
         {
-            Session[errorSession] = x.Message + x.StackTrace;
-            HttpContext.Current.Response.Redirect("Error.aspx", false);
+            throw new NotImplementedException();
         }
+
+
+
+
 
         public DataTable getMenuItems()
         {//Method to fetch everything from the menu table and DataTabling it - should be faster than commanding it every time
@@ -153,7 +115,7 @@ namespace Website
 
             try
             {
-                if(order != null && order.getOrderItemsObject().getThisOrderItems().Rows.Count > 0)
+                if (order != null && order.getOrderItemsObject().getThisOrderItems().Rows.Count > 0)
                 {
                     orderItemsTable = order.getOrderItemsObject().getThisOrderItems();
                 }
@@ -167,8 +129,9 @@ namespace Website
                 throwEx(x);
             }
 
+            DataTable menu = getMenuItems();
 
-            if (menuItems.Rows.Count <= 0)
+            if (menu.Rows.Count <= 0)
             {//if the menuItems table is empty
                 throwEx(new Exception("Menu Table is Empty"));
             }
@@ -189,7 +152,7 @@ namespace Website
 
                     try
                     {
-                        foreach (DataRow dr in menuItems.Rows)
+                        foreach (DataRow dr in menu.Rows)
                         {//Get the product's name, price and such to show in the headPanel
                             isFound3 = false;
                             if (dr[menuIDCol].ToString() == productId.ToString())
@@ -216,7 +179,7 @@ namespace Website
                     name = new Label();
                     price = new Label();
                     quanlbl = new Label();
-                    this.totalPrice += productPrice * quantity;
+                    totalPrice += productPrice * quantity;
 
                     price.CssClass = "col-2";
                     quanlbl.CssClass = "col-2";

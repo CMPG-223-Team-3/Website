@@ -32,9 +32,8 @@ namespace Website
                 conn = connection.getConnection();
             }
             catch (Exception x)
-            {//Note how we're doing the error handling on the site: put Exception message into error session and redirect to Error.aspx
-                Session[errorSession] = x.Message;
-                Response.Redirect("Error.aspx");
+            {
+                throwEx(x);
             }
         }
 
@@ -49,7 +48,8 @@ namespace Website
                 "SELECT * " +
                 "FROM `ORDER` " +
                 "WHERE `Table_nr` = @tnr " +
-                "AND `Customer_Name` = '" + customerName.ToUpper() + "'"
+                "AND `Customer_Name` = '" + customerName.ToUpper() + "' " +
+                "AND `Paid` != 1"
             };
             comm.Parameters.AddWithValue("@tnr", tableNr);
 
@@ -92,7 +92,7 @@ namespace Website
                 Response.Redirect("IsThisYourOrder.aspx", false); //send the last order number matching to the entered table number and name to the page to check with them if that is their last order(given that they lost connection or something)
             }
             if (ordNr == -1)
-            {//if no order was found, no worries, go to where the customer can order
+            {//if no order was found, no worries, go to where the customer can order (already signed in)
                 Response.Redirect("CustomerOrder.aspx", false);
             }
             Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");

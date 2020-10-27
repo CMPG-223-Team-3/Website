@@ -134,6 +134,7 @@
     <Content Include="images\logo.jpg" />
     <Content Include="IsThisYourOrder.aspx" />
     <Content Include="Login.aspx" />
+    <Content Include="OrderStatus.aspx" />
     <Content Include="WaiterLogOut.aspx" />
     <Content Include="Orders.aspx" />
     <Content Include="Registration.aspx" />
@@ -195,6 +196,13 @@
     </Compile>
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OrderStatus.aspx.cs">
+      <DependentUpon>OrderStatus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OrderStatus.aspx.designer.cs">
+      <DependentUpon>OrderStatus.aspx</DependentUpon>
     </Compile>
     <Compile Include="WaiterLogOut.aspx.cs">
       <DependentUpon>WaiterLogOut.aspx</DependentUpon>
