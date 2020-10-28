@@ -16,12 +16,7 @@ namespace Website
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!this.IsPostBack)
-            {
-                this.BindGrid();
-            }
-
-            
+            this.BindGrid();
         }
 
         private void BindGrid()
@@ -31,19 +26,18 @@ namespace Website
             using (connection)
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM ORDER where Order_ID = @NUM;");
-                cmd.Parameters.AddWithValue("@NUM", 1);
-                    using (MySqlDataAdapter sda = new MySqlDataAdapter())
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `ORDER` WHERE `Status` = " + 0 + ";");
+                using (MySqlDataAdapter sda = new MySqlDataAdapter())
+                {
+                    cmd.Connection = connection;
+                    sda.SelectCommand = cmd;
+                    using (DataTable dt = new DataTable())
                     {
-                        cmd.Connection = connection;
-                        sda.SelectCommand = cmd;
-                        using (DataTable dt = new DataTable())
-                        {
-                            sda.Fill(dt);
-                            GridView1.DataSource = dt;
-                            GridView1.DataBind();
-                        }
+                        sda.Fill(dt);
+                        GridView1.DataSource = dt;
+                        GridView1.DataBind();
                     }
+                }
             }
         }
 

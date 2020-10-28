@@ -115,7 +115,7 @@ namespace Website
                                 
                                 if (Session[selectedWaiterIDSession] != null)
                                 {
-                                    order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0, int.Parse(Session[selectedWaiterIDSession].ToString()));
+                                    order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0, int.Parse(Session[selectedWaiterIDSession].ToString()), 0);
                                     Session[orderIDSession] = order.getOrderID();
                                 }
                                 else

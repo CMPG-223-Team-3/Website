@@ -220,7 +220,7 @@ namespace Website.App_Code
             {
                 throw new Exception("Invalid quantity of products to add : addProduct() in OrderItems");
             }
-            if (orderItems.Rows.Count > 0)
+            if (orderItems.Rows.Count >= 0)
             {
                 if (hasProduct(productId))
                 {

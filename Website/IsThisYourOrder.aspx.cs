@@ -18,6 +18,8 @@ namespace Website
         private static string fromPageSession = "FromPage";
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
+        private static string orderObjectSession = "OrderObject";
+        private static string selectedWaiterIDSession = "WaiterID";
 
         private string menuIDCol = "Menu_Item_ID";
         private string menuNameCol = "Item_Name";
@@ -25,6 +27,9 @@ namespace Website
         private string orderItemsMenuIDCol = "Menu_Item_ID";
         private string orderItemsOrderIDCol = "Order_ID";
         private string orderItemsQuantityCol = "Quantity_Ordered";
+
+        private static string orderCookieName = "OrderCookie";
+        private static string orderCookieSubName = "OrderIDCookie";
 
         private MySqlConnection conn;
         private Order order;
@@ -43,6 +48,24 @@ namespace Website
             {
                 if (Session[orderIDSession] != null)
                 {
+                    try
+                    {
+                        HttpCookie cookie = Request.Cookies[orderCookieName];
+                        if (cookie != null)
+                        {
+                            Session[selectedWaiterIDSession] = null;
+                            Response.Redirect("OrderStatus.aspx", false);
+                            /*Label i = new Label();
+                            i.Text = "WARNING: CLICKING YES OR NO WILL OVERRIDE YOUR CURRENTLY SAVED ORDER";
+                            i.CssClass = "display-4";
+                            yesnopanel.Controls.Add(i);*/
+                        }
+                    }
+                    catch(Exception x)
+                    {
+                        throwEx(x);
+                    }
+
                     try
                     {
                         menuItems = getMenuItems();

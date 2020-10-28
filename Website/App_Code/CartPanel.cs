@@ -276,7 +276,7 @@ namespace Website.App_Code
             //Add the total label in the headPanel
             Label total = new Label();
             total.Text = "Total: R" + totalPrice.ToString();
-            total.CssClass = "";
+            total.CssClass = "text-right m-auto";
             headPanel.Controls.Add(total);
 
 

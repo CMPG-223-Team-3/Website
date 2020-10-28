@@ -38,51 +38,65 @@ namespace Website
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies[orderCookieName];
-            if(cookie != null)
+            try
             {
-                if(cookie[orderCookieSubName] != null)
+                HttpCookie cookie = Request.Cookies[orderCookieName];
+                if (cookie != null)
                 {
-                    try
+                    if (cookie[orderCookieSubName] != null)
                     {
-                        order = new Order(int.Parse(cookie[orderCookieSubName]));
+                        try
+                        {
+                            order = new Order(int.Parse(cookie[orderCookieSubName]));
 
-                        update();
-                        if (totalPrice <= 0)
-                        {//just to make sure that order isn't empty
-                            throwEx(new Exception("It looks as if the order saved is empty"));
+                            update();
+                            if (totalPrice <= 0)
+                            {//just to make sure that order isn't empty
+                                throwEx(new Exception("It looks as if the order saved is empty"));
+                            }
+
+
+                            Label status = new Label();
+                            status.Text = "Status of your order:\t" + order.getStatusString();
+                            status.CssClass = "row";
+                            pnlstatus.Controls.Add(status);
+                            Label paid = new Label();
+                            paid.Text = "Payment information:\t" + order.getPaidString();
+                            paid.CssClass = "row";
+                            pnlstatus.Controls.Add(paid);
+                            Label waiter = new Label();
+                            waiter.Text = "Your waiter:\t" + order.getWaiter();
+                            waiter.CssClass = "row";
+                            pnlstatus.Controls.Add(waiter);
                         }
-
-                        Label status = new Label();
-                        status.Text = "Status of your order: " +  order.getStatus().ToString();
-                        pnlstatus.Controls.Add(status);
-                    }
-                    catch (Exception x)
-                    {
-                        throwEx(x);
+                        catch (Exception x)
+                        {
+                            throwEx(x);
+                        }
                     }
                 }
-            }
-            else
-            {
-                Response.Write("<script>alert('It seems that we could not retrieve your order cookie, please contact your waiter for order status')<script>");
-                Label i = new Label();
-                i.Text = "Whoops, we could not retrieve an order... If you have placed one, please contact your waiter for your order status...";
-                i.CssClass = "display-1";
+                else
+                {
+                    
+                    Label i = new Label();
+                    i.Text = "Whoops, we could not retrieve an order... If you have placed one, please contact your waiter for your order status...";
+                    i.CssClass = "";
 
-                pnl1.Controls.Add(i);
-                //Response.Redirect("Default.aspx", false);
+                    pnl1.Controls.Add(i);
+                    //Response.Redirect("Default.aspx", false);
+                }
             }
+            catch(Exception x)
+            {
+                throwEx(x);
+            }
+            
         }
 
         private void throwEx(Exception x)
         {
             throw new NotImplementedException();
         }
-
-
-
-
 
         public DataTable getMenuItems()
         {//Method to fetch everything from the menu table and DataTabling it - should be faster than commanding it every time

@@ -30,8 +30,6 @@ namespace Website.App_Code
         private int orderPaid;
         private int orderStatus;
         private OrderItems orderItems;
-        private string orderName;
-        private int orderCashOrCard;
 
         private string tabName = "ORDER";
         private string orderIDName = "Order_ID";
@@ -44,60 +42,19 @@ namespace Website.App_Code
 
         private int orderWaiter;
         private int orderTable;
+        private string orderName;
+        private int orderCashOrCard;
 
         public Order()
         {
             try
             {
-                doTheOrder("", 0, 0, 0, 0);
+                doTheOrder("", 0, 0, 0, 0, 0);
             }
             catch(Exception c)
             {
                 throw c;
             }
-            /*
-            int paid = 0; //i'm leaving these as default cus i don't know which vals mean what
-            int stat = 0;
-            int corcard = 0;
-            try
-            {
-                DatabaseConnection connect = new DatabaseConnection();//Class to connect to database
-                conn = connect.getConnection();
-            }
-            catch (Exception x)
-            {
-                throw x;
-            }
-
-            try
-            {
-                MySqlCommand cmmd = new MySqlCommand();
-                cmmd.CommandText =
-                    "INSERT " +
-                    "INTO `ORDER`" +
-                    "(`Paid`, `Status`, `CashOrCard`) " +
-                    "VALUES(@pd, @st, @ccc);";
-                cmmd.Connection = conn;
-                cmmd.Parameters.AddWithValue("@pd", paid);
-                cmmd.Parameters.AddWithValue("@st", stat);
-                cmmd.Parameters.AddWithValue("@ccc", corcard);
-
-                executeNonQuery(cmmd);
-                orderID = getLastID();
-                orderItems = new OrderItems(orderID);//Object for all the items in the database for this order
-
-                orderName = "";
-                tableID = 0;
-                orderWaiter = 0;
-                orderPaid = paid;
-                orderStatus = stat;
-                orderCashOrCard = corcard;
-
-            }
-            catch (Exception o)
-            {
-                throw o;
-            }*/
         }
 
 
@@ -120,11 +77,11 @@ namespace Website.App_Code
             }
         }
 
-        public Order(string name, int tabID, int paid, int status, int waiter)//Parameters of the customer so new order can be made
+        public Order(string name, int tabID, int paid, int status, int waiter, int cashorcard)//Parameters of the customer so new order can be made
         {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
-                doTheOrder(name, tabID, paid, status, waiter);
+                doTheOrder(name, tabID, paid, status, waiter, cashorcard);
             }
             catch(Exception x)
             {
@@ -132,7 +89,7 @@ namespace Website.App_Code
             }
         }
 
-        private void doTheOrder(string name, int tabID, int paid, int status, int waiter)//Parameters of the customer so new order can be made
+        private void doTheOrder(string name, int tabID, int paid, int status, int waiter, int cashorcard)//Parameters of the customer so new order can be made
         {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
@@ -149,14 +106,15 @@ namespace Website.App_Code
                 cmmd.CommandText =
                     "INSERT " +
                     "INTO `ORDER`" +
-                    "(`Customer_Name`, `Table_nr`, `Paid`, `Status`, `Waiter_ID`) " +
-                    "VALUES(@nm, @cid, @pd, @st, @wid);";
+                    "(`Customer_Name`, `Table_nr`, `Paid`, `Status`, `Waiter_ID`, `CashOrCard`) " +
+                    "VALUES(@nm, @cid, @pd, @st, @wid, @ccc);";
                 cmmd.Connection = conn;
                 cmmd.Parameters.AddWithValue("@nm", name.ToUpper());
                 cmmd.Parameters.AddWithValue("@cid", tabID);
                 cmmd.Parameters.AddWithValue("@pd", paid);
                 cmmd.Parameters.AddWithValue("@st", status);
                 cmmd.Parameters.AddWithValue("@wid", waiter);
+                cmmd.Parameters.AddWithValue("@ccc", cashorcard);
 
                 executeNonQuery(cmmd);
                 orderID = getLastID();
@@ -167,6 +125,7 @@ namespace Website.App_Code
                 tableID = tabID;
                 orderStatus = status;
                 orderWaiter = waiter;
+                orderCashOrCard = cashorcard;
             }
             catch (Exception o)
             {
@@ -491,9 +450,78 @@ namespace Website.App_Code
             return orderItems;//Return the OrderItems object (Will probably be used to add, remove and such from the items in the order)
                               //for example: Order.getOrderItemsObject.addProduct(productId);
         }
-        public int getStatus()
+        public string getStatusString()
         {
-            return orderStatus;
+            if(orderStatus == 0)
+            {
+                return "Pending";
+            }
+            else if(orderStatus == 1)
+            {
+                return "Delivered";
+            }
+            else
+            {
+                return "Status not found";
+            }
+        }
+        public string getPaidString()
+        {
+            if (orderPaid == 0)
+            {
+                return "Pending payment";
+            }
+            else if (orderPaid == 1)
+            {
+                return "Paid";
+            }
+            else
+            {
+                return "Payment status not found";
+            }
+        }
+        public string getCashOrCardString()
+        {
+            if (orderCashOrCard == 0)
+            {
+                return "Cash";
+            }
+            else if (orderCashOrCard == 1)
+            {
+                return "Card";
+            }
+            else
+            {
+                return "Selection not found";
+            }
+        }
+        public int getTable()
+        {
+            return orderTable;
+        }
+        public string getWaiter()
+        {
+            string name;
+            try
+            {
+                MySqlCommand waitcomm = new MySqlCommand();
+                waitcomm.Connection = conn;
+                waitcomm.CommandText =
+                    "SELECT `Waiter_FirstName` " +
+                    "FROM WAITER " +
+                    "WHERE `Waiter_ID` = @id";
+                name = waitcomm.ExecuteScalar().ToString();
+
+                if (name != null)
+                    return name;
+                else
+                    throw new Exception();
+            }
+            catch(Exception x)
+            {
+                return "Can't find waiter";
+            }
+            
         }
     }
 }
