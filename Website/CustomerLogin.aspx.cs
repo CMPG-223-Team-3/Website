@@ -154,7 +154,6 @@ namespace Website
                                             i.Value = waiterID.ToString();
                                             i.Text = waiterName + " " + waiterLastName;
                                             RadioButtonList1.Items.Add(i);
-                                            
                                         }
                                     }
                                 }

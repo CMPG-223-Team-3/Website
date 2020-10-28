@@ -14,5 +14,15 @@ namespace Website
         {
 
         }
+
+        protected void orderbtnlink_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("OrderStatus.aspx");
+        }
+
+        protected void loginbtnlink_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("CustomerLogin.aspx");
+        }
     }
 }

@@ -157,8 +157,7 @@ namespace Website
             }
             catch(Exception ee)
             {
-                Session[errorSession] = ee.Message + ee.StackTrace;
-                Response.Redirect("Error.aspx");
+                throwEx(ee);
             }
         }
 
@@ -274,8 +273,7 @@ namespace Website
             }
             catch(Exception x)
             {
-                Session[errorSession] = x.Message + ":   " + x.StackTrace;
-                Response.Redirect("Error.aspx");
+                throwEx(x);
             }
             //Server.Transfer("CustomerOrder.aspx");
             btnSearch_Click(new object(), new EventArgs());
@@ -295,8 +293,7 @@ namespace Website
                 }
                 catch(Exception x)
                 {
-                    Session[errorSession] = x.Message;
-                    Response.Redirect("Error.aspx");
+                    throwEx(x);
                 }
             }
             isSearched = true;
@@ -338,7 +335,7 @@ namespace Website
 
         private void throwEx(Exception x)
         {
-            Session[errorSession] = x.Message + x.StackTrace;
+            Session[errorSession] = x.Message;
             HttpContext.Current.Response.Redirect("Error.aspx", false);
         }
 

@@ -131,6 +131,7 @@
       <DependentUpon>gulpfile.es5.js</DependentUpon>
     </Content>
     <Content Include="gulpfile.js" />
+    <Content Include="images\coffee.jpg" />
     <Content Include="images\logo.jpg" />
     <Content Include="IsThisYourOrder.aspx" />
     <Content Include="Login.aspx" />

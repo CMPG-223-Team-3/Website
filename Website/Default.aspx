@@ -15,107 +15,69 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                <a class="navbar-brand" href="#">Company Name</a>
-
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+        <!--Nav bar-->
+        <nav class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
+            <div class="container-fluid">
+                <a class="navbar-brand thumbnail navPic" href="#">
+                    <img src="images/logo.jpg" style="max-height: 40px" /></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Home</a>
+                            <!--<a class="nav-link" href="Default.aspx">Home</a>-->
+                            <a class="nav-link" href="Default.aspx"><asp:Label  ID="Label1" runat="server" Text="Home"></asp:Label></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="CustomerLogin.aspx">Login</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">Products</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Product 1</a>
-                                <a class="dropdown-item" href="#">Product 2</a>
-                                <a class="dropdown-item" href="#">Product 3</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Product 4</a>
-                            </div>
+                            <a class="nav-link" href="CustomerLogin.aspx"><asp:Label ID="lblLogin" runat="server" Text="Login"></asp:Label></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <div class="jumbotron">
-                <h1 class="display-4">Simple. Elegant. Awesome.</h1>
-                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <i class="fas fa-clock"></i>
-                <p class="lead">
-                    <asp:Button class="btn btn-primary btn lg" ID="Button1" runat="server" Text="Learn More" />
-                    <!--<a class="btn btn-primary btn lg" href="#" role="button">Learn more</a>-->
-                </p>
-            </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-boddy text-centre">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick text to buil up on the card title</p>
-                            <a href="#" class="card-link">Another link</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="card-boddy text-centre">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick text to buil up on the card title</p>
-                            <a href="#" class="card-link">Another link</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-boddy text-centre">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">Some quick text to buil up on the card title</p>
-                                <a href="#" class="card-link">Another link</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-sm-4 mt-md-0">
-                <div class="col-sm-12 col-md-8">
-                    <h3>An important heading</h3>
-                    <p class="lead">A sort of important subheading can go here, which is larger and gray.</p>
-            
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                </div>
-            
-                <div class="col-sm-12 col-md-4">
-                    <h3 class="mb-4">Secondary Menu</h3>
-            
-                    <ul class="nav flex-column nav-pills">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Active</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">Disabled</a>
-                        </li>
+                            <!--<a class="nav-link" href="Checkout.aspx">My Order</a>-->
+                            <a class="nav-link" href="OrderStatus.aspx"><asp:Label ID="Label3" runat="server" Text="My Order"></asp:Label></a>
+                        </li> 
                     </ul>
                 </div>
             </div>
+        </nav>
+
+
+        <div class="container">
+
+
+
+            <div class="container text-white">
+                <div class="display-4">TORO COFFEE BAR</div>
+                <h3>Where coffee meets expectations</h3>
+                <p class="lead">Lorem ipsum dolor.</p>
+                <p>Toro is a coffee bar - We love people, and we love coffee! That's why relationships and quality products are close to our hearts.</p>
+                <asp:Button class="btn btn-dark" ID="orderbtnlink" runat="server" Text="Your Order" OnClick="orderbtnlink_Click" />
+            </div>
+
+
+            <div class="display-4 text-center text-white mt-3">Coffee!</div>
+
+            <div class="container">
+                <div class="jumbotron text-center text-sm-left row mt-sm-1 mt-md-3">
+                    <div class="col-sm-12 col-md-3 col-lg-4">
+                        <h3 class="text-uppercase">A heading</h3>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate, soluta?</p>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-4">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, veritatis. Reiciendis nihil maxime enim nisi quam, asperiores illo aperiam quod!</p>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 container-fluid">
+                        <img class="figure-img w-300 thumbnail" src="images/coffee.jpg" style="max-width: 300px;">
+                    </div>
+                    <div class="lead">
+                        <asp:Button class="btn btn-dark" ID="loginbtnlink" runat="server" Text="Log In" OnClick="loginbtnlink_Click" />
+                    </div>
+                </div>
+
+            </div>
+
+
+
         </div>
     </form>
     </body>

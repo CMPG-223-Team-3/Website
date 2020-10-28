@@ -28,17 +28,16 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="Default.aspx">Home</a>
+                            <!--<a class="nav-link" href="Default.aspx">Home</a>-->
+                            <a class="nav-link" href="Default.aspx"><asp:Label  ID="Label1" runat="server" Text="Home"></asp:Label></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="CustomerOrder.aspx">Order</a>
+                            <a class="nav-link" href="CustomerLogin.aspx"><asp:Label ID="lblLogin" runat="server" Text="Login"></asp:Label></a>
                         </li>
                         <li class="nav-item">
-                            <a><asp:Label ID="lblLogin" runat="server" Text="Login" href="CustomerLogin.aspx"></asp:Label></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="Checkout.aspx">My Order</a>
-                        </li>
+                            <!--<a class="nav-link" href="Checkout.aspx">My Order</a>-->
+                            <a class="nav-link" href="OrderStatus.aspx"><asp:Label ID="Label3" runat="server" Text="My Order"></asp:Label></a>
+                        </li> 
                     </ul>
                 </div>
             </div>
@@ -135,12 +134,12 @@
                     </div>
                 </div>
             </div>
-     </footer>-->
+     </footer>
 
         <div class="footer-copyright text-center py-3">
             Copyright text
         <a href="#">2020</a>
-        </div>
+        </div>-->
 
 
     </form>

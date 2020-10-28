@@ -65,8 +65,13 @@ namespace Website
             }
             else
             {
-                Response.Write("<script>alert('It seems that we could not retrieve your order cookie, please contact you waiter for order status')<script>");
-                Response.Redirect("Default.aspx", false);
+                Response.Write("<script>alert('It seems that we could not retrieve your order cookie, please contact your waiter for order status')<script>");
+                Label i = new Label();
+                i.Text = "Whoops, we could not retrieve an order... If you have placed one, please contact your waiter for your order status...";
+                i.CssClass = "display-1";
+
+                pnl1.Controls.Add(i);
+                //Response.Redirect("Default.aspx", false);
             }
         }
 
