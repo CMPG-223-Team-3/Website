@@ -1,0 +1,20 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@fortawesome/fontawesome-free": "^5.9.0",
+    "bootstrap": "^4.5.2",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^4.1.0",
+    "gulp-uglify": "^3.0.2",
+    "jquery": "^3.5.1",
+    "popper.js": "^2.0.0-next.4"
+  },
+  "dependencies": {
+    "node-sass": "^4.14.1"
+  }
+}
