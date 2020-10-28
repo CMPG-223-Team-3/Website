@@ -62,7 +62,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data">
-      <HintPath>..\..\..\MySql.Data.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\OneDrive - NORTH-WEST UNIVERSITY\2020\Semester 2\CMPG 223\Project\Code\Website\Website\bin\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
