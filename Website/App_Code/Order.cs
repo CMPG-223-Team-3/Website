@@ -47,6 +47,15 @@ namespace Website.App_Code
 
         public Order()
         {
+            try
+            {
+                doTheOrder("", 0, 0, 0, 0);
+            }
+            catch(Exception c)
+            {
+                throw c;
+            }
+            /*
             int paid = 0; //i'm leaving these as default cus i don't know which vals mean what
             int stat = 0;
             int corcard = 0;
@@ -88,7 +97,7 @@ namespace Website.App_Code
             catch (Exception o)
             {
                 throw o;
-            }
+            }*/
         }
 
 
@@ -111,7 +120,19 @@ namespace Website.App_Code
             }
         }
 
-        public Order(string name, int tabID, int paid, int status)//Parameters of the customer so new order can be made
+        public Order(string name, int tabID, int paid, int status, int waiter)//Parameters of the customer so new order can be made
+        {//Commonly the one you'd use for making a new order (no orderID)
+            try
+            {
+                doTheOrder(name, tabID, paid, status, waiter);
+            }
+            catch(Exception x)
+            {
+                throw x;
+            }
+        }
+
+        private void doTheOrder(string name, int tabID, int paid, int status, int waiter)//Parameters of the customer so new order can be made
         {//Commonly the one you'd use for making a new order (no orderID)
             try
             {
@@ -122,21 +143,20 @@ namespace Website.App_Code
             {
                 throw x;
             }
-
-            this.tableID = tabID;
             try
             {
                 MySqlCommand cmmd = new MySqlCommand();
                 cmmd.CommandText =
                     "INSERT " +
                     "INTO `ORDER`" +
-                    "(`Customer_Name`, `Table_nr`, `Paid`, `Status`) " +
-                    "VALUES(@nm, @cid, @pd, @st);";
+                    "(`Customer_Name`, `Table_nr`, `Paid`, `Status`, `Waiter_ID`) " +
+                    "VALUES(@nm, @cid, @pd, @st, @wid);";
                 cmmd.Connection = conn;
                 cmmd.Parameters.AddWithValue("@nm", name.ToUpper());
                 cmmd.Parameters.AddWithValue("@cid", tabID);
                 cmmd.Parameters.AddWithValue("@pd", paid);
                 cmmd.Parameters.AddWithValue("@st", status);
+                cmmd.Parameters.AddWithValue("@wid", waiter);
 
                 executeNonQuery(cmmd);
                 orderID = getLastID();
@@ -146,6 +166,7 @@ namespace Website.App_Code
                 orderPaid = paid;
                 tableID = tabID;
                 orderStatus = status;
+                orderWaiter = waiter;
             }
             catch (Exception o)
             {
@@ -352,11 +373,11 @@ namespace Website.App_Code
                     Connection = conn,
                     CommandText =
                     "UPDATE ORDER " +
-                    "SET Waiter_ID = @cus " +
-                    "WHERE Order_ID = @oid "
+                    "SET `Waiter_ID` =" + waiterID + " "+
+                    "WHERE `Order_ID` =" + orderID + " "
                 };
-                i.Parameters.AddWithValue("@cus", waiterID);
-                i.Parameters.AddWithValue("@oid", orderID);
+                //i.Parameters.AddWithValue("@cus", waiterID);
+                //i.Parameters.AddWithValue("@oid", orderID);
 
                 conn.Open();
                 if (i.ExecuteNonQuery() > 0)

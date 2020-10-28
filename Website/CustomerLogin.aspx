@@ -96,22 +96,19 @@
 
                         <!--<div><asp:RangeValidator class="" ID="RangeValidator1" runat="server" ErrorMessage="Please input value between 1 and 20" ControlToValidate="txtTable" MinimumValue="1" MaximumValue="20"></asp:RangeValidator> </div>-->
                         <div class="row">
-                            <label class="control-label mt-2" for="UpdatePanel1">Pick Your Waiter:</label>
                             <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
                             <div>
                                 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                                     <ContentTemplate>
-                                        <asp:RadioButtonList ID="RadioButtonList1" runat="server" required="true"></asp:RadioButtonList>
+                                        <label class="control-label mt-2" for="UpdatePanel1">Pick Your Waiter:</label>
+                                        <asp:RadioButtonList ID="RadioButtonList1" runat="server" CssClass="radio" required="true">
+                                        </asp:RadioButtonList>
                                     </ContentTemplate>
                                 </asp:UpdatePanel>
                             </div>
-                            
-                            
-
-
+                        </div>
+                        <div>
                             <asp:Button ID="btnSignIn" runat="server" Text="Sign In" CssClass="btn btn-dark mt-3" CausesValidation="True" OnClick="btnSignIn_Click" />
-
-                            
                         </div>
                         
                     </fieldset>

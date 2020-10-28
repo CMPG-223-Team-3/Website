@@ -39,6 +39,7 @@ namespace Website
         private static string fromPageSession = "FromPage";
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
+        private static string selectedWaiterIDSession = "WaiterID";
 
 
         private static string menuItemID = "Menu_Item_ID";
@@ -90,18 +91,37 @@ namespace Website
                     {//if logged in user has tableid (should be if they logged in)
                         if (Session[orderIDSession] != null)
                         {//if the user had an order pending but closed the thing
-                            if(order == null)
+                            if (order == null)
                             {
                                 order = new Order(int.Parse(Session[orderIDSession].ToString())); //at this point we need a customer ID to make a new order, have to fix
                                 order.updateOrderNameAndTable(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()));
+                                if (Session[selectedWaiterIDSession] != null)
+                                {
+                                    if (order.updateOrderWaiter(int.Parse(Session[selectedWaiterIDSession].ToString())) != true)
+                                    {
+                                        throwEx(new Exception("Could not set your waiter, please contact a staff member"));
+                                    }
+                                }
+                                else
+                                {
+                                    throwEx(new Exception("Could not find selected waiter, please log in again"));
+                                }
                             }
                         }
                         else
                         {
                             if(order == null)
                             {
-                                order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0);
-                                Session[orderIDSession] = order.getOrderID();
+                                
+                                if (Session[selectedWaiterIDSession] != null)
+                                {
+                                    order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0, int.Parse(Session[selectedWaiterIDSession].ToString()));
+                                    Session[orderIDSession] = order.getOrderID();
+                                }
+                                else
+                                {
+                                    throwEx(new Exception("Could not find selected waiter, please log in again"));
+                                }
                             }
                         }
                     }

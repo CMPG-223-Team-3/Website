@@ -18,6 +18,7 @@ namespace Website
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
         private static string orderObjectSession = "OrderObject";
+        private static string selectedWaiterIDSession = "WaiterID";
 
         private static string waiterWaiterIDName = "Waiter_ID";
         private static string waiterWaiterName = "Waiter_FirstName";
@@ -89,6 +90,7 @@ namespace Website
         {
             Session[tableIDSession] = int.Parse(txtTable.Text);
             Session[userNameSession] = txtName.Text.Trim().ToUpper();
+            Session[selectedWaiterIDSession] = RadioButtonList1.SelectedItem.Value;
 
             int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
 
@@ -148,13 +150,25 @@ namespace Website
                                             /*RadioButton i = new RadioButton();
                                             i.Text = waiterName + " " + waiterLastName;
                                             i.ID = waiterID.ToString();*/
-                                            RadioButtonList1.Items.Add(" " + waiterName + " " + waiterLastName);
+                                            ListItem i = new ListItem();
+                                            i.Value = waiterID.ToString();
+                                            i.Text = waiterName + " " + waiterLastName;
+                                            RadioButtonList1.Items.Add(i);
+                                            
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                }
+                if(RadioButtonList1.Items.Count <= 0)
+                {
+                    throwEx(new Exception("I can't find any waiters in the database..."));
+                }
+                else
+                {
+                    RadioButtonList1.Items[0].Selected = true;
                 }
             }
             catch (Exception xx)
