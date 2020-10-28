@@ -16,6 +16,42 @@
 </head>
 <body>
     <form id="form1" runat="server">
+        <nav class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
+            <div class="container-fluid">
+                <a class="navbar-brand thumbnail navPic" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="Default.aspx">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Order</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown" data-toggle="dropdown"><asp:Label ID="lblLogin" runat="server" Text="Login" href="#"></asp:Label></a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="OrderStatus.aspx">My Order</a>
+                                <a class="dropdown-item" href="#">Item2</a>
+                                <a class="dropdown-item" href="#">Item3</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Item4</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                                
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
         <div class="container mt-3">
             <div class="row">
                 <div class="col-sm-12 col-md-6"><!--left side-->
@@ -37,22 +73,23 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6"><!--right side-->
-                    <fieldset class="field" >
-                        <div class="m-b-3 row">
-                            <h2><a href="CustomerLogin.aspx" class="">Login</a> / <a href="" class="active"> Waiter</a></h2>
+                <div class="col-sm-12 col-md-6 FormBox"><!--right side-->
+                    <fieldset class="field form-group">
+                        <div class="m-b-5 row">
+                            <h2><a href="" class="linkInActive">Login</a> / <a href="WaiterLogin.aspx" class="active linkActive"> Waiter</a></h2>
                         </div>
                         <div class="row">
                             <asp:Label ID="lblStatus" runat="server" Text="" CssClass="text"></asp:Label>
                         </div>
                         <div class="row">
-                            <asp:Label CssClass="col-3" ID="Label1" runat="server" Text="Username: "></asp:Label>
-                            <asp:TextBox AutoCompleteType="DisplayName" ID="txtName" runat="server" placeholder="UserName" CssClass="form-control col-9"></asp:TextBox>
-                            <div><asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="txtName" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
+                            <!--<asp:Label CssClass="col-3" ID="Label1" runat="server" Text="Username: "></asp:Label>-->
+                            <label class="control-label mt-2">Username:</label>
+                            <asp:TextBox AutoCompleteType="DisplayName" ID="txtName" runat="server" placeholder="UserName" CssClass="form-control col-9" required="true"></asp:TextBox>
                         </div>
                         <div class="row">
-                            <asp:Label CssClass="col-3" ID="Label2" runat="server" Text="Password: "></asp:Label>
-                            <asp:TextBox ID="txtPassword" runat="server" placeholder="Password" CssClass="form-control col-9" TextMode="Password"></asp:TextBox>
+                            <!--<asp:Label CssClass="col-3" ID="Label2" runat="server" Text="Password: "></asp:Label>-->
+                            <label class="control-label mt-2">Password:</label>
+                            <asp:TextBox ID="txtPassword" runat="server" placeholder="Password" CssClass="form-control col-9" TextMode="Password" required="true"></asp:TextBox>
                             <div><asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtPassword" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
                         </div>
                         <div class="row">

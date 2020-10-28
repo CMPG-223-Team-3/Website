@@ -134,20 +134,6 @@ namespace Website
 
                 pnlOrder.Controls.Clear();
                 pnlOrder.Controls.Add(cartPanel.getHeadPanel());
-
-                if (cartPanel.getTotalPrice() == 0)
-                {
-                    //orderlbl.Visible = true;
-                }
-                else
-                {
-                    //orderlbl.Visible = false;
-                }
-
-                /*if(cartPanel.isBtnClicked())
-                {
-                    
-                }*/
             }
             catch(Exception ee)
             {

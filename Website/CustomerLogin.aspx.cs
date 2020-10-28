@@ -19,6 +19,10 @@ namespace Website
         private static string tableIDSession = "TableID";
         private static string orderObjectSession = "OrderObject";
 
+        private static string waiterWaiterIDName = "Waiter_ID";
+        private static string waiterWaiterName = "Waiter_FirstName";
+        private static string waiterWaiterLastName = "Waiter_LastName";
+
 
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri; //Getting the pagename to store in session at page load so we can know which page to go back to after Error page is thrown
@@ -30,6 +34,9 @@ namespace Website
             {
                 DatabaseConnection connection = new DatabaseConnection(); //New connection object (See Connection.cs)
                 conn = connection.getConnection();
+
+                showAllWaiters();
+
             }
             catch (Exception x)
             {
@@ -102,6 +109,58 @@ namespace Website
         {
             Session[errorSession] = x.Message + x.StackTrace;
             HttpContext.Current.Response.Redirect("Error.aspx", false);
+        }
+
+        public void showAllWaiters()
+        {
+            MySqlCommand comm = new MySqlCommand
+            {
+                Connection = conn,
+                CommandText =
+                "SELECT * " +
+                "FROM `WAITER`"
+            };
+
+            int waiterID;
+            string waiterName;
+            string waiterLastName;
+
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+                    using (MySqlDataReader r = comm.ExecuteReader())
+                    {//using a reader here cus i need the last value
+                        if (r.HasRows)
+                        {
+                            while (r.Read())
+                            {
+                                if (r[waiterWaiterIDName] != System.DBNull.Value)
+                                {
+                                    waiterID = int.Parse(r[waiterWaiterIDName].ToString());
+                                    if(r[waiterWaiterName] != System.DBNull.Value)
+                                    {
+                                        waiterName = r[waiterWaiterName].ToString();
+                                        if (r[waiterWaiterLastName] != System.DBNull.Value)
+                                        {
+                                            waiterLastName = r[waiterWaiterLastName].ToString();
+                                            /*RadioButton i = new RadioButton();
+                                            i.Text = waiterName + " " + waiterLastName;
+                                            i.ID = waiterID.ToString();*/
+                                            RadioButtonList1.Items.Add(" " + waiterName + " " + waiterLastName);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception xx)
+            {
+                throwEx(xx);
+            }
         }
     }
 }

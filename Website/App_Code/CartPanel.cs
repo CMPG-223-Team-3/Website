@@ -388,12 +388,12 @@ namespace Website.App_Code
 
                 Session[orderIDSession] = null;
 
-                //Response.Write("<script>alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
+                HttpContext.Current.Response.Write("<script language='javascript'>window.alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
                 HttpContext.Current.Response.Redirect("OrderStatus.aspx", false);
             }
             catch (HttpException x)
             {
-                //Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
+                HttpContext.Current.Response.Write("<script language='javascript'>window.alert('It seems that we can't create a cookie so you can see your order... For order details, contact your waiter...')<script>");
                 HttpContext.Current.Response.Redirect("Default.aspx", false);
             }
             catch (Exception x)
