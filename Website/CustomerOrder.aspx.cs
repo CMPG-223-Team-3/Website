@@ -1,5 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI.WebControls;
 using Website.App_Code;
@@ -42,6 +45,10 @@ namespace Website
         private static string menuItemName = "Item_Name";
         private static string menuItemDesc = "Item_Description";
         private static string menuItemPrice = "Price";
+        private string cartSession = "Cart";
+
+        private static string orderCookieName = "OrderCookie";
+        private static string orderCookieSubName = "OrderIDCookie";
 
         protected void Page_Init(object o, EventArgs e)
         {
@@ -112,20 +119,7 @@ namespace Website
                 {
                     cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
                 }
-                else
-                {
-                    cartPanel.update();
-                    isTheThing = true;
-                }
 
-                pnlOrder.Controls.Clear();
-                pnlOrder.Controls.Add(cartPanel.getHeadPanel());
-                Button checkoutBtn = new Button();
-                checkoutBtn.CausesValidation = false;
-                checkoutBtn.Text = "Checkout";
-                checkoutBtn.CssClass = "btn btn-dark btn-lg";
-                checkoutBtn.Click += new EventHandler(checkoutBtnClicked);
-                pnlOrder.Controls.Add(checkoutBtn);
 
                 if (!IsPostBack || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
@@ -138,21 +132,33 @@ namespace Website
                     isSearched = false;
                 }
 
+                pnlOrder.Controls.Clear();
+                pnlOrder.Controls.Add(cartPanel.getHeadPanel());
+
                 if (cartPanel.getTotalPrice() == 0)
                 {
-                    pnlOrder.Visible = false;
+                    //orderlbl.Visible = true;
                 }
                 else
                 {
-                    pnlOrder.Visible = true;
+                    //orderlbl.Visible = false;
                 }
 
+                /*if(cartPanel.isBtnClicked())
+                {
+                    
+                }*/
             }
             catch(Exception ee)
             {
                 Session[errorSession] = ee.Message + ee.StackTrace;
                 Response.Redirect("Error.aspx");
             }
+        }
+
+        protected void Page_LoadComplete(object sender, EventArgs e)
+        {
+
         }
         
         //Method to load the correct products from the sent query (query in string form instead of a command var is easier to manipulate at this stage)
@@ -188,7 +194,7 @@ namespace Website
 
                                 //Create panel to serve as a card, so img, price, name can be added inside it
                                 Panel pnl1 = new Panel();
-                                pnl1.CssClass = "card row bg-dark m-md-2 m-lg-3 text-light";
+                                pnl1.CssClass = "card row bg-dark mb-xs-2 mb-lg-3 text-light";
 
                                 Panel pnlNameDesc = new Panel();
                                 pnlNameDesc.CssClass = "col-sm-8 pnlNameDesc";
@@ -265,8 +271,8 @@ namespace Website
                 Session[errorSession] = x.Message + ":   " + x.StackTrace;
                 Response.Redirect("Error.aspx");
             }
+            //Server.Transfer("CustomerOrder.aspx");
             btnSearch_Click(new object(), new EventArgs());
-            Page_Load(new object(), new EventArgs());
         }
 
         //When user searched for product
@@ -290,26 +296,49 @@ namespace Website
             isSearched = true;
         }
 
-        private void checkoutBtnClicked(object sender, EventArgs e)
+        /*private void checkoutBtnClicked(object sender, EventArgs e)
         {
             try
             {
+                cartPanel.update();
                 cartPanel.order.getOrderItemsObject().close();
-                Session[tableIDSession] = order.getTableID();
-                Session[orderIDSession] = order.getOrderID();
-                Response.Redirect("Checkout.aspx", false);
+                try
+                {
+                    HttpCookie userCookie = new HttpCookie(orderCookieName);
+                    userCookie[orderCookieSubName] = cartPanel.order.getOrderID().ToString();
+                    Response.Cookies.Add(userCookie);
+                    userCookie.Expires = DateTime.Now.AddHours(5);
+                }
+                catch (Exception x)
+                {
+                    throw new HttpException();
+                }
+
+                Session[orderIDSession] = null;
+
+                Response.Write("<script>alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
+                Response.Redirect("OrderStatus.aspx", false);
             }
-            catch(Exception x)
+            catch (HttpException x)
+            {
+                Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
+                Response.Redirect("Default.aspx", false);
+            }
+            catch (Exception x)
             {
                 throwEx(x);
-            }
-            Page_Load(new object(), new EventArgs());
-        }
+            }            
+        }*/
 
         private void throwEx(Exception x)
         {
             Session[errorSession] = x.Message + x.StackTrace;
             HttpContext.Current.Response.Redirect("Error.aspx", false);
+        }
+
+        protected void forcePostbackBtn_Click(object sender, EventArgs e)
+        {
+            // do nothing - for double postback purposes
         }
     }
 }

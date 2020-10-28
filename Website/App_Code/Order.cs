@@ -31,6 +31,7 @@ namespace Website.App_Code
         private int orderStatus;
         private OrderItems orderItems;
         private string orderName;
+        private int orderCashOrCard;
 
         private string tabName = "ORDER";
         private string orderIDName = "Order_ID";
@@ -38,11 +39,17 @@ namespace Website.App_Code
         private string paidName = "Paid";
         private string statusName = "Status";
         private string orderCustomerName = "Customer_Name";
+        private string orderWaiterName = "Waiter_ID";
+        private string orderCashOrCardName = "CashOrCard";
+
+        private int orderWaiter;
+        private int orderTable;
 
         public Order()
         {
             int paid = 0; //i'm leaving these as default cus i don't know which vals mean what
             int stat = 0;
+            int corcard = 0;
             try
             {
                 DatabaseConnection connect = new DatabaseConnection();//Class to connect to database
@@ -59,15 +66,24 @@ namespace Website.App_Code
                 cmmd.CommandText =
                     "INSERT " +
                     "INTO `ORDER`" +
-                    "(`Paid`, `Status`) " +
-                    "VALUES(@pd, @st);";
+                    "(`Paid`, `Status`, `CashOrCard`) " +
+                    "VALUES(@pd, @st, @ccc);";
                 cmmd.Connection = conn;
                 cmmd.Parameters.AddWithValue("@pd", paid);
                 cmmd.Parameters.AddWithValue("@st", stat);
+                cmmd.Parameters.AddWithValue("@ccc", corcard);
 
                 executeNonQuery(cmmd);
                 orderID = getLastID();
                 orderItems = new OrderItems(orderID);//Object for all the items in the database for this order
+
+                orderName = "";
+                tableID = 0;
+                orderWaiter = 0;
+                orderPaid = paid;
+                orderStatus = stat;
+                orderCashOrCard = corcard;
+
             }
             catch (Exception o)
             {
@@ -125,6 +141,11 @@ namespace Website.App_Code
                 executeNonQuery(cmmd);
                 orderID = getLastID();
                 orderItems = new OrderItems(orderID);//Object for all the items in the database for this order
+
+                orderName = name.ToUpper();
+                orderPaid = paid;
+                tableID = tabID;
+                orderStatus = status;
             }
             catch (Exception o)
             {
@@ -165,6 +186,10 @@ namespace Website.App_Code
                                     orderStatus = int.Parse(rd[statusName].ToString());
                                 if (rd[orderCustomerName] != System.DBNull.Value)
                                     orderName = rd[orderCustomerName].ToString();
+                                if (rd[orderWaiterName] != System.DBNull.Value)
+                                    orderWaiter = int.Parse(rd[orderWaiterName].ToString());
+                                if (rd[orderCashOrCardName] != System.DBNull.Value)
+                                    orderCashOrCard = int.Parse(rd[orderCashOrCardName].ToString());
                             }
                             success = true;
                         }
@@ -202,11 +227,6 @@ namespace Website.App_Code
                 throw p;
             }
             return x;
-        }
-
-        public void OrderPaid()
-        {//Method to update order so that the order has been paid
-            throw new NotImplementedException();
         }
 
         public void executeNonQuery(MySqlCommand que)
@@ -249,6 +269,8 @@ namespace Website.App_Code
                     return true;
                 }
                 conn.Close();
+                orderName = name.ToUpper();
+                tableID = table;
                 return false;
             }
             catch (Exception x)
@@ -280,6 +302,7 @@ namespace Website.App_Code
                     return true;
                 }
                 conn.Close();
+                orderName = name.ToUpper();
                 return false;
             }
             catch (Exception x)
@@ -310,6 +333,7 @@ namespace Website.App_Code
                     return true;
                 }
                 conn.Close();
+                tableID = table;
                 return false;
 
             }
@@ -341,6 +365,7 @@ namespace Website.App_Code
                     return true;
                 }
                 conn.Close();
+                orderWaiter = waiterID;
                 return false;
 
             }
@@ -372,6 +397,7 @@ namespace Website.App_Code
                     return true;
                 }
                 conn.Close();
+                orderCashOrCard = cashorcard;
                 return false;
 
             }
@@ -403,6 +429,7 @@ namespace Website.App_Code
                     return true;
                 }
                 conn.Close();
+                orderStatus = status;
                 return false;
 
             }
@@ -442,6 +469,10 @@ namespace Website.App_Code
         {
             return orderItems;//Return the OrderItems object (Will probably be used to add, remove and such from the items in the order)
                               //for example: Order.getOrderItemsObject.addProduct(productId);
+        }
+        public int getStatus()
+        {
+            return orderStatus;
         }
     }
 }

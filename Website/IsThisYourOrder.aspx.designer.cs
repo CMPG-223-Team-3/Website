@@ -24,30 +24,21 @@ namespace Website
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// pnl1 control.
+        /// orderpanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnl1;
+        protected global::System.Web.UI.WebControls.Panel orderpanel;
 
         /// <summary>
-        /// pnl2 control.
+        /// yesnopanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnl2;
-
-        /// <summary>
-        /// pnlCheckout control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlCheckout;
+        protected global::System.Web.UI.WebControls.Panel yesnopanel;
     }
 }

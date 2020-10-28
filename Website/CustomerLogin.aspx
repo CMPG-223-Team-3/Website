@@ -35,7 +35,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown" data-toggle="dropdown"><asp:Label ID="lblLogin" runat="server" Text="Login" href="#"></asp:Label></a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="Checkout.aspx">My Order</a>
+                                    <a class="dropdown-item" href="OrderStatus.aspx">My Order</a>
                                     <a class="dropdown-item" href="#">Item2</a>
                                     <a class="dropdown-item" href="#">Item3</a>
                                     <div class="dropdown-divider"></div>

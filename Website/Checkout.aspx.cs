@@ -20,6 +20,7 @@ namespace Website
 
         private static string orderCookieName = "OrderCookie";
         private static string orderCookieSubName = "OrderIDCookie";
+        private string cartSession = "Cart";
 
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
 
@@ -41,26 +42,26 @@ namespace Website
                 {//if user is signed in with their table
                     if(Session[orderIDSession] != null)
                     {//user has their order placed
-                        if(cart == null)
+                        if(Session[cartSession] != null)
                         {
-                            cart = new CartPanel(new Order(int.Parse(Session[orderIDSession].ToString())));
-                        }
-                        else
-                        {
-                            cart.update();
-                        }
-                        if (cart.getTotalPrice() == 0)
-                        {
-                            cart.order.getOrderItemsObject().close();
-                            Response.Redirect(Session[fromPageSession].ToString(), false);
-                        }
-                        pnlCheckout.Controls.Add(cart.getHeadPanel());
+                            cart = (CartPanel)Session[cartSession];
+                            if (cart.getTotalPrice() == 0)
+                            {
+                                cart.order.getOrderItemsObject().close();
+                                Response.Redirect(Session[fromPageSession].ToString(), false);
+                            }
+                            pnlCheckout.Controls.Add(cart.getHeadPanel());
 
-                        Button checkOut = new Button();
-                        checkOut.Text = "Confirm Order";
-                        checkOut.CssClass = "btn btn-dark";
-                        checkOut.Click += new EventHandler(checkoutBtnClicked);
-                        pnlCheckout.Controls.Add(checkOut);
+                            Button checkOut = new Button();
+                            checkOut.Text = "Confirm Order";
+                            checkOut.CssClass = "btn btn-dark";
+                            checkOut.Click += new EventHandler(checkoutBtnClicked);
+                            pnlCheckout.Controls.Add(checkOut);
+                        }
+                    }
+                    else
+                    {
+                        Response.Redirect("CustomerOrder.aspx", false);
                     }
                 }
                 else
@@ -101,13 +102,13 @@ namespace Website
             catch(HttpException x)
             {
                 Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
-                Response.Redirect("default.aspx", false);
+                Response.Redirect("Default.aspx", false);
             }
             catch(Exception x)
             {
                 throwEx(x);
             }
-            Page_Load(new object(), new EventArgs());
+            Server.Transfer("Checkout.aspx");
         }
 
         private void throwEx(Exception x)

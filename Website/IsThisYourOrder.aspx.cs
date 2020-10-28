@@ -71,14 +71,14 @@ namespace Website
                         yes.Text = "Yes";
                         no.Text = "No";
 
-                        yes.CssClass = "btn btn-dark btn-lg";
-                        no.CssClass = "btn btn-dark btn-lg";
+                        yes.CssClass = "btn btn-dark btn-lg m-2";
+                        no.CssClass = "btn btn-dark btn-lg m-2";
 
                         yes.Click += new EventHandler(yesBtnClicked);
                         no.Click += new EventHandler(noBtnClicked);
 
-                        pnl2.Controls.Add(yes);
-                        pnl2.Controls.Add(no);
+                        yesnopanel.Controls.Add(yes);
+                        yesnopanel.Controls.Add(no);
                     }
                     catch (Exception x)
                     {
@@ -148,7 +148,7 @@ namespace Website
             int quantity = -1;
             int counterer = 0;
             bool isFound3 = false;
-            pnl1.Controls.Clear();
+            orderpanel.Controls.Clear();
             totalPrice = 0;
 
             try
@@ -232,7 +232,7 @@ namespace Website
                     temp.Controls.Add(quanlbl);
                     temp.Controls.Add(name);
                     temp.Controls.Add(price);
-                    pnl1.Controls.Add(temp);
+                    orderpanel.Controls.Add(temp);
 
                     counterer++;
                 }

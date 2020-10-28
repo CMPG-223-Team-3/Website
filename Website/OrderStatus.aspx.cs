@@ -52,6 +52,10 @@ namespace Website
                         {//just to make sure that order isn't empty
                             throwEx(new Exception("It looks as if the order saved is empty"));
                         }
+
+                        Label status = new Label();
+                        status.Text = "Status of your order: " +  order.getStatus().ToString();
+                        pnlstatus.Controls.Add(status);
                     }
                     catch (Exception x)
                     {
@@ -62,7 +66,7 @@ namespace Website
             else
             {
                 Response.Write("<script>alert('It seems that we could not retrieve your order cookie, please contact you waiter for order status')<script>");
-                Response.Redirect("default.aspx", false);
+                Response.Redirect("Default.aspx", false);
             }
         }
 
@@ -190,9 +194,11 @@ namespace Website
                     quanlbl.Text = quantity.ToString() + " X ";
 
                     //Build the first part of headPanel
-                    pnl1.Controls.Add(quanlbl);
-                    pnl1.Controls.Add(name);
-                    pnl1.Controls.Add(price);
+                    Panel temp = new Panel();
+                    temp.Controls.Add(quanlbl);
+                    temp.Controls.Add(name);
+                    temp.Controls.Add(price);
+                    pnl1.Controls.Add(temp);
 
                     counterer++;
                 }

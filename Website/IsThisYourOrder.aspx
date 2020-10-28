@@ -16,17 +16,18 @@
 </head>
 <body>
     <form id="form1" runat="server">
+
         <div class="container">
             <div>
-                <h1 style="margin: auto;">Pending order found with your credentials</h1>
-                <h3 style="margin: auto;">Is this your order?</h3>
+                <h1 class="align-middle mt-3 mb-5">Welcome!</h1>
+                <h3 class="align-middle">We found a pending order with your credentials</h3>
+                <h5>Is this your order? Would you like to continue with it? Click Yes</h5>
             </div>
-            <div>
-                <asp:Panel style="margin: auto;" ID="pnl1" runat="server"></asp:Panel>
-                <asp:Panel style="margin: auto;" ID="pnl2" runat="server"></asp:Panel>
-            </div>
-            <div>
-                <asp:Panel style="margin: auto;" class="container m-4" ID="pnlCheckout" runat="server"></asp:Panel>
+            <div class="bordered mt-5">
+                <div>
+                    <asp:Panel class="FormBox" ID="orderpanel" runat="server"></asp:Panel>
+                    <asp:Panel class="mt-3" ID="yesnopanel" runat="server"></asp:Panel>
+                </div>
             </div>
         </div>
     </form>

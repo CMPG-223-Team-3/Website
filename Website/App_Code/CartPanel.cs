@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Data;
+using System.Text;
 using System.Web;
 using System.Web.UI.WebControls;
 using Website;
@@ -25,16 +26,18 @@ namespace Website.App_Code
         private int orderID;
         private Panel headPanel; //Main panel to put each orderpanel into with the information of the order item
         private float totalPrice;
-        private Order order;
+        public Order order;
         private DataTable menuItems;
         private DataTable orderItemsTable;
         private OrderItems orderItems;
+        private static bool isTheBtnClicked;
 
         private Button min;
         private Button plus;
         private Label name;
         private Label price;
         private Label quanlbl;
+        private Button checkoutbtn;
 
         private string menuIDCol = "Menu_Item_ID";
         private string menuNameCol = "Item_Name";
@@ -43,6 +46,10 @@ namespace Website.App_Code
         private string orderItemsOrderIDCol = "Order_ID";
         private string orderItemsQuantityCol = "Quantity_Ordered";
 
+        private static string orderCookieName = "OrderCookie";
+        private static string orderCookieSubName = "OrderIDCookie";
+
+        private static string orderIDSession = "OrderID";
         private static string errorSession = "Error";
 
         public CartPanel(MySqlConnection c, int orderID)
@@ -159,6 +166,12 @@ namespace Website.App_Code
 
             if (orderItemsTable.Rows.Count <= 0)
             {//if there is no orderIems in order
+
+                Label i = new Label();
+                i.Text = "Click an `add to cart` button";
+                i.CssClass = "control-label mb-2";
+                headPanel.Controls.Add(i);
+
                 return 0;
             }
 
@@ -212,6 +225,10 @@ namespace Website.App_Code
                     name = new Label();
                     price = new Label();
                     quanlbl = new Label();
+                    
+
+                    
+
                     this.totalPrice += productPrice * quantity;
 
                     min.CssClass = "btn btn-dark col-3";
@@ -248,12 +265,21 @@ namespace Website.App_Code
                 }
             }
 
+            //Add the checkout button
+            checkoutbtn = new Button();
+            checkoutbtn.CausesValidation = false;
+            checkoutbtn.Text = "Checkout";
+            checkoutbtn.CssClass = "btn btn-dark btn-lg m-1";
+            checkoutbtn.Click += new EventHandler(checkoutBtnClicked);
+            headPanel.Controls.Add(checkoutbtn);
+
             //Add the total label in the headPanel
             Label total = new Label();
-            total.Text = "R" + totalPrice.ToString();
+            total.Text = "Total: R" + totalPrice.ToString();
             total.CssClass = "";
-
             headPanel.Controls.Add(total);
+
+
             return counterer;
         }
 
@@ -264,7 +290,6 @@ namespace Website.App_Code
                 order.getOrderItemsObject().addProduct(id, count);
                 orderItems = order.getOrderItemsObject();
             }
-
         }
 
         public void removeItem(int id, int count)
@@ -288,6 +313,7 @@ namespace Website.App_Code
 
                 addItem(Id, 1);
                 update();
+                triggerIsBtnClicked();
             }
             catch (Exception c)
             {
@@ -312,6 +338,8 @@ namespace Website.App_Code
             {
                 throwEx(x);
             }
+
+            triggerIsBtnClicked();
         }
 
         public Panel getHeadPanel()
@@ -322,6 +350,56 @@ namespace Website.App_Code
         public float getTotalPrice()
         {
             return this.totalPrice;
+        }
+        
+        public bool isBtnClicked()
+        {
+            bool tmp = isTheBtnClicked;
+            isTheBtnClicked = false;
+            return tmp;
+        }
+
+        private void triggerIsBtnClicked()
+        {
+            isTheBtnClicked = true;
+        }
+
+
+
+
+
+        private void checkoutBtnClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                this.update();
+                this.order.getOrderItemsObject().close();
+                try
+                {
+                    HttpCookie userCookie = new HttpCookie(orderCookieName);
+                    userCookie[orderCookieSubName] = this.order.getOrderID().ToString();
+                    HttpContext.Current.Response.Cookies.Add(userCookie);
+                    userCookie.Expires = DateTime.Now.AddHours(5);
+                }
+                catch (Exception x)
+                {
+                    throw new HttpException();
+                }
+
+                Session[orderIDSession] = null;
+
+                //Response.Write("<script>alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
+                HttpContext.Current.Response.Redirect("OrderStatus.aspx", false);
+            }
+            catch (HttpException x)
+            {
+                //Response.Write("<script>alert('It seems that we can't create a cookie to store your order... For order details, contact your waiter...')<script>");
+                HttpContext.Current.Response.Redirect("Default.aspx", false);
+            }
+            catch (Exception x)
+            {
+                throwEx(x);
+            }
         }
     }
 }

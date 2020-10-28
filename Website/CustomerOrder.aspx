@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CustomerOrder.aspx.cs" Inherits="Website.CustomerOrder" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CustomerOrder.aspx.cs" Inherits="Website.CustomerOrder" ErrorPage="Error.aspx" %>
 
 <!DOCTYPE html>
 
@@ -13,12 +13,19 @@
     <script src="dist/fontawesome.js"></script>
     <script src="dist/bootstrap.js"></script>
 
+    <style type="text/css">
+        .auto-style1 {
+            left: 5px;
+            top: -10px;
+        }
+    </style>
+
 </head>
 <body>
     <form id="form1" runat="server">
 
         <!--Nav bar-->
-            <nav class="navbar navbar-expand-md navbar-dark sticky-top mb-sm-1 mb-md-2 mb-lg-3">
+            <nav class="auto-style1">
                 <div class="container-fluid">
                     <a class="navbar-brand thumbnail navPic" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
@@ -72,10 +79,41 @@
 
             <div class="container">
                 <div class="row">
-                    <asp:Panel class="col-xs-12 col-lg-7" ID="pnlMaster" runat="server"></asp:Panel>
-                    <asp:Panel class="col-xs-0 col-lg-5" ID="pnlOrder" runat="server"></asp:Panel>
+                    <div class="col-lg-6 FormBox">
+                        <div>
+                            <label class="control-label mb-3" for="pnlOrder"><h2>Our Menu:</h2></label>
+                        </div>
+                        <asp:Panel ID="pnlMaster" runat="server"></asp:Panel>
+                    </div>
+
+                    <div class="col-lg-6 FormBox">
+                        <div>
+                            <label class="control-label mb-3" for="pnlOrder"><h2>Order Items:</h2></label>
+                        </div>
+                        <div>
+                            <!--<asp:Label ID="orderlbl" runat="server" Text="Click a `add to cart` button" Visible="false" class="control-label mb-2" for="pnlOrder"></asp:Label>-->
+                            <asp:ScriptManager ID="ScriptManager1" runat="server" />
+                            <asp:UpdateProgress runat="server" ID="pageupdateprogress">
+                                    <ProgressTemplate>
+                                        Loading...
+                                    </ProgressTemplate>
+                                </asp:UpdateProgress>
+                            <asp:UpdatePanel ID="updatePanel" UpdateMode="Conditional" runat="server">
+                                <ContentTemplate>
+                                    <asp:Panel ID="pnlOrder" runat="server"></asp:Panel>
+                                    <!--<asp:Button CssClass="btn btn-dark btn-lg" ID="checkoutBtn" runat="server" Text="Checkout" Visible="false" CausesValidation="false"/>-->
+                                </ContentTemplate>
+                                
+                            </asp:UpdatePanel>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+
+
+        <div>
+            <asp:Button ID="forcePostbackBtn" runat="server" Text="Button" Visible="false" OnClick="forcePostbackBtn_Click" />
         </div>
 
         <footer class="page-footer font-small pt-md-4 pb-4 mt-4">
