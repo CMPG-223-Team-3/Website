@@ -46,7 +46,7 @@
                         <div class="card-boddy text-centre">
                             <h5 class="card-title">Orders that have not been delivered</h5>
                             <div class="card-text">
-                                <asp:GridView ID="GridView1" runat="server" OnSelectedIndexChanged="GridView1_SelectedIndexChanged"></asp:GridView>
+                                <asp:GridView ID="GridView1" runat="server"></asp:GridView>
                             </div>
                         </div>
                     </div>

@@ -26,7 +26,7 @@ namespace Website
             using (connection)
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID', Table_nr AS 'Table Number', Customer_Name AS 'Customer Name' FROM `ORDER` WHERE `Status` = " + 0 + " ORDER BY Order_Date_Time DESC;");
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM `ORDER` WHERE `Status` = " + 0 + ";");
                 using (MySqlDataAdapter sda = new MySqlDataAdapter())
                 {
                     cmd.Connection = connection;

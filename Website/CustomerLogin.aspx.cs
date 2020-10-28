@@ -36,7 +36,8 @@ namespace Website
                 DatabaseConnection connection = new DatabaseConnection(); //New connection object (See Connection.cs)
                 conn = connection.getConnection();
 
-                showAllWaiters();
+                if(!IsPostBack)
+                    showAllWaiters();
 
             }
             catch (Exception x)
