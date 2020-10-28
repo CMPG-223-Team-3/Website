@@ -13,16 +13,10 @@
     <script src="dist/fontawesome.js"></script>
     <script src="dist/bootstrap.js"></script>
 
-    <style type="text/css">
-        .auto-style1 {
-            left: 5px;
-            top: -10px;
-        }
-    </style>
 </head>
 <body>
     <form id="form1" runat="server">
-        <nav class="auto-style1">
+        <nav>
             <div class="container-fluid">
                 <a class="navbar-brand thumbnail navPic" href="#"><img src="images/logo.jpg" style="max-height: 40px"/></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
