@@ -26,18 +26,12 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <!--<a class="nav-link" href="Default.aspx">Home</a>-->
                             <a class="nav-link" href="Default.aspx"><asp:Label  ID="Label1" runat="server" Text="Home"></asp:Label></a>
-                        </li>
-                        <li class="nav-item">
-                            <!--<a class="nav-link active" href="CustomerOrder.aspx">Order</a>-->
-                            <a class="nav-link" href="CustomerOrder.aspx"><asp:Label ID="Label2" runat="server" Text="Order"></asp:Label></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="CustomerLogin.aspx"><asp:Label ID="lblLogin" runat="server" Text="Login"></asp:Label></a>
                         </li>
                         <li class="nav-item">
-                            <!--<a class="nav-link" href="Checkout.aspx">My Order</a>-->
                             <a class="nav-link" href="Checkout.aspx"><asp:Label ID="Label3" runat="server" Text="My Order"></asp:Label></a>
                         </li> 
                     </ul>
@@ -46,7 +40,59 @@
         </nav>
 
          <div class="container">
-
+             <div class="row">
+                 <div class="col-md-12">
+                    <div class="FormBox">
+                        <div class="card-boddy text-centre">
+                            <h5 class="card-title">Orders that have not been delivered</h5>
+                            <div class="card-text">
+                                <asp:GridView ID="GridView1" runat="server"></asp:GridView>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-sm-12 col-md-12">
+                      <div class="card-dark mb-4"></div>
+                 </div>
+                 <div class="col-sm-12 col-md-6">
+                    <div class="FormBox mb-4">
+                        <div class="card-boddy text-centre">
+                            <h5 class="card-title">Orders delivered</h5>
+                            <div class="card-text">
+                                <label>Order ID:</label>
+                            </div>
+                            <div>
+                                <asp:DropDownList ID="DropDownListOrderIds" runat="server"></asp:DropDownList>
+                            </div>
+                            <div>
+                                <asp:RadioButtonList ID="RadioButtonListDeliveryStatus" runat="server">
+                                    <asp:ListItem Selected="True" Text="Delivered"></asp:ListItem>
+                                    <asp:ListItem Text="Not Delivered"></asp:ListItem>
+                                </asp:RadioButtonList>
+                            </div>
+                            <div>
+                                <asp:Button ID="BtnDelivered" runat="server" Text="Button" class="btn btn-secondary myButtonRight"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-sm-12 col-md-6">
+                    <div class="FormBox mb-4">
+                        <div class="card-boddy text-centre">
+                            <h5 class="card-title">Orders Paid</h5>
+                            <div class="card-text">
+                                <div>
+                                    <label>Table Number:</label>
+                                    <asp:TextBox AutoCompleteType="None" ID="TextBoxTableNumber" runat="server" CssClass="form-control" required="true" TextMode="Number"></asp:TextBox>
+                                </div>
+                                <div>
+                                    <asp:Button ID="ButtonPay" runat="server" Text="Button" class="btn btn-secondary myButtonRight"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
          </div>
     </form>
 </body>

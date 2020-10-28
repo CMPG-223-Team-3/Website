@@ -18,6 +18,15 @@ $dark: rgba(0, 0, 0, 0.28);
     border-top: 3px solid rgb(219, 219, 219);
 }
 
+.myButtonRight {
+    margin-left: 80%;
+    margin-right: 20%;
+}
+
+.card{
+    background-color: $dark;
+}
+
 .dropdown:hover .dropdown-menu {
     display: block;
 }
