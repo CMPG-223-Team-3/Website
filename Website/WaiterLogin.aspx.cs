@@ -13,5 +13,10 @@ namespace Website
         {
 
         }
+
+        protected System.Void Button1_Click(System.Object sender, System.EventArgs e)
+        {
+
+        }
     }
 }

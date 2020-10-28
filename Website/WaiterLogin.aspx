@@ -93,7 +93,7 @@
                             <div><asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtPassword" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
                         </div>
                         <div class="row">
-                            <asp:Button ID="Button1" runat="server" Text="Sign In" CssClass="btn btn-dark"/>
+                            <asp:Button ID="Button1" runat="server" Text="Sign In" CssClass="btn btn-dark" OnClick="Button1_Click"/>
                         </div>
                     </fieldset>
                 </div>
