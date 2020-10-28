@@ -46,7 +46,7 @@
                         <div class="card-boddy text-centre">
                             <h5 class="card-title">Orders that have not been delivered</h5>
                             <div class="card-text">
-                                <asp:GridView ID="GridView1" runat="server"></asp:GridView>
+                                <asp:GridView ID="GridView1" runat="server" class="table table-striped table-dark"></asp:GridView>
                             </div>
                         </div>
                     </div>
