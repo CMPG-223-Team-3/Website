@@ -89,10 +89,15 @@ namespace Website
 
         protected void btnSignIn_Click(object sender, EventArgs e)
         {
+            /*Session[tableIDSession] = null;
+            Session[userNameSession] = null;
+            Session[selectedWaiterIDSession] = null;
+            Session[orderIDSession] = null;*/
+            Session.Clear();
+
             Session[tableIDSession] = int.Parse(txtTable.Text);
             Session[userNameSession] = txtName.Text.Trim().ToUpper();
             Session[selectedWaiterIDSession] = RadioButtonList1.SelectedItem.Value;
-            Session[orderIDSession] = null;
 
             Response.Redirect("CustomerOrder.aspx", false);
 

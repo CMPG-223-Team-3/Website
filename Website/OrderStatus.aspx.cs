@@ -17,6 +17,7 @@ namespace Website
         private static string fromPageSession = "FromPage";
         private static string orderIDSession = "OrderID";
         private static string tableIDSession = "TableID";
+        private static string selectedWaiterIDSession = "WaiterID";
 
         private string menuIDCol = "Menu_Item_ID";
         private string menuNameCol = "Item_Name";
@@ -27,6 +28,7 @@ namespace Website
 
         private static string orderCookieName = "OrderCookie";
         private static string orderCookieSubName = "OrderIDCookie";
+
 
         private Order order;
         private float totalPrice;
@@ -41,6 +43,12 @@ namespace Website
             Session[orderIDSession] = null;
             Session[userNameSession] = null;
             Session[tableIDSession] = null;
+            Session[selectedWaiterIDSession] = null;
+
+            /*Session[orderIDSession] = null;
+           Session[userNameSession] = null;
+           Session[tableIDSession] = null;
+           Session[selectedWaiterIDSession] = null;*/
 
             try
             {

@@ -47,7 +47,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-6"><!--left side-->
                     <div>
-                        <div class="Logo row"><asp:Image runat="server" ImageUrl="~/images/logo.jpg"/></div>
+                        <!--<div class="Logo row"><asp:Image runat="server" ImageUrl="~/images/logo.jpg"/></div>-->
                         <h3 class="row">Welcome back !</h3>
                         <p class="row">You feel lost?</p>
                         <p class="row">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam non suscipit quibusdam nobis saepe. Architecto sunt sit odio magni facere.</p>

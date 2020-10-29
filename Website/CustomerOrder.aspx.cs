@@ -31,7 +31,6 @@ namespace Website
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
-        private bool isTheThing = false;
 
         //session var names
         private static string userNameSession = "UserName";
