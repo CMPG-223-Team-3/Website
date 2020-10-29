@@ -501,16 +501,33 @@ namespace Website.App_Code
         }
         public string getWaiter()
         {
-            string name;
+            string name = null;
             try
             {
                 MySqlCommand waitcomm = new MySqlCommand();
                 waitcomm.Connection = conn;
                 waitcomm.CommandText =
-                    "SELECT `Waiter_FirstName` " +
-                    "FROM WAITER " +
+                    "SELECT * " +
+                    "FROM `WAITER` " +
                     "WHERE `Waiter_ID` = @id";
-                name = waitcomm.ExecuteScalar().ToString();
+                waitcomm.Parameters.AddWithValue("@id", orderWaiter);
+                using(conn)
+                {
+                    conn.Open();
+                    using (MySqlDataReader rdr = waitcomm.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            while (rdr.Read())
+                            {
+                                if (rdr["Waiter_FirstName"] != System.DBNull.Value)
+                                {
+                                    name = rdr["Waiter_FirstName"].ToString();
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (name != null)
                     return name;
