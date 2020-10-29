@@ -99,7 +99,8 @@ namespace Website
 
         private void throwEx(Exception x)
         {
-            throw new NotImplementedException();
+            Session[errorSession] = x.Message + " " + x.StackTrace;
+            Response.Redirect("Error.aspx", false);
         }
 
         public DataTable getMenuItems()

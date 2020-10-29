@@ -29,7 +29,7 @@ namespace Website.App_Code
         private int orderID;
         private int orderPaid;
         private int orderStatus;
-        private OrderItems orderItems;
+        private static OrderItems orderItems;
 
         private string tabName = "ORDER";
         private string orderIDName = "Order_ID";
@@ -325,26 +325,29 @@ namespace Website.App_Code
 
         public bool updateOrderWaiter(int waiterID)
         {
+            
             try
             {
                 MySqlCommand i = new MySqlCommand
                 {
                     Connection = conn,
                     CommandText =
-                    "UPDATE ORDER " +
+                    "UPDATE `ORDER` " +
                     "SET `Waiter_ID` =" + waiterID + " "+
                     "WHERE `Order_ID` =" + orderID + " "
                 };
                 //i.Parameters.AddWithValue("@cus", waiterID);
                 //i.Parameters.AddWithValue("@oid", orderID);
+                DatabaseConnection mk = new DatabaseConnection();
+                MySqlConnection co = mk.getConnection();
 
-                conn.Open();
+                co.Open();
                 if (i.ExecuteNonQuery() > 0)
                 {
-                    conn.Close();
+                    co.Close();
                     return true;
                 }
-                conn.Close();
+                co.Close();
                 orderWaiter = waiterID;
                 return false;
 
@@ -539,6 +542,10 @@ namespace Website.App_Code
                 return "Can't find waiter";
             }
             
+        }
+        public int getWaiterInt()
+        {
+            return orderWaiter;
         }
     }
 }

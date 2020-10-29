@@ -19,11 +19,11 @@ namespace Website.App_Code
         private string OrderIDCol = "Order_ID";
         private string QuantityCol = "Quantity_Ordered";
 
-        private static MySqlConnection conn;
+        private MySqlConnection conn;
         private int orderID;
-        private static DataTable orderItems;
-        private static MySqlCommandBuilder build;
-        private static MySqlDataAdapter adap;
+        private DataTable orderItems;
+        private MySqlCommandBuilder build;
+        private MySqlDataAdapter adap;
 
         public OrderItems(int OrderID)
         {//Only constructor - needs the OrderID - will usually already be known if this class was to be used by Order class
@@ -125,7 +125,9 @@ namespace Website.App_Code
                 if (hasProduct(productId))
                 {
                     int place = whereProduct(productId);
-                    orderItems.Rows[place][OrderIDCol] = DBNull.Value;
+
+                    orderItems.Rows.Remove(orderItems.Rows[place]);
+                    //orderItems.Rows[place][OrderIDCol] = DBNull.Value;
                 }
             }
             catch (DeletedRowInaccessibleException x)
@@ -183,9 +185,11 @@ namespace Website.App_Code
                     if (quant - howmany > 0)
                     {
                         orderItems.Rows[place][QuantityCol] = (quant - howmany);
+                        System.Diagnostics.Debug.WriteLine("Removed quantity:" + howmany + " from " + orderItems.Rows[place].ToString());
                     }
                     else
                     {
+                        System.Diagnostics.Debug.WriteLine("Removing all products id:" + productId);
                         removeAllOfAProduct(productId);
                     }
                 }
@@ -228,6 +232,7 @@ namespace Website.App_Code
                     int place = whereProduct(productId);
                     int quant = int.Parse(orderItems.Rows[place][QuantityCol].ToString());
                     orderItems.Rows[place][QuantityCol] = (quant + howmany);
+                    System.Diagnostics.Debug.WriteLine("Quantity updated:" + orderItems.Rows[place].ToString());
                 }
                 else
                 {
@@ -239,6 +244,7 @@ namespace Website.App_Code
                         dr[QuantityCol] = howmany;
 
                         orderItems.Rows.Add(dr);
+                        System.Diagnostics.Debug.WriteLine("Added:" + dr.ToString());
                     }
                     catch (Exception x)
                     {
@@ -258,17 +264,32 @@ namespace Website.App_Code
                     {
                         conn.Open();
 
-                        for(int i = 0; i < orderItems.Rows.Count; i++)
+                        for(int i = 0; i < orderItems.Rows.Count-1; i++)
                         {
-                            for(int j = orderItems.Rows.Count; j < i; j--)
+                            /*if(orderItems.Rows[i][OrderIDCol] == DBNull.Value || orderItems.Rows[i][MenuIDCol] == DBNull.Value)
                             {
-                                if(orderItems.Rows[i] == orderItems.Rows[j])
+                                orderItems.Rows.Remove(orderItems.Rows[i]);
+                            }*/
+
+                            System.Diagnostics.Debug.WriteLine("r1:" + orderItems.Rows[i][0] + " r2:" + orderItems.Rows[i][1]);
+
+                            for (int j = orderItems.Rows.Count-1; j > i; j--)
+                            {
+                               
+
+
+
+                                if(orderItems.Rows[i][0] == orderItems.Rows[j][0] && orderItems.Rows[i][1] == orderItems.Rows[j][1])
                                 {
-                                    orderItems.Rows[i].Delete();
+                                    System.Diagnostics.Debug.WriteLine("Deleting: " + orderItems.Rows[i]);
+                                    orderItems.Rows.Remove(orderItems.Rows[i]);
+                                    break;
+
                                 }
                             }
                         }
 
+                        //orderItems.AcceptChanges();
                         adap.Update(orderItems);
                     }
                 }

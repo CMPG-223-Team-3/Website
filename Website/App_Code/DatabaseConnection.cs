@@ -7,6 +7,7 @@ using System.Web;
 namespace Website.App_Code
 {
     //This class depends on the current .NET Framework's MySql.Data's ability to reuse the same connection after .dispose() is called
+    //This class's purpose is to be able to reuse the connection to the database without extensive copy and pasting
     public class DatabaseConnection
     {
         private MySqlConnection conn;

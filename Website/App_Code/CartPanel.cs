@@ -8,7 +8,7 @@ using Website;
 
 namespace Website.App_Code
 {
-    public class CartPanel : System.Web.UI.Page
+    public class CartPanel
     {
         /*
         * This class's purpose is to create a way (panel) to visualize the 
@@ -30,7 +30,7 @@ namespace Website.App_Code
         private DataTable menuItems;
         private DataTable orderItemsTable;
         private OrderItems orderItems;
-        private static bool isTheBtnClicked;
+        private bool isTheBtnClicked;
 
         private Button min;
         private Button plus;
@@ -102,16 +102,9 @@ namespace Website.App_Code
             }
         }
 
-        protected void Page_UnLoad(object sender, EventArgs e)
-        {
-            //order = null;
-            //cartPanel = null;
-            this.Page = null;
-        }
-
         private void throwEx(Exception x)
         {
-            Session[errorSession] = x.Message + x.StackTrace;
+            HttpContext.Current.Session[errorSession] = x.Message + x.StackTrace;
             HttpContext.Current.Response.Redirect("Error.aspx", false);
         }
 
@@ -382,13 +375,14 @@ namespace Website.App_Code
 
         private void checkoutBtnClicked(object sender, EventArgs e)
         {
-            Session[orderIDSession] = null;
+            /*Session[orderIDSession] = null;
             Session[userNameSession] = null;
             Session[tableIDSession] = null;
-            Session[selectedWaiterIDSession] = null;
+            Session[selectedWaiterIDSession] = null;*/
             try
             {
-                Session[orderIDSession] = null;
+                HttpContext.Current.Session[orderIDSession] = null;
+                HttpContext.Current.Session["Cart"] = null;
 
 
                 this.update();

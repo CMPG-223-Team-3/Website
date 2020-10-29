@@ -26,8 +26,8 @@ namespace Website
          * 
          */
 
-        private static Order order;
-        private static CartPanel cartPanel;
+        private Order order;
+        private CartPanel cartPanel;
         private MySqlConnection conn;
         private string pageName = HttpContext.Current.Request.Url.AbsoluteUri;
         private bool isSearched = false; //Has the user searched for something
@@ -64,9 +64,9 @@ namespace Website
                     throw new Exception("Username not logged in");
                 }
 
-                if (cartPanel != null)
+                if(Session[cartSession] != null)
                 {
-                    cartPanel.update();
+                    cartPanel = (CartPanel)Session[cartSession];
                 }
             }
             catch
@@ -90,23 +90,28 @@ namespace Website
 
                 btnSearch_Click(new object(), new EventArgs());
 
-                if (Session[userNameSession] != null)
-                {//if the user has logged in, display their name instead of the log in label on the navbar
-                    lblLogin.Text = Session[userNameSession].ToString();
+                if(!IsPostBack)
+                {
+                    if (Session[userNameSession] != null)
+                    {//if the user has logged in, display their name instead of the log in label on the navbar
+                        lblLogin.Text = Session[userNameSession].ToString();
 
-                    if (Session[tableIDSession] != null)
-                    {//if logged in user has tableid (should be if they logged in)
-                        if (Session[orderIDSession] != null)
-                        {//if the user had an order pending but closed the thing
-                            if (order == null)
-                            {
-                                order = new Order(int.Parse(Session[orderIDSession].ToString())); //at this point we need a customer ID to make a new order, have to fix
-                                order.updateOrderNameAndTable(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()));
+                        if (Session[tableIDSession] != null)
+                        {//if logged in user has tableid (should be if they logged in)
+                            if (Session[orderIDSession] != null)
+                            {//if the user had an order pending but closed the thing
+                             //if (order == null)
+                             //{
                                 if (Session[selectedWaiterIDSession] != null)
                                 {
-                                    if (order.updateOrderWaiter(int.Parse(Session[selectedWaiterIDSession].ToString())) != true)
+                                    order = new Order(int.Parse(Session[orderIDSession].ToString()));
+                                    order.updateOrderNameAndTable(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()));
+                                    if (order.getWaiterInt() == 0)
                                     {
-                                        throwEx(new Exception("Could not set your waiter, please contact a staff member"));
+                                        if (order.updateOrderWaiter(int.Parse(Session[selectedWaiterIDSession].ToString())) != true)
+                                        {
+                                            throwEx(new Exception("Could not set your waiter, please contact a staff member"));
+                                        }
                                     }
                                 }
                                 else
@@ -114,38 +119,55 @@ namespace Website
                                     throwEx(new Exception("Could not find selected waiter, please log in again"));
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (order == null)
+                            else
                             {
+                                //if (order == null)
+                                //{
 
                                 if (Session[selectedWaiterIDSession] != null)
                                 {
                                     order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0, int.Parse(Session[selectedWaiterIDSession].ToString()), 0);
                                     Session[orderIDSession] = order.getOrderID();
+                                    if (order.getWaiterInt() == 0)
+                                    {
+                                        if (order.updateOrderWaiter(int.Parse(Session[selectedWaiterIDSession].ToString())) != true)
+                                        {
+                                            throwEx(new Exception("Could not set your waiter, please contact a staff member"));
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     throwEx(new Exception("Could not find selected waiter, please log in again"));
                                 }
+                                //}
                             }
+                        }
+                        else
+                        {
+                            Page_Init(new object(), new EventArgs());
                         }
                     }
                     else
                     {
-                        Page_Init(new object(), new EventArgs());
+                        Response.Redirect("CustomerLogin.aspx", false);
+                        Context.ApplicationInstance.CompleteRequest();
+                    }
+                }
+
+                
+
+                if(Session[cartSession] == null)
+                {
+                    if(order != null)
+                    {
+                        cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                        Session[cartSession] = cartPanel;
                     }
                 }
                 else
                 {
-                    Response.Redirect("CustomerLogin.aspx", false);
-                    Context.ApplicationInstance.CompleteRequest();
-                }
-
-                if(cartPanel == null)
-                {
-                    cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
+                    cartPanel.update();
                 }
                 if (!IsPostBack || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
