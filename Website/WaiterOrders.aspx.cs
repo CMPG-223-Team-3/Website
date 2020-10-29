@@ -13,6 +13,7 @@ namespace Website
     public partial class WaiterOrders : System.Web.UI.Page
     {
         //private MySqlConnection connection;
+        private static string waiterWaiter = "WaiterLogged";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -27,7 +28,8 @@ namespace Website
             using (connection)
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID', Table_nr AS 'Table Number', Customer_Name AS 'Customer Name' FROM `ORDER` WHERE `Status` = 0 ORDER BY Order_Date_Time DESC; ");
+                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID', Table_nr AS 'Table Number', Customer_Name AS 'Customer Name' FROM `ORDER` WHERE `Status` = 0 AND `Waiter_ID` = @wid ORDER BY Order_Date_Time DESC; ");
+                cmd.Parameters.AddWithValue("@wid", Session[waiterWaiter].ToString());
                 using (MySqlDataAdapter sda = new MySqlDataAdapter())
                 {
                     cmd.Connection = connection;
@@ -50,7 +52,8 @@ namespace Website
             using (connection)
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID', Table_nr AS 'Table Number', Customer_Name AS 'Customer Name' FROM `ORDER` WHERE `Paid` = 0 AND `Status` = 1 ORDER BY Order_Date_Time DESC;");
+                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID', Table_nr AS 'Table Number', Customer_Name AS 'Customer Name' FROM `ORDER` WHERE `Paid` = 0 AND `Status` = 1 AND `Waiter_ID` = @wid ORDER BY Order_Date_Time DESC;");
+                cmd.Parameters.AddWithValue("@wid", Session[waiterWaiter].ToString());
                 using (MySqlDataAdapter sda = new MySqlDataAdapter())
                 {
                     cmd.Connection = connection;
@@ -73,7 +76,8 @@ namespace Website
             using (connection)
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID' FROM `ORDER` WHERE `Paid` = 0 ORDER BY Order_Date_Time DESC;");
+                MySqlCommand cmd = new MySqlCommand("SELECT Order_ID AS 'Order ID' FROM `ORDER` WHERE `Paid` = 0 AND `Waiter_ID` = @wid ORDER BY Order_Date_Time DESC;");
+                cmd.Parameters.AddWithValue("@wid", Session[waiterWaiter].ToString());
                 using (MySqlDataAdapter sda = new MySqlDataAdapter())
                 {
                     cmd.Connection = connection;

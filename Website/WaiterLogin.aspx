@@ -81,7 +81,7 @@
                             <!--<asp:Label CssClass="col-3" ID="Label2" runat="server" Text="Password: "></asp:Label>-->
                             <label class="control-label mt-2">Password:</label>
                             <asp:TextBox ID="txtPassword" runat="server" placeholder="Password" CssClass="form-control col-9" TextMode="Password" required="true"></asp:TextBox>
-                            <div><asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtPassword" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>
+                            <!--<div><asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtPassword" ErrorMessage="* This is a required field" CssClass="text"></asp:RequiredFieldValidator></div>-->
                         </div>
                         <div class="row">
                             <asp:Button ID="Button1" runat="server" Text="Sign In" CssClass="btn btn-dark" OnClick="Button1_Click"/>
