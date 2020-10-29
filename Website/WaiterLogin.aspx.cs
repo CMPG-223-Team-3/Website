@@ -77,7 +77,8 @@ namespace Website
                 }
                 else
                 {
-                    lblLogin.Text = "could not find you";
+                    txtStat.Visible = true;
+                    txtStat.Text = "We could not find you...";
                 }
             }
             catch(Exception x)
