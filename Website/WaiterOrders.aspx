@@ -41,12 +41,40 @@
 
          <div class="container">
              <div class="row">
-                 <div class="col-md-12">
+                 <div class="col-md-6">
                     <div class="FormBox">
                         <div class="card-boddy text-centre">
                             <h5 class="card-title">Orders that have not been delivered</h5>
                             <div class="card-text">
                                 <asp:GridView ID="GridView1" runat="server" class="table table-striped table-dark"></asp:GridView>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6">
+                    <div class="FormBox">
+                        <div class="card-boddy text-centre">
+                            <h5 class="card-title">Orders that have not been paid</h5>
+                            <div class="card-text">
+                                <asp:GridView ID="GridView2" runat="server" class="table table-striped table-dark"></asp:GridView>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-sm-12 col-md-12">
+                      <div class="card-dark mb-4"></div>
+                 </div>
+                 <div class="col-md-12">
+                    <div class="FormBox">
+                        <div class="card-boddy text-centre">
+                            <h5 class="card-title">Orders details</h5>
+                            <div class="card-text">
+                                <div>
+                                    <label>Table Number :</label>
+                                    <asp:DropDownList ID="DropDownListOrder2" runat="server" AutoPostBack="True"></asp:DropDownList>
+                                    <asp:Button ID="ButtonShowOrder" runat="server" Text="Show Order" class="btn btn-secondary myButtonRight" OnClick="ButtonShowOrder_Click"/>
+                                </div>
+                                <asp:GridView ID="GridView3" runat="server" class="table table-striped table-dark"></asp:GridView>
                             </div>
                         </div>
                     </div>
@@ -62,16 +90,10 @@
                                 <label>Order ID:</label>
                             </div>
                             <div>
-                                <asp:DropDownList ID="DropDownListOrderIds" runat="server"></asp:DropDownList>
+                                <asp:DropDownList ID="DropDownListOrderIds" runat="server" AutoPostBack="True"></asp:DropDownList>
                             </div>
                             <div>
-                                <asp:RadioButtonList ID="RadioButtonListDeliveryStatus" runat="server">
-                                    <asp:ListItem Selected="True" Text="Delivered"></asp:ListItem>
-                                    <asp:ListItem Text="Not Delivered"></asp:ListItem>
-                                </asp:RadioButtonList>
-                            </div>
-                            <div>
-                                <asp:Button ID="BtnDelivered" runat="server" Text="Button" class="btn btn-secondary myButtonRight"/>
+                                <asp:Button ID="BtnDelivered" runat="server" Text="Delivered" class="btn btn-secondary myButtonRight" OnClick="BtnDelivered_Click"/>
                             </div>
                         </div>
                     </div>
@@ -83,10 +105,10 @@
                             <div class="card-text">
                                 <div>
                                     <label>Table Number:</label>
-                                    <asp:TextBox AutoCompleteType="None" ID="TextBoxTableNumber" runat="server" CssClass="form-control" required="true" TextMode="Number"></asp:TextBox>
+                                    <asp:DropDownList ID="DropDownListTableNumbers" runat="server" AutoPostBack="True"></asp:DropDownList>
                                 </div>
                                 <div>
-                                    <asp:Button ID="ButtonPay" runat="server" Text="Button" class="btn btn-secondary myButtonRight"/>
+                                    <asp:Button ID="ButtonPay" runat="server" Text="Button" class="btn btn-secondary myButtonRight" OnClick="ButtonPay_Click"/>
                                 </div>
                             </div>
                         </div>

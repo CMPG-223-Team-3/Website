@@ -60,6 +60,42 @@ namespace Website
         protected global::System.Web.UI.WebControls.GridView GridView1;
 
         /// <summary>
+        /// GridView2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GridView2;
+
+        /// <summary>
+        /// DropDownListOrder2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList DropDownListOrder2;
+
+        /// <summary>
+        /// ButtonShowOrder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonShowOrder;
+
+        /// <summary>
+        /// GridView3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GridView3;
+
+        /// <summary>
         /// DropDownListOrderIds control.
         /// </summary>
         /// <remarks>
@@ -67,15 +103,6 @@ namespace Website
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList DropDownListOrderIds;
-
-        /// <summary>
-        /// RadioButtonListDeliveryStatus control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList RadioButtonListDeliveryStatus;
 
         /// <summary>
         /// BtnDelivered control.
@@ -87,13 +114,13 @@ namespace Website
         protected global::System.Web.UI.WebControls.Button BtnDelivered;
 
         /// <summary>
-        /// TextBoxTableNumber control.
+        /// DropDownListTableNumbers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBoxTableNumber;
+        protected global::System.Web.UI.WebControls.DropDownList DropDownListTableNumbers;
 
         /// <summary>
         /// ButtonPay control.
