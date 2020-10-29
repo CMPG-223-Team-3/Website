@@ -46,11 +46,15 @@ namespace Website.App_Code
         private string orderItemsOrderIDCol = "Order_ID";
         private string orderItemsQuantityCol = "Quantity_Ordered";
 
+        private static string userNameSession = "UserName";
+        private static string errorSession = "Error";
+        private static string fromPageSession = "FromPage";
+        private static string orderIDSession = "OrderID";
+        private static string tableIDSession = "TableID";
+        private static string selectedWaiterIDSession = "WaiterID";
+
         private static string orderCookieName = "OrderCookie";
         private static string orderCookieSubName = "OrderIDCookie";
-
-        private static string orderIDSession = "OrderID";
-        private static string errorSession = "Error";
 
         public CartPanel(MySqlConnection c, int orderID)
         {
@@ -76,6 +80,7 @@ namespace Website.App_Code
 
         public CartPanel(Order ord)
         {//Constructor that receives the person's Order object (already has all the info we need)
+
             this.conn = ord.getConnection();
             this.orderID = ord.getOrderID();
 
@@ -95,6 +100,13 @@ namespace Website.App_Code
             {
                 throwEx(x);
             }
+        }
+
+        protected void Page_UnLoad(object sender, EventArgs e)
+        {
+            //order = null;
+            //cartPanel = null;
+            this.Page = null;
         }
 
         private void throwEx(Exception x)
@@ -370,8 +382,15 @@ namespace Website.App_Code
 
         private void checkoutBtnClicked(object sender, EventArgs e)
         {
+            Session[orderIDSession] = null;
+            Session[userNameSession] = null;
+            Session[tableIDSession] = null;
+            Session[selectedWaiterIDSession] = null;
             try
             {
+                Session[orderIDSession] = null;
+
+
                 this.update();
                 this.order.getOrderItemsObject().close();
                 try
@@ -380,21 +399,32 @@ namespace Website.App_Code
                     userCookie[orderCookieSubName] = this.order.getOrderID().ToString();
                     HttpContext.Current.Response.Cookies.Add(userCookie);
                     userCookie.Expires = DateTime.Now.AddHours(5);
+                    order = null;
                 }
                 catch (Exception x)
                 {
                     throw new HttpException();
                 }
 
-                Session[orderIDSession] = null;
-
                 HttpContext.Current.Response.Write("<script language='javascript'>window.alert('Thank you! Your waiter will be with you soon to confirm payment')<script>");
-                HttpContext.Current.Response.Redirect("OrderStatus.aspx", false);
+                HttpContext.Current.Response.Redirect("OrderStatus.aspx", true);
+            }
+            catch (System.Threading.ThreadAbortException)
+            {
+                // ignore it
             }
             catch (HttpException x)
             {
-                HttpContext.Current.Response.Write("<script language='javascript'>window.alert('It seems that we can't create a cookie so you can see your order... For order details, contact your waiter...')<script>");
-                HttpContext.Current.Response.Redirect("Default.aspx", false);
+                try
+                {
+                    HttpContext.Current.Response.Write("<script language='javascript'>window.alert('It seems that we can't create a cookie so you can see your order... For order details, contact your waiter...')<script>");
+                    HttpContext.Current.Response.Redirect("Default.aspx", true);
+                }
+                catch (System.Threading.ThreadAbortException)
+                {
+                    // ignore it
+                }
+                
             }
             catch (Exception x)
             {

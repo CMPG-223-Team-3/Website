@@ -14,7 +14,7 @@
     <script src="dist/bootstrap.js"></script>
 
 </head>
-<body>
+<body onload="window.history.forward();">
     <form id="form1" runat="server">
 
         <!--Nav bar-->

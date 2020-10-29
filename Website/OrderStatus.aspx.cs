@@ -38,6 +38,10 @@ namespace Website
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Session[orderIDSession] = null;
+            Session[userNameSession] = null;
+            Session[tableIDSession] = null;
+
             try
             {
                 HttpCookie cookie = Request.Cookies[orderCookieName];

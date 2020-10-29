@@ -82,7 +82,14 @@ namespace Website
 
             try
             {
+                Response.Cache.SetNoStore();
+                Response.Cache.AppendCacheExtension("no-cache");
+                Response.Expires = 0;
+
+
+
                 btnSearch_Click(new object(), new EventArgs());
+
                 if (Session[userNameSession] != null)
                 {//if the user has logged in, display their name instead of the log in label on the navbar
                     lblLogin.Text = Session[userNameSession].ToString();
@@ -110,9 +117,9 @@ namespace Website
                         }
                         else
                         {
-                            if(order == null)
+                            if (order == null)
                             {
-                                
+
                                 if (Session[selectedWaiterIDSession] != null)
                                 {
                                     order = new Order(Session[userNameSession].ToString(), int.Parse(Session[tableIDSession].ToString()), 0, 0, int.Parse(Session[selectedWaiterIDSession].ToString()), 0);
@@ -135,12 +142,11 @@ namespace Website
                     Response.Redirect("CustomerLogin.aspx", false);
                     Context.ApplicationInstance.CompleteRequest();
                 }
+
                 if(cartPanel == null)
                 {
                     cartPanel = new CartPanel(order.getConnection(), order.getOrderID());
                 }
-
-
                 if (!IsPostBack || !isSearched)
                 {//if the user hasn't searched anything or 1st time page loaded
                     showProducts(conn, "SELECT * FROM `MENU-ITEM`");
@@ -155,7 +161,11 @@ namespace Website
                 pnlOrder.Controls.Clear();
                 pnlOrder.Controls.Add(cartPanel.getHeadPanel());
             }
-            catch(Exception ee)
+            catch(System.Threading.ThreadAbortException)
+            {
+                // ignore it
+            }
+            catch (Exception ee)
             {
                 throwEx(ee);
             }
@@ -335,8 +345,8 @@ namespace Website
 
         private void throwEx(Exception x)
         {
-            Session[errorSession] = x.Message;
-            HttpContext.Current.Response.Redirect("Error.aspx", false);
+            Session[errorSession] = x.Message + " :: " + x.StackTrace;
+            Response.Redirect("Error.aspx", true);
         }
 
         protected void forcePostbackBtn_Click(object sender, EventArgs e)

@@ -61,3 +61,5 @@ D:\OneDrive\Desktop\Git\Website\Website\obj\Release\Website.csprojAssemblyRefere
 D:\OneDrive\Desktop\Git\Website\Website\obj\Release\Website.csproj.CopyComplete
 D:\OneDrive\Desktop\Git\Website\Website\obj\Release\Website.dll
 D:\OneDrive\Desktop\Git\Website\Website\obj\Release\Website.pdb
+D:\OneDrive\Desktop\Git\Website\Website\bin\MySqlConnector.dll
+D:\OneDrive\Desktop\Git\Website\Website\bin\MySqlConnector.xml

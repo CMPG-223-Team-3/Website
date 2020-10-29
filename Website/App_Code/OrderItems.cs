@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Collections;
 using System.Data;
 
 namespace Website.App_Code
@@ -256,6 +257,18 @@ namespace Website.App_Code
                     using (conn)
                     {
                         conn.Open();
+
+                        for(int i = 0; i < orderItems.Rows.Count; i++)
+                        {
+                            for(int j = orderItems.Rows.Count; j < i; j--)
+                            {
+                                if(orderItems.Rows[i] == orderItems.Rows[j])
+                                {
+                                    orderItems.Rows[i].Delete();
+                                }
+                            }
+                        }
+
                         adap.Update(orderItems);
                     }
                 }
@@ -308,6 +321,30 @@ namespace Website.App_Code
                 return counter;
             }
             return 0;
+        }
+
+
+        public DataTable RemoveDuplicateRows(DataTable dTable, string colName)
+        {
+            Hashtable hTable = new Hashtable();
+            ArrayList duplicateList = new ArrayList();
+
+            //Add list of all the unique item value to hashtable, which stores combination of key, value pair.
+            //And add duplicate item value in arraylist.
+            foreach (DataRow drow in dTable.Rows)
+            {
+                if (hTable.Contains(drow[colName]))
+                    duplicateList.Add(drow);
+                else
+                    hTable.Add(drow[colName], string.Empty);
+            }
+
+            //Removing a list of duplicate items from datatable.
+            foreach (DataRow dRow in duplicateList)
+                dTable.Rows.Remove(dRow);
+
+            //Datatable which contains unique records will be return as output.
+            return dTable;
         }
     }
 }

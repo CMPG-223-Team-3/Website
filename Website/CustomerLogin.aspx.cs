@@ -92,8 +92,12 @@ namespace Website
             Session[tableIDSession] = int.Parse(txtTable.Text);
             Session[userNameSession] = txtName.Text.Trim().ToUpper();
             Session[selectedWaiterIDSession] = RadioButtonList1.SelectedItem.Value;
+            Session[orderIDSession] = null;
 
-            int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
+            Response.Redirect("CustomerOrder.aspx", false);
+
+            /*int ordNr = lastOrderID(int.Parse(txtTable.Text), txtName.Text);
+
 
             if (ordNr > 0)
             {//dunno how table nums work - rn can't be less than 1\
@@ -104,8 +108,8 @@ namespace Website
             if (ordNr == -1)
             {//if no order was found, no worries, go to where the customer can order (already signed in)
                 Response.Redirect("CustomerOrder.aspx", false);
-            }
-            Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
+            }*/
+            //Response.Write("<script>alert('We're having trouble with the entered table number or order)</script>");
         }
 
         private void throwEx(Exception x)
