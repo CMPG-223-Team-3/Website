@@ -46,7 +46,7 @@
                         <div class="card-boddy text-centre">
                             <h5 class="card-title">Orders that have not been delivered</h5>
                             <div class="card-text">
-                                <asp:GridView ID="GridView1" runat="server"></asp:GridView>
+                                <asp:GridView ID="GridView1" runat="server" class="table table-striped table-dark"></asp:GridView>
                             </div>
                         </div>
                     </div>
@@ -70,11 +70,13 @@
                             <h5 class="card-title">Orders details</h5>
                             <div class="card-text">
                                 <div>
-                                    <label>Table Number :</label>
+                                    <label>Prder Number :</label>
                                     <asp:DropDownList ID="DropDownListOrder2" runat="server" AutoPostBack="True"></asp:DropDownList>
                                     <asp:Button ID="ButtonShowOrder" runat="server" Text="Show Order" class="btn btn-secondary myButtonRight" OnClick="ButtonShowOrder_Click"/>
                                 </div>
-                                <asp:GridView ID="GridView3" runat="server" class="table table-striped table-dark"></asp:GridView>
+                                <div>
+                                    <asp:GridView ID="GridView3" runat="server" class="table table-striped table-dark"></asp:GridView>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -108,7 +110,7 @@
                                     <asp:DropDownList ID="DropDownListTableNumbers" runat="server" AutoPostBack="True"></asp:DropDownList>
                                 </div>
                                 <div>
-                                    <asp:Button ID="ButtonPay" runat="server" Text="Button" class="btn btn-secondary myButtonRight" OnClick="ButtonPay_Click"/>
+                                    <asp:Button ID="ButtonPay" runat="server" Text="Pay" class="btn btn-secondary myButtonRight" OnClick="ButtonPay_Click"/>
                                 </div>
                             </div>
                         </div>
